@@ -11,6 +11,11 @@ http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
 Author:       Heidi Neumann <heidineu@de.ibm.com>
 Date  :	      01/03/2005
 
+Changes:      03/07/2005: added description to register Pegasus Simple Display
+                          consumer
+	      03/09/2005: added sample indication subscription for Pegasus to 
+			  test/indication directory
+
 /* ---------------------------------------------------------------------------*/
 
 
@@ -26,6 +31,36 @@ support now. To enable this, you need to do the following:
 - enable the class definition of Linux_OperatingSystemIndication in the
   mof/Linux_Base.mof file
 - for PEGASUS:
-  enable the registration of the Indication Interface for the provider
-  cmpiOSBase_OperatingSystemProvider
+  - edit mof/makefile.pegasus to enable the registration of the Indication 
+    class and provider
 - now build the cmpi-base package as described in the README
+
+
+
+Indication Sample (openPegasus)
+-------------------------------
+
+A sample indication subscription can be found under test/indication. You 
+need to register the Pegasus Simple Display consumer. The registration 
+command and mof is:
+
+> cimmofl -nroot/PG_InterOp $(PEGASUS_ROOT)/src/Providers/sample/Load/SimpleDisplayConsumerR.mof
+
+The openPegasus SimpleDisplayConsumer writes received indications into the
+indicationLog file. You only need to set the PEGASUS_DISPLAYCONSUMER_DIR 
+environment variable by:
+
+> export PEGASUS_DISPLAYCONSUMER_DIR=<path>
+
+Then load the sample filter, handler and subscription by:
+
+> wbemexec PegasusCreateFilter.localhost.xml
+> wbemexec PegasusCreateHandler.localhost.xml
+> wbemexec PegasusCreateSubscription.localhost.xml
+
+Unload via the following order:
+
+> wbemexec PegasusDeleteSubscription.localhost.xml
+> wbemexec PegasusDeleteHandler.localhost.xml
+> wbemexec PegasusDeleteFilter.localhost.xml
+

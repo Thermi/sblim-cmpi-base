@@ -5,6 +5,9 @@ include ../setting.cmpi
 install:
 	cimmofl -I. -nroot/cimv2 Linux_Base.mof
 	cimmofl -I. -nroot/PG_InterOp Linux_BaseRegistration.mof
+#	cimmofl -nroot/PG_InterOp $(PEGASUS_ROOT)/src/Providers/sample/Load/SimpleDisplayConsumerR.mof
+#	cimmofl -I. -nroot/cimv2 Linux_BaseIndication.mof
+#	cimmofl -I. -nroot/PG_InterOp Linux_BaseIndicationReg.mof
 
 
 

@@ -1,0 +1,43 @@
+//
+// Linux_BaseIndicationReg.mof
+//
+// (C) Copyright IBM Corp. 2005
+//
+// THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+// ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+// CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+//
+// You can obtain a current copy of the Common Public License from
+// http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+//
+// Author:       Heidi Neumann <heidineu@de.ibm.com>
+// Contributors:
+//
+// Description:
+// instances to register CIM Indication classes for Linux Base System 
+// Instrumentation to openPegasus' root/PG_InterOp namespace
+//
+
+
+#pragma locale ("en_US")
+#pragma namespace ("root/PG_InterOp")
+
+// ===================================================================
+// 	Linux_OperatingSystemIndication
+// ===================================================================
+
+
+instance of PG_ProviderCapabilities
+{
+   //The provider module as defined in PG_ProviderModule
+   ProviderModuleName = "OSBase_OperatingSystemProviderModule";
+   //The provider name as defined in PG_Provider
+   ProviderName = "OSBase_OperatingSystemProvider";
+   CapabilityID = "2";
+   //Name of the CIM class as defined in the mof
+   ClassName = "Linux_OperatingSystemIndication";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 4 }; // Indication
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};

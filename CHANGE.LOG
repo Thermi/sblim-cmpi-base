@@ -57,5 +57,8 @@
   FreePhysicalMemory, SizeStoredInPagingFiles and 
   FreeSpaceInPagingFiles for kernel 2.6
 * bug# 1155834: fixed OperatingSystem's InstallDate for Fedora
+* added sample subscriptions to test/indication directory
+* updated README.INDICATION with better description and sample for
+  openPegasus
 
 // ===================================================================
