@@ -171,16 +171,17 @@ char * get_system_name() {
 
 char * get_os_name(){
 
-  if( !CIM_OS_NAME ) {
+  if(!CIM_OS_NAME) {
 
     _OSBASE_TRACE(4,("--- get_os_name() called : init"));
 
     get_system_name();
-    if( CIM_HOST_NAME ) {
-      CIM_OS_NAME = calloc(1,strlen(CIM_HOST_NAME)+1);
-      strcpy( CIM_OS_NAME, CIM_HOST_NAME );
+    if(CIM_HOST_NAME) {
+      if((CIM_OS_NAME=calloc(1,strlen(CIM_HOST_NAME)+1)) != NULL) {
+	strcpy( CIM_OS_NAME, CIM_HOST_NAME );
+      }
     }
-
+    
     _OSBASE_TRACE(4,("--- get_os_name() : CIM_OS_NAME initialized with %s",CIM_OS_NAME));
   }
   return CIM_OS_NAME;
@@ -193,7 +194,7 @@ char * get_os_name(){
 signed short get_os_timezone() {
   struct timeval  tv;
   struct timezone tz;
-
+  
   if( CIM_OS_TIMEZONE == 999 ) {
 
     _OSBASE_TRACE(4,("--- get_os_timezone() called : init"));
@@ -234,18 +235,19 @@ unsigned long _get_os_boottime() {
 /* add timezone to datetime 'str'of format %Y%m%d%H%M%S.000000
  * out : yyyyMMddHHmmss.SSSSSSsutc, e.g. 20030112152345.000000+100
  */
-void _cat_timezone( char * str , signed short zone ) {
-  char * tz = NULL;
+void _cat_timezone( char *str, signed short zone ) {
+  char *tz = NULL;
 
-  tz = calloc(1,5);
-  sprintf(tz, "%+04d", zone);
-  if( str != NULL ) {
-    if( str != NULL ) { strcat(str,tz); }
+  if((tz=calloc(1,sizeof(long long))) != NULL) {
+    sprintf(tz, "%+04d", zone);
+    if( str != NULL ) {
+      if( str != NULL ) { strcat(str,tz); }
+    }
+    if(tz) free(tz);
   }
-  if(tz) free(tz);
 }
 
-
+ 
 /* ---------------------------------------------------------------------------*/
 /* tool function : executes commandlines and returns their output             */
 /* ( stdout and stderr )                                                      */
@@ -539,9 +541,11 @@ void _osbase_trace( int level, char * file, int line, char * msg) {
     if( gmtime_r( &sec , &cttm) != NULL ) {
       strftime(tm,20,"%m/%d/%Y %H:%M:%S",&cttm);
     }
+    fprintf(ferr,"[%i] [%s] --- %s(%i) : %s\n", level, tm, file, line, msg);
   }
-  
-  fprintf(ferr,"[%i] [%s] --- %s(%i) : %s\n", level, tm, file, line, msg);
+  else {
+    fprintf(ferr,"[%i] --- %s(%i) : %s\n", level, file, line, msg);
+  }  
   
   if( (_SBLIM_TRACE_FILE != NULL) ) {
     fclose(ferr);
