@@ -3,8 +3,8 @@
 //
 // Copyright (c) 2002, International Business Machines
 //
-// THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE 
-// ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE 
+// THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+// ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
 // CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
 //
 // You can obtain a current copy of the Common Public License from
@@ -13,7 +13,7 @@
 // Author:       Heidi Neumann <heidineu@de.ibm.com>
 // Contributors:
 //
-// Description: 
+// Description:
 // CIM classes for Linux Base System Instrumentation
 //
 
@@ -33,11 +33,11 @@
 // 	Linux_ComputerSystem
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_ComputerSystem"),
+[ Provider("cmpi:cmpiOSBase_ComputerSystemProvider"),
   Description ("A class derived from ComputerSystem"
   " to represent the GNU/Linux OS on a Desktop, Mobile, NetPC,"
   " Server or other type of a single node Computer System ." )
-] 
+]
 class Linux_ComputerSystem : CIM_ComputerSystem
 { };
 
@@ -46,11 +46,11 @@ class Linux_ComputerSystem : CIM_ComputerSystem
 // 	Linux_OperatingSystem
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_OperatingSystem") ] 
+[ Provider("cmpi:cmpiOSBase_OperatingSystemProvider") ]
 class Linux_OperatingSystem : CIM_OperatingSystem
 {
-  [ Description("Average total cpu time in percents."), 
-    Units("Percent") 
+  [ Description("Average total cpu time in percents."),
+    Units("Percent")
   ]
   uint16 PctTotalCPUTime;
 
@@ -62,7 +62,7 @@ class Linux_OperatingSystem : CIM_OperatingSystem
 // 	Linux_UnixProcess
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_UnixProcess") ] 
+[ Provider("cmpi:cmpiOSBase_UnixProcessProvider") ] 
 class Linux_UnixProcess : CIM_UnixProcess
 {
   uint32 MaxNumberOfChildProcesses ;
@@ -77,7 +77,7 @@ class Linux_UnixProcess : CIM_UnixProcess
 // 	Linux_Processor
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_Processor") ] 
+[ Provider("cmpi:cmpiOSBase_ProcessorProvider") ] 
 class Linux_Processor : CIM_Processor
 { };
 
@@ -95,7 +95,7 @@ class Linux_Processor : CIM_Processor
 // ===================================================================
 
 [ Association, 
-  Provider("cmpi:cmpiLinux_RunningOS") ] 
+  Provider("cmpi:cmpiOSBase_RunningOSProvider") ] 
 class Linux_RunningOS : CIM_RunningOS
 {
   [ Override ("Antecedent"),
@@ -117,7 +117,7 @@ class Linux_RunningOS : CIM_RunningOS
 [ Association, 
   Aggregation,
   Composition, 
-  Provider("cmpi:cmpiLinux_OSProcess") ] 
+  Provider("cmpi:cmpiOSBase_OSProcessProvider") ] 
 class Linux_OSProcess : CIM_OSProcess
 {
   [ Override ("GroupComponent"),
@@ -139,7 +139,7 @@ class Linux_OSProcess : CIM_OSProcess
 [ Association, 
   Aggregation,
   Composition,
-  Provider("cmpi:cmpiLinux_CSProcessor") ] 
+  Provider("cmpi:cmpiOSBase_CSProcessorProvider") ] 
 class Linux_CSProcessor : CIM_SystemDevice
 { 
   [ Override ("GroupComponent"),

@@ -1,14 +1,14 @@
 
-#ifndef _CMPIPROVSUP_H_
-#define _CMPIPROVSUP_H_
+#ifndef _CMPIOSBASE_COMMON_H_
+#define _CMPIOSBASE_COMMON_H_
 
 /*
- * cmpiprovsup.h
+ * cmpiOSBase_Common.h
  *
  * Copyright (c) 2002, International Business Machines
  *
- * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE 
- * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE 
+ * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+ * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
  *
  * You can obtain a current copy of the Common Public License from
@@ -19,11 +19,18 @@
  *
  * Interface Type : Common Manageability Programming Interface ( CMPI )
  *
- * Description: 
+ * Description:
  * This library contains common /  generic methods to write CMPI Provider.
- * 
+ *
 */
+/* ---------------------------------------------------------------------------*/
 
+#include "cmpidt.h"
+
+/* ---------------------------------------------------------------------------*/
+
+extern char * CSCreationClassName;
+extern char * OSCreationClassName;
 
 /* ---------------------------------------------------------------------------*/
 
@@ -34,7 +41,7 @@ void _check_system_key_value_pairs( CMPIBroker * _broker,
 				    CMPIStatus * rc );
 
 
-int _assoc_create_inst_1toN( CMPIBroker * _broker, 
+int _assoc_create_inst_1toN( CMPIBroker * _broker,
 			     CMPIContext * ctx,
 			     CMPIResult * rslt,
 			     CMPIObjectPath * cop,
@@ -76,15 +83,15 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
 
 /* - method to get the name of the target class                               */
 char * _assoc_targetClass_Name( CMPIBroker * _broker,
-				CMPIObjectPath * ref, 
+				CMPIObjectPath * ref,
 				char * _RefLeftClass,
 				char * _RefRightClass,
 				CMPIStatus * rc);
 
 
 /* - method to get an empty CMPIObjectPath of the target class                */
-CMPIObjectPath * _assoc_targetClass_OP( CMPIBroker * _broker, 
-					CMPIObjectPath * ref, 
+CMPIObjectPath * _assoc_targetClass_OP( CMPIBroker * _broker,
+					CMPIObjectPath * ref,
 					char * _RefLeftClass,
 					char * _RefRightClass,
 					CMPIStatus * rc );
@@ -100,12 +107,12 @@ int _assoc_check_parameter_const( CMPIBroker * _broker,
 				  char * _RefRightClass,
 				  char * resultClass,
 				  char * role,
-				  char * resultRole, 
+				  char * resultRole,
 				  CMPIStatus * rc );
 
 
 /* ---------------------------------------------------------------------------*/
-/*                        end of cmpiprovsup.h                                */
+/*                       end of cmpiOSBase_Common.h                           */
 /* ---------------------------------------------------------------------------*/
 
 

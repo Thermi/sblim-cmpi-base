@@ -1,5 +1,5 @@
 /*
- * Linux_OSProcess.c
+ * cmpiOSBase_OSProcessProvider.c
  *
  * Copyright (c) 2002, International Business Machines
  *
@@ -10,7 +10,7 @@
  * You can obtain a current copy of the Common Public License from
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
- * Author:       Heidi Neumann <heidineu@de.ibm.com>
+ * Author:       
  * Contributors:
  *
  * Interface Type : Common Manageability Programming Interface ( CMPI )
@@ -27,22 +27,25 @@
 #include "cmpift.h"
 #include "cmpimacs.h"
 
-#include "cmpiprovsup.h"
+#include "cmpiOSBase_Common.h"
 
-#include "cimibase.h"
+unsigned char CMPI_true  = 1;
+unsigned char CMPI_false = 0;
 
-unsigned char CMPI_true=1;
-unsigned char CMPI_false=0;
-
-static CMPIBroker * _broker = NULL;
+CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
+
 #ifdef DEBUG
     int _debug = 1;
 #else
     int _debug = 0;
 #endif
+
+static char * _FILENAME = "cmpiOSBase_OSProcessProvider.c";
+
+/* ---------------------------------------------------------------------------*/
 
 static char * _ClassName     = "Linux_OSProcess";
 static char * _RefLeft       = "GroupComponent";
@@ -58,26 +61,27 @@ static char * _RefRightClass = "Linux_UnixProcess";
 /* ---------------------------------------------------------------------------*/
 
 
-CMPIStatus Linux_OSProcessCleanup( CMPIInstanceMI * mi, 
-				   CMPIContext * ctx) {
+CMPIStatus OSBase_OSProcessProviderCleanup( CMPIInstanceMI * mi, 
+           CMPIContext * ctx) { 
+  if( _debug )
+    fprintf( stderr, "--- %s : %s CMPI Cleanup()\n", _FILENAME, _ClassName );
   CMReturn(CMPI_RC_OK);
 }
 
-CMPIStatus Linux_OSProcessEnumInstanceNames( CMPIInstanceMI * mi, 
-					     CMPIContext * ctx, 
-					     CMPIResult * rslt, 
-					     CMPIObjectPath * ref) {
+CMPIStatus OSBase_OSProcessProviderEnumInstanceNames( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * ref) { 
   CMPIStatus rc    = {CMPI_RC_OK, NULL};
   int        refrc = 0;
   
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI EnumInstanceNames()\n", _ClassName );
+    fprintf( stderr, "--- %s : %s CMPI EnumInstanceNames()\n", _FILENAME, _ClassName );
   
   refrc = _assoc_create_inst_1toN( _broker,ctx,rslt,ref,
 				   _ClassName,_RefLeftClass,_RefRightClass,
 				   _RefLeft,_RefRight,
 				   1,0,&rc);
-
   if( refrc != 0 ) { 
     if( _debug ) {
       if( rc.msg != NULL ) 
@@ -87,25 +91,24 @@ CMPIStatus Linux_OSProcessEnumInstanceNames( CMPIInstanceMI * mi,
   }
 
   CMReturnDone( rslt );
-  CMReturn( CMPI_RC_OK );
+  return rc;
 }
 
-CMPIStatus Linux_OSProcessEnumInstances( CMPIInstanceMI * mi, 
-					 CMPIContext * ctx, 
-					 CMPIResult * rslt, 
-					 CMPIObjectPath * ref, 
-					 char ** properties) {
+CMPIStatus OSBase_OSProcessProviderEnumInstances( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * ref, 
+           char ** properties) { 
   CMPIStatus rc    = {CMPI_RC_OK, NULL};
   int        refrc = 0;
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI EnumInstances()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI EnumInstances()\n", _FILENAME, _ClassName );
 
   refrc = _assoc_create_inst_1toN( _broker,ctx,rslt,ref,
 				   _ClassName,_RefLeftClass,_RefRightClass,
 				   _RefLeft,_RefRight,
 				   1,1,&rc);
-
   if( refrc != 0 ) { 
     if( _debug ) {
       if( rc.msg != NULL ) 
@@ -115,20 +118,19 @@ CMPIStatus Linux_OSProcessEnumInstances( CMPIInstanceMI * mi,
   }
 
   CMReturnDone( rslt );
-  CMReturn( CMPI_RC_OK );
+  return rc;
 }
 
-
-CMPIStatus Linux_OSProcessGetInstance( CMPIInstanceMI * mi, 
-				       CMPIContext * ctx, 
-				       CMPIResult * rslt, 
-				       CMPIObjectPath * cop, 
-				       char ** properties) {
+CMPIStatus OSBase_OSProcessProviderGetInstance( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * cop, 
+           char ** properties) {
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
-  
+
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI GetInstance()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI GetInstance()\n", _FILENAME, _ClassName );
   
   ci = _assoc_get_inst( _broker,ctx,cop,_ClassName,_RefLeft,_RefRight,&rc);
 
@@ -142,70 +144,69 @@ CMPIStatus Linux_OSProcessGetInstance( CMPIInstanceMI * mi,
 
   CMReturnInstance( rslt, ci );
   CMReturnDone(rslt);
-  CMReturn(CMPI_RC_OK);
-}
-
-CMPIStatus Linux_OSProcessCreateInstance( CMPIInstanceMI * mi, 
-					  CMPIContext * ctx, 
-					  CMPIResult * rslt, 
-					  CMPIObjectPath * cop, 
-					  CMPIInstance * ci) {
-  CMPIStatus rc = {CMPI_RC_OK, NULL};
-
-  if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI CreateInstance()\n", _ClassName ); 
-
-  CMSetStatusWithChars( _broker, &rc, 
-			CMPI_RC_ERR_NOT_SUPPORTED, "NOT_SUPPORTED" ); 
   return rc;
 }
 
-CMPIStatus Linux_OSProcessSetInstance( CMPIInstanceMI * mi, 
-				       CMPIContext * ctx, 
-				       CMPIResult * rslt, 
-				       CMPIObjectPath * cop,
-				       CMPIInstance * ci, 
-				       char **properties) {
+CMPIStatus OSBase_OSProcessProviderCreateInstance( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * cop, 
+           CMPIInstance * ci) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI SetInstance()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI CreateInstance()\n", _FILENAME, _ClassName );
 
   CMSetStatusWithChars( _broker, &rc, 
-			CMPI_RC_ERR_NOT_SUPPORTED, "NOT_SUPPORTED" ); 
+			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
   return rc;
 }
 
-CMPIStatus Linux_OSProcessDeleteInstance( CMPIInstanceMI * mi, 
-					  CMPIContext * ctx, 
-					  CMPIResult * rslt, 
-					  CMPIObjectPath * cop) { 
-  CMPIStatus rc = {CMPI_RC_OK, NULL};
-  
-  if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI DeleteInstance()\n", _ClassName ); 
-
-  CMSetStatusWithChars( _broker, &rc, 
-			CMPI_RC_ERR_NOT_SUPPORTED, "NOT_SUPPORTED" ); 
-  return rc;
-}
-
-CMPIStatus Linux_OSProcessExecQuery( CMPIInstanceMI * mi, 
-				     CMPIContext * ctx, 
-				     CMPIResult * rslt, 
-				     CMPIObjectPath * cop, 
-				     char * lang, 
-				     char * query) {
+CMPIStatus OSBase_OSProcessProviderSetInstance( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * cop,
+           CMPIInstance * ci, 
+           char **properties) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI ExecQuery()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI SetInstance()\n", _FILENAME, _ClassName );
 
   CMSetStatusWithChars( _broker, &rc, 
-			CMPI_RC_ERR_NOT_SUPPORTED, "NOT_SUPPORTED" ); 
+			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
   return rc;
 }
 
+CMPIStatus OSBase_OSProcessProviderDeleteInstance( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * cop) {
+  CMPIStatus rc = {CMPI_RC_OK, NULL}; 
+
+  if( _debug )
+    fprintf( stderr, "--- %s : %s CMPI DeleteInstance()\n", _FILENAME, _ClassName );
+
+  CMSetStatusWithChars( _broker, &rc, 
+			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+  return rc;
+}
+
+CMPIStatus OSBase_OSProcessProviderExecQuery( CMPIInstanceMI * mi, 
+           CMPIContext * ctx, 
+           CMPIResult * rslt, 
+           CMPIObjectPath * ref, 
+           char * lang, 
+           char * query) {
+  CMPIStatus rc = {CMPI_RC_OK, NULL};
+
+  if( _debug )
+    fprintf( stderr, "--- %s : %s CMPI ExecQuery()\n", _FILENAME, _ClassName );
+
+  CMSetStatusWithChars( _broker, &rc, 
+			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+  return rc;
+}
 
 
 /* ---------------------------------------------------------------------------*/
@@ -213,13 +214,12 @@ CMPIStatus Linux_OSProcessExecQuery( CMPIInstanceMI * mi,
 /* ---------------------------------------------------------------------------*/
 
 
-CMPIStatus Linux_OSProcessAssociationCleanup( CMPIAssociationMI * mi,
-					      CMPIContext * ctx) {
+CMPIStatus OSBase_OSProcessProviderAssociationCleanup( CMPIAssociationMI * mi,
+           CMPIContext * ctx) {
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI AssociationCleanup()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI AssociationCleanup()\n", _FILENAME, _ClassName );
   CMReturn(CMPI_RC_OK);
 }
-
 
 /* 
  * The intention of associations is to show the relations between different
@@ -275,22 +275,21 @@ CMPIStatus Linux_OSProcessAssociationCleanup( CMPIAssociationMI * mi,
  *    If this requirement is not true, the provider returns nothing.
  */
 
-
-CMPIStatus Linux_OSProcessAssociators( CMPIAssociationMI * mi,
-				       CMPIContext * ctx,
-				       CMPIResult * rslt,
-				       CMPIObjectPath * cop,
-				       char * assocClass,
-				       char * resultClass,
-				       char * role,
-				       char * resultRole,
-				       char ** propertyList ) {
+CMPIStatus OSBase_OSProcessProviderAssociators( CMPIAssociationMI * mi,
+           CMPIContext * ctx,
+           CMPIResult * rslt,
+           CMPIObjectPath * cop,
+           char * assocClass,
+           char * resultClass,
+           char * role,
+           char * resultRole,
+           char ** propertyList ) {
   CMPIStatus       rc    = {CMPI_RC_OK, NULL};
   CMPIObjectPath * op    = NULL;
   int              refrc = 0;
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI Associators()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI Associators()\n", _FILENAME, _ClassName );
     
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
@@ -303,15 +302,11 @@ CMPIStatus Linux_OSProcessAssociators( CMPIAssociationMI * mi,
 				      _RefLeftClass,_RefRightClass,
 				      resultClass,role,resultRole, 
 				      &rc ) == 0 ) { goto exit; }
-    
-    /* TODO */
-    /* currently not discovered if resultClass, role or resultRole are set */
 
-    refrc = _assoc_create_refs_1toN(_broker, ctx, rslt, cop, 
+     refrc = _assoc_create_refs_1toN(_broker, ctx, rslt, cop, 
 				    _ClassName,_RefLeftClass,_RefRightClass,
 				    _RefLeft,_RefRight,
 				    1, 1, &rc);
-
     if( refrc != 0 ) { 
       if( _debug ) {
 	if( rc.msg != NULL ) 
@@ -319,7 +314,6 @@ CMPIStatus Linux_OSProcessAssociators( CMPIAssociationMI * mi,
       }
       CMReturn(CMPI_RC_ERR_FAILED); 
     }
-
   }
 
  exit:
@@ -327,20 +321,20 @@ CMPIStatus Linux_OSProcessAssociators( CMPIAssociationMI * mi,
   CMReturn(CMPI_RC_OK);
 }
 
-CMPIStatus Linux_OSProcessAssociatorNames( CMPIAssociationMI * mi,
-					   CMPIContext * ctx,
-					   CMPIResult * rslt,
-					   CMPIObjectPath * cop,
-					   char * assocClass,
-					   char * resultClass,
-					   char * role,
-					   char * resultRole ) {
+CMPIStatus OSBase_OSProcessProviderAssociatorNames( CMPIAssociationMI * mi,
+           CMPIContext * ctx,
+           CMPIResult * rslt,
+           CMPIObjectPath * cop,
+           char * assocClass,
+           char * resultClass,
+           char * role,
+           char * resultRole) {
   CMPIStatus       rc    = {CMPI_RC_OK, NULL};
   CMPIObjectPath * op    = NULL;
   int              refrc = 0;
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI AssociatorNames()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI AssociatorNames()\n", _FILENAME, _ClassName );
     
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
@@ -354,14 +348,10 @@ CMPIStatus Linux_OSProcessAssociatorNames( CMPIAssociationMI * mi,
 				      resultClass,role,resultRole, 
 				      &rc ) == 0 ) { goto exit; }
     
-    /* TODO */
-    /* currently not discovered if resultClass, role or resultRole are set */
-    
     refrc = _assoc_create_refs_1toN(_broker, ctx, rslt, cop, 
 				    _ClassName,_RefLeftClass,_RefRightClass,
 				    _RefLeft,_RefRight,
 				    0, 1, &rc);
-
     if( refrc != 0 ) { 
       if( _debug ) {
 	if( rc.msg != NULL ) 
@@ -369,7 +359,6 @@ CMPIStatus Linux_OSProcessAssociatorNames( CMPIAssociationMI * mi,
       }
       CMReturn(CMPI_RC_ERR_FAILED); 
     }
-
   }
 
  exit:
@@ -386,20 +375,19 @@ CMPIStatus Linux_OSProcessAssociatorNames( CMPIAssociationMI * mi,
  * association itself.
  */
 
-
-CMPIStatus Linux_OSProcessReferences( CMPIAssociationMI * mi,
-				      CMPIContext * ctx,
-				      CMPIResult * rslt,
-				      CMPIObjectPath * cop,
-				      char * assocClass,
-				      char * role,
-				      char ** propertyList ) {
+CMPIStatus OSBase_OSProcessProviderReferences( CMPIAssociationMI * mi,
+           CMPIContext * ctx,
+           CMPIResult * rslt,
+           CMPIObjectPath * cop,
+           char * assocClass,
+           char * role,
+           char ** propertyList ) {
   CMPIStatus       rc    = {CMPI_RC_OK, NULL};
   CMPIObjectPath * op    = NULL;
   int              refrc = 0;
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI References()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI References()\n", _FILENAME, _ClassName );
     
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
@@ -413,14 +401,10 @@ CMPIStatus Linux_OSProcessReferences( CMPIAssociationMI * mi,
 				      NULL,role,NULL, 
 				      &rc ) == 0 ) { goto exit; }
     
-    /* TODO */
-    /* currently not discovered if role is set */
-    
     refrc = _assoc_create_refs_1toN(_broker, ctx, rslt, cop, 
 				    _ClassName,_RefLeftClass,_RefRightClass,
 				    _RefLeft,_RefRight,
 				    1, 0, &rc);
-
     if( refrc != 0 ) { 
       if( _debug ) {
 	if( rc.msg != NULL ) 
@@ -428,7 +412,6 @@ CMPIStatus Linux_OSProcessReferences( CMPIAssociationMI * mi,
       }
       CMReturn(CMPI_RC_ERR_FAILED); 
     }
-
   }
 
  exit:
@@ -436,19 +419,18 @@ CMPIStatus Linux_OSProcessReferences( CMPIAssociationMI * mi,
   CMReturn(CMPI_RC_OK);
 }
 
-
-CMPIStatus Linux_OSProcessReferenceNames( CMPIAssociationMI * mi,
-					  CMPIContext * ctx,
-					  CMPIResult * rslt,
-					  CMPIObjectPath * cop,
-					  char * assocClass,
-					  char * role) {
+CMPIStatus OSBase_OSProcessProviderReferenceNames( CMPIAssociationMI * mi,
+           CMPIContext * ctx,
+           CMPIResult * rslt,
+           CMPIObjectPath * cop,
+           char * assocClass,
+           char * role) {
   CMPIStatus       rc    = {CMPI_RC_OK, NULL};
   CMPIObjectPath * op    = NULL;
   int              refrc = 0;
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI ReferenceNames()\n", _ClassName ); 
+    fprintf( stderr, "--- %s : %s CMPI ReferenceNames()\n", _FILENAME, _ClassName );
     
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
@@ -461,15 +443,11 @@ CMPIStatus Linux_OSProcessReferenceNames( CMPIAssociationMI * mi,
 				      _RefLeftClass,_RefRightClass,
 				      NULL,role,NULL, 
 				      &rc ) == 0 ) { goto exit; }
-    
-    /* TODO */
-    /* currently not discovered if role is set */
-    
+        
     refrc = _assoc_create_refs_1toN(_broker, ctx, rslt, cop, 
 				    _ClassName,_RefLeftClass,_RefRightClass,
 				    _RefLeft,_RefRight,
 				    0, 0, &rc);
-
     if( refrc != 0 ) { 
       if( _debug ) {
 	if( rc.msg != NULL ) 
@@ -477,7 +455,6 @@ CMPIStatus Linux_OSProcessReferenceNames( CMPIAssociationMI * mi,
       }
       CMReturn(CMPI_RC_ERR_FAILED); 
     }
-
   }
 
  exit:
@@ -490,17 +467,18 @@ CMPIStatus Linux_OSProcessReferenceNames( CMPIAssociationMI * mi,
 /*                              Provider Factory                              */
 /* ---------------------------------------------------------------------------*/
 
-CMInstanceMIStub( Linux_OSProcess,
-		  Linux_OSProcess, 
-		  _broker, 
-		  CMNoHook);
+CMInstanceMIStub( OSBase_OSProcessProvider, 
+                  OSBase_OSProcessProvider, 
+                  _broker, 
+                  CMNoHook);
 
-CMAssociationMIStub( Linux_OSProcess, 
-		     Linux_OSProcess, 
-		     _broker, 
-		     CMNoHook);
+CMAssociationMIStub( OSBase_OSProcessProvider, 
+                     OSBase_OSProcessProvider, 
+                     _broker, 
+                     CMNoHook);
+
 
 /* ---------------------------------------------------------------------------*/
-/*                        end of Linux_OSProcess                              */
+/*          end of cmpiOSBase_OSProcessProvider                      */
 /* ---------------------------------------------------------------------------*/
 
