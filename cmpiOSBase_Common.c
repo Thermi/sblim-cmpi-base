@@ -577,12 +577,23 @@ int _assoc_check_parameter_const( CMPIBroker * _broker,
   int              intrc       = 0;
 
   _OSBASE_TRACE(2,("--- _assoc_check_parameter_const() called"));
+  //fprintf(stderr,"cop : %s\n",CMGetCharPtr(CDToString(_broker, cop, rc)));
+
+  sourceClass = CMGetClassName(cop, rc);
+  scop = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
+			    CMGetCharPtr(sourceClass), rc );
+
+  if( strcasecmp(CMGetCharPtr(sourceClass),_RefLeftClass) == 0 ||
+      CMClassPathIsA(_broker,scop,_RefLeftClass,rc) == 1 ) {
+    intrc = 1;
+  }
+  else if( strcasecmp(CMGetCharPtr(sourceClass),_RefRightClass) == 0 ||
+	   CMClassPathIsA(_broker,scop,_RefRightClass,rc) == 1 ) {
+    intrc = 1;
+  }
+  else {  goto exit; }
 
   if( resultClass || role || resultRole) {
-
-    sourceClass = CMGetClassName(cop, rc);
-    scop = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
-			    CMGetCharPtr(sourceClass), rc );
 
     /* check if resultClass is parent or the class itslef of the target class */
     if( resultClass ) {
