@@ -3,10 +3,6 @@
 
 include setting.cmpi
 
-# define the Hardware Platform the compile will run on
-HW=$(shell ./platform.sh)
-
-
 #------------------------------------------------------------------------------#
 
 # insert only when using the sysman module
@@ -25,6 +21,15 @@ endif
 
 #------------------------------------------------------------------------------#
 
+ifndef PEGASUS_HOME
+  ERROR = pegasus_home_undefined
+pegasus_home_undefined:
+	@ echo PEGASUS_HOME environment variable must be set to the Pegasus installation directory
+	@ exit 1
+endif
+
+# define the Hardware Platform the compile will run on
+HW=$(shell ./platform.sh)
 
 # No changes necessary below this line
 
