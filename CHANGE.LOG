@@ -45,3 +45,8 @@
   -> see README.IDICATION for more information
 
 // ===================================================================
+// new in version 1.4.2 :
+
+* fixed retrieval of LPARID on Power
+
+// ===================================================================

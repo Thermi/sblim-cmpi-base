@@ -29,7 +29,13 @@
 /* ---------------------------------------------------------------------------*/
 // private declarations
 
+#if defined (S390)
 #define LPARNAME   "grep 'LPAR Name' /proc/sysinfo"
+#endif
+
+#if defined (PPC)
+#define LPARNAME   "grep 'partition_id' /proc/ppc64/lparcfg"
+#endif
 
 /* ---------------------------------------------------------------------------*/
 
@@ -75,16 +81,24 @@ int get_cs_lparid(char *lparid, int size) {
 
   memset(lparid,0,size);
 
-#if defined (S390)
+#if defined (S390) || defined (PPC)
 
   char **hdout = NULL;
+  char *ptr    = NULL;
   char id[255];
 
   if( runcommand(LPARNAME,NULL,&hdout,NULL)) { return -1; }
   if(hdout[0]) {
+#if defined (S390)
     sscanf(hdout[0],"%*s %*s %s",id);
+#endif
+#if defined (PPC)
+    ptr=strchr(hdout[0],'=');
+    ptr+=1;
+    sscanf(ptr,"%s",id);
+#endif
     if(strlen(id)>size) { return -1; }
-    strcpy(lparid,id)
+    strcpy(lparid,id);
   }
   return 0;
 #endif
