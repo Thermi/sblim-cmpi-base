@@ -140,15 +140,22 @@ char * get_os_name(){
 /* ---------------------------------------------------------------------------*/
 
 signed short get_os_timezone() {
-  char ** hdout = NULL;
-  int     rc    = 0;
+  char ** hdout  = NULL;
+  char *  ptr    = NULL;
+  char    hour[] = "00";
+  char    min[]  = "00"; 
+  int     rc     = 0;
 
   if( _debug ) { fprintf(stderr, "--- %s : get_os_timezone()\n",_FILENAME); }
 
   if( CIM_OS_TIMEZONE == 999 ) {
     rc = runcommand( "date +%z" , NULL , &hdout , NULL );
     if( rc == 0 ) {
-      CIM_OS_TIMEZONE = atoi(hdout[0]);
+      ptr = hdout[0]+1;
+      strncpy(hour,ptr,2);
+      ptr = hdout[0]+3;
+      strncpy(min,ptr,2);
+      CIM_OS_TIMEZONE = (atoi(hour)*60)+atoi(min);
       freeresultbuf(hdout);
     }
     else {

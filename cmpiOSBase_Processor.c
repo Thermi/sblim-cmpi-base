@@ -148,9 +148,9 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   /* 2.7 */
 #ifndef CIM26COMPAT
   CMSetProperty( ci, "ElementName", sptr->name, CMPI_chars);  
-  CMSetProperty( ci, "EnabledStatus", (CMPIValue*)&(status), CMPI_uint16);
-  CMSetProperty( ci, "OtherEnabledStatus", "NULL", CMPI_chars);
-  CMSetProperty( ci, "RequestedStatus", (CMPIValue*)&(status), CMPI_uint16);
+  CMSetProperty( ci, "EnabledState", (CMPIValue*)&(status), CMPI_uint16);
+  CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
+  CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "EnabledDefault", (CMPIValue*)&(status), CMPI_uint16);
 #endif
 

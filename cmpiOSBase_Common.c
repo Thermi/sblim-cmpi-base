@@ -11,7 +11,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
- * Contributors:
+ * Contributors: Adrian Schuur <schuur@de.ibm.com>
  *
  * Interface Type : Common Manageability Programming Interface ( CMPI )
  *
@@ -287,7 +287,6 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
 			     int associators,
 			     CMPIStatus * rc) {
 
-  CMPIInstance    * rci = NULL;
   CMPIInstance    * ci  = NULL;
   CMPIObjectPath  * op  = NULL;
   CMPIObjectPath  * rop = NULL;
@@ -310,82 +309,96 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
     return -1;
   }
 
-  en = CBEnumInstanceNames( _broker, ctx, op, rc);
-  if( en == NULL ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_FAILED, "CBEnumInstanceNames( _broker, ctx, op, rc)" );
-    return -1;
-  }
-
-  while( CMHasNext( en, rc) ) {
-
-    data = CMGetNext( en, rc);
-    if( data.value.ref == NULL ) {
+  if( (associators == 1) && (inst == 1) ) {
+    /* associators() */
+    en = CBEnumInstances( _broker, ctx, op, NULL, rc);
+    if( en == NULL ) {
       CMSetStatusWithChars( _broker, rc,
-			    CMPI_RC_ERR_FAILED, "CMGetNext( en, rc)" );
+			    CMPI_RC_ERR_FAILED, "CBEnumInstances( _broker, ctx, op, rc)" );
       return -1;
     }
-    //    fprintf(stderr,"_assoc_create_refs_1toN(): %s\n",
-    //    	    CMGetCharPtr(CDToString(_broker, data.value.ref, rc)));
-    //    if( _debug) { fprintf(stderr,"data.value.ref - namespace : %s\n",
-    //    			  CMGetCharPtr(CMGetNameSpace(data.value.ref,rc))); }
 
-    if( associators == 0 ) {
+    while( CMHasNext( en, rc) ) {
 
-      /* references() || referenceNames() */
-      ci = CMNewInstance( _broker, rop, rc);
-      if( CMIsNullObject(ci) ) {
+      data = CMGetNext( en, rc);
+      if( data.value.inst == NULL ) {
+        CMSetStatusWithChars( _broker, rc,
+			      CMPI_RC_ERR_FAILED, "CMGetNext( en, rc)" );
+        return -1;
+      }
+      
+      CMReturnInstance( rslt, data.value.inst );
+    }
+  }
+
+  else {
+    en = CBEnumInstanceNames( _broker, ctx, op, rc);
+    if( en == NULL ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, "CBEnumInstanceNames( _broker, ctx, op, rc)" );
+      return -1;
+    }
+
+    while( CMHasNext( en, rc) ) {
+
+      data = CMGetNext( en, rc);
+      if( data.value.ref == NULL ) {
 	CMSetStatusWithChars( _broker, rc,
-			      CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." );
+			      CMPI_RC_ERR_FAILED, "CMGetNext( en, rc)" );
 	return -1;
       }
+      //    fprintf(stderr,"_assoc_create_refs_1toN(): %s\n",
+      //    	    CMGetCharPtr(CDToString(_broker, data.value.ref, rc)));
+      //    if( _debug) { fprintf(stderr,"data.value.ref - namespace : %s\n",
+      //    			  CMGetCharPtr(CMGetNameSpace(data.value.ref,rc))); }
+      
+      if( associators == 0 ) {
 
-      targetName = _assoc_targetClass_Name(_broker,ref,_RefLeftClass,_RefRightClass,rc);
-
-      if( strcmp( targetName,_RefRightClass) == 0 ) {
-	CMSetProperty( ci, _RefLeft, (CMPIValue*)&(ref), CMPI_ref );
-	CMSetProperty( ci, _RefRight, (CMPIValue*)&(data.value.ref), CMPI_ref );
-      }
-      else if( strcmp( targetName,_RefLeftClass) == 0 ) {
-	CMSetProperty( ci, _RefLeft, (CMPIValue*)&(data.value.ref), CMPI_ref );
-	CMSetProperty( ci, _RefRight, (CMPIValue*)&(ref), CMPI_ref );
-      }
-
-      //      fprintf(stderr,"_assoc_create_refs_1toN() inst: %s\n",
-      //      	      CMGetCharPtr(CDToString(_broker, ci, rc)));
-
-      if( inst == 0 ) {
-	cop = CMGetObjectPath(ci,rc);
-	if( cop == NULL ) {
+	/* references() || referenceNames() */
+	ci = CMNewInstance( _broker, rop, rc);
+	if( CMIsNullObject(ci) ) {
 	  CMSetStatusWithChars( _broker, rc,
-				CMPI_RC_ERR_FAILED, "CMGetObjectPath(ci,rc)" );
+				CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." );
 	  return -1;
 	}
-	CMSetNameSpace(cop,CMGetCharPtr(CMGetNameSpace(ref,rc)));
-	//	fprintf(stderr,"_assoc_create_refs_1toN() cop: %s\n",
-	//		CMGetCharPtr(CDToString(_broker, cop, rc)));
-	CMReturnObjectPath( rslt, cop );
-      }
-      else {
-	//	fprintf(stderr,"_assoc_create_refs_1toN() returns instance\n");
-	CMReturnInstance( rslt, ci );
-      }
-
-    }
-    else {
-      /* associators() || associatorNames() */
-      if( inst == 0 ) {
-	CMReturnObjectPath( rslt, data.value.ref );
-      }
-      else {
-	rci = CBGetInstance(_broker, ctx, data.value.ref, NULL, rc);
-	if( rci == NULL ) {
-	  if( rc->rc == CMPI_RC_ERR_FAILED ) { rc->rc = CMPI_RC_OK; }
+	
+	targetName = _assoc_targetClass_Name(_broker,ref,_RefLeftClass,_RefRightClass,rc);
+	
+	if( strcmp( targetName,_RefRightClass) == 0 ) {
+	  CMSetProperty( ci, _RefLeft, (CMPIValue*)&(ref), CMPI_ref );
+	  CMSetProperty( ci, _RefRight, (CMPIValue*)&(data.value.ref), CMPI_ref );
 	}
-	else if( rci != NULL ) { CMReturnInstance( rslt, rci ); }
+	else if( strcmp( targetName,_RefLeftClass) == 0 ) {
+	  CMSetProperty( ci, _RefLeft, (CMPIValue*)&(data.value.ref), CMPI_ref );
+	  CMSetProperty( ci, _RefRight, (CMPIValue*)&(ref), CMPI_ref );
+	}
+	
+	//      fprintf(stderr,"_assoc_create_refs_1toN() inst: %s\n",
+	//      	      CMGetCharPtr(CDToString(_broker, ci, rc)));
+	
+	if( inst == 0 ) {
+	  cop = CMGetObjectPath(ci,rc);
+	  if( cop == NULL ) {
+	    CMSetStatusWithChars( _broker, rc,
+				  CMPI_RC_ERR_FAILED, "CMGetObjectPath(ci,rc)" );
+	  return -1;
+	  }
+	  CMSetNameSpace(cop,CMGetCharPtr(CMGetNameSpace(ref,rc)));
+	  //	fprintf(stderr,"_assoc_create_refs_1toN() cop: %s\n",
+	  //		CMGetCharPtr(CDToString(_broker, cop, rc)));
+	  CMReturnObjectPath( rslt, cop );
+	}
+	else {
+	  //	fprintf(stderr,"_assoc_create_refs_1toN() returns instance\n");
+	  CMReturnInstance( rslt, ci );
+	}
       }
+      else {
+	/* associatorNames() */
+	if( inst == 0 ) { CMReturnObjectPath( rslt, data.value.ref ); }
+      }
+      
     }
-
   }
 
  exit:
