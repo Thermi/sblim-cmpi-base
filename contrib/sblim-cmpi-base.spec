@@ -24,13 +24,15 @@ Standards Based Linux Instrumentation Base Providers
 %Package devel
 Summary: SBLIM Base Instrumentation Header Development Files
 Group: Systems Management/Base
+Requires: %{name} = %{version}
 
 %Description devel
 SBLIM Base Provider Development Package
 
+
 %prep
 
-%setup
+%setup -n %{name}-%{version}-%{release}
 
 export PATCH_GET=0
 
@@ -58,7 +60,7 @@ make install INSTALL_ROOT=$RPM_BUILD_ROOT PEGASUS= STANDALONE=1
 
 # SUSE specific
 install -d $RPM_BUILD_ROOT/sbin/conf.d
-install -m755 contrib/SuSEconfig.sblim-cmpi-base $RPM_BUILD_ROOT/sbin/conf.d
+install -m755 contrib/SuSEconfig.%{name} $RPM_BUILD_ROOT/sbin/conf.d
 
 %files
 
@@ -76,4 +78,4 @@ install -m755 contrib/SuSEconfig.sblim-cmpi-base $RPM_BUILD_ROOT/sbin/conf.d
 
 # SUSE specific too
 %post
-echo "#run me once" > /var/adm/SuSEconfig/run-sblim-cmpi-base
+echo "#run me once" > /var/adm/SuSEconfig/run-%{name} || true
