@@ -12,9 +12,14 @@
 
 * support for standalone build (RPM)
 
+// ==================================================================
+// new in version 1.2.4 :
+
 * fixed algorithm to retrieve Version of Linux_OperatingSystem
 
 * Processor instrumentation ported to GENERIC and X86_64 hardware 
   platform
+
+* test script accepts userID and password
 
 // ===================================================================
