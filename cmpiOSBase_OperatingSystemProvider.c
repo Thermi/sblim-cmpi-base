@@ -278,61 +278,68 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
     valrc.uint8 = 0;
 
     incmd = CMGetArg( in, "cmd", &rc);
-
-    cmd = (char*)malloc( (strlen(CMGetCharPtr(incmd.value.string))+1)*sizeof(char) );
-    strcpy(cmd, CMGetCharPtr(incmd.value.string) );
-
-    cmdrc = runcommand( cmd, NULL, &hdout, &hderr );
-
-    /* command execution failed */
-    if( cmdrc != 0 ) {
+    if( incmd.value.string == NULL ) {    
       valrc.uint8 = 2;
-      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() returned with %i",_ClassName,cmdrc));
-      goto exitExecCmd;
+      CMSetStatusWithChars( _broker, &rc, 
+			    CMPI_RC_ERR_FAILED, "Could not get command string." ); 
+      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
     }
+    else {
 
-    /* command execution output on hderr */
-    if( hderr[0] != NULL ) {
-      valrc.uint8 = 1;
-      buf = _copy_buf( hderr );
-      if( buf != NULL ) {
-	rc = CMAddArg( out, "out", buf, CMPI_chars);
-	if( rc.rc != CMPI_RC_OK ) {
-	  if( rc.msg != NULL ) {
-	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stderr CMAddArg() %s",_ClassName,CMGetCharPtr(rc.msg)));
-	  }
-	  else {
-	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stderr CMAddArg()",_ClassName));
+      cmd = calloc(1,(strlen(CMGetCharPtr(incmd.value.string))+1));
+      strcpy(cmd, CMGetCharPtr(incmd.value.string) );
+      cmdrc = runcommand( cmd, NULL, &hdout, &hderr );    
+      if(cmd) free(cmd);
+
+      /* command execution failed */
+      if( cmdrc != 0 ) {
+	valrc.uint8 = 2;
+	_OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() returned with %i",_ClassName,cmdrc));
+	goto exitExecCmd;
+      }
+
+      /* command execution output on hderr */
+      if( hderr[0] != NULL ) {
+	valrc.uint8 = 1;
+	buf = _copy_buf( hderr );
+	if( buf != NULL ) {
+	  rc = CMAddArg( out, "out", buf, CMPI_chars);
+	  if( rc.rc != CMPI_RC_OK ) {
+	    if( rc.msg != NULL ) {
+	      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stderr CMAddArg() %s",_ClassName,CMGetCharPtr(rc.msg)));
+	    }
+	    else {
+	      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stderr CMAddArg()",_ClassName));
+	    }
 	  }
 	}
+	goto exitExecCmd;
       }
-      goto exitExecCmd;
-    }
 
-    if( hdout[0] != NULL ) {
-      buf = _copy_buf( hdout );
-      if( buf != NULL ) {
-	rc = CMAddArg( out, "out", buf, CMPI_chars);
-	if( rc.rc != CMPI_RC_OK ) {
-	  if( rc.msg != NULL ) {
+      if( hdout[0] != NULL ) {
+	buf = _copy_buf( hdout );
+	if( buf != NULL ) {
+	  rc = CMAddArg( out, "out", buf, CMPI_chars);
+	  if( rc.rc != CMPI_RC_OK ) {
+	    if( rc.msg != NULL ) {
 	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stdout CMAddArg() %s",_ClassName,CMGetCharPtr(rc.msg)));
-	  }
-	  else {
-	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stdout CMAddArg()",_ClassName));
+	    }
+	    else {
+	      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stdout CMAddArg()",_ClassName));
+	    }
 	  }
 	}
+	goto exitExecCmd;
       }
-      goto exitExecCmd;
-    }
 
-  exitExecCmd:
-    freeresultbuf(hdout);
-    freeresultbuf(hderr);
-    if(cmd) free(cmd);
-    if(buf) free(buf);
-    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() %s exited",_ClassName,methodName));
-    CMReturnData( rslt, &valrc, CMPI_uint8);
-    CMReturnDone( rslt );
+    exitExecCmd:
+      freeresultbuf(hdout);
+      freeresultbuf(hderr);
+      if(buf) free(buf);
+      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() %s exited",_ClassName,methodName));
+      CMReturnData( rslt, &valrc, CMPI_uint8);
+      CMReturnDone( rslt );
+    }
   }
   else if( strcasecmp(CMGetCharPtr(class), _ClassName) == 0 &&
 	   strcasecmp(methodName, "Reboot") == 0 ) {
@@ -366,8 +373,7 @@ static char * _copy_buf( char ** hdbuf ) {
   }	
   if(buf_size<1) { buf_size = 1; }
 
-  buf = (char *) malloc ( buf_size*sizeof(char) );
-  memset( buf, 0, buf_size*sizeof(char) );
+  buf = calloc (1, buf_size);
 
   /* write output of hdbuf to buf */
   i=0;

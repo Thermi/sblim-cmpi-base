@@ -58,11 +58,9 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
   _OSBASE_TRACE(3,("--- get_operatingsystem_data() called"));
 
-  (*sptr) = (struct cim_operatingsystem *)malloc(sizeof(struct cim_operatingsystem));
-  memset(*sptr, 0, sizeof(struct cim_operatingsystem));
+  (*sptr) = calloc(1,sizeof(struct cim_operatingsystem));
 
-  if( !CIM_OS_DISTRO ) { get_os_distro(); }
-  (*sptr)->version = CIM_OS_DISTRO;
+  (*sptr)->version = get_os_distro();
   (*sptr)->osType = 36;
 
   (*sptr)->numOfProcesses = get_os_numOfProcesses();
@@ -109,53 +107,13 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
   return 0;
 }
 
+
 char * get_os_distro() {
   char ** hdout   = NULL;
   char *  ptr     = NULL;
   int     strl    = 0;
   int     i       = 0;
   int     rc      = 0;
-
-  /* check if Red Hat */
-  /*
-    if( !CIM_OS_DISTRO ) {
-    rc = runcommand( "rpm -q redhat-release" , NULL , &hdout , NULL );
-    if( rc == 0 && ( strstr(hdout[0],"not installed") == NULL) ) {
-      CIM_OS_DISTRO = (char *) malloc( strlen(hdout[0])*sizeof(char));
-      ptr = strchr(hdout[0], '\n');
-      *ptr = '\0';
-      strcpy( CIM_OS_DISTRO , hdout[0] );
-      freeresultbuf(hdout);
-    }
-  }
-  */
-  /* check if SuSE */
-  /*
-  if( !CIM_OS_DISTRO ) {
-#ifdef INTEL
-    rc = runcommand( "rpm -q SuSE-release" , NULL , &hdout , NULL );
-    if( rc == 0 && ( strstr(hdout[0],"not installed") == NULL) ) {
-      CIM_OS_DISTRO = (char *) malloc( strlen(hdout[0])*sizeof(char));
-      ptr = strchr(hdout[0], '\n');
-      *ptr = '\0';
-      strcpy( CIM_OS_DISTRO , hdout[0] );
-      freeresultbuf(hdout);
-    }
-#elif S390
-    rc = runcommand( "cat /etc/SuSE-release" , NULL , &hdout , NULL );
-    if( rc == 0 ) {
-      CIM_OS_DISTRO = (char *) malloc( strlen(hdout[0]+strlen(hdout[1]))*sizeof(char));
-      ptr = strchr(hdout[0], '\n');
-      *ptr = '\0';
-      strcpy( CIM_OS_DISTRO , hdout[0] );
-      strcat( CIM_OS_DISTRO , hdout[1] );
-      ptr = strchr(CIM_OS_DISTRO, '\n');
-      *ptr = '\0';
-      freeresultbuf(hdout);
-    }
-#endif
-  }
-  */
 
   if( !CIM_OS_DISTRO ) {
     
@@ -184,14 +142,13 @@ char * get_os_distro() {
       strcpy( CIM_OS_DISTRO , "Linux" );
     }
     freeresultbuf(hdout);
-
     _OSBASE_TRACE(4,("--- get_os_distro() : CIM_OS_DISTRO initialized with %s",CIM_OS_DISTRO));
-
   }
 
   _OSBASE_TRACE(4,("--- get_os_distro() exited : %s",CIM_OS_DISTRO));
   return CIM_OS_DISTRO;
 }
+
 
 char * get_kernel_version() {
   char ** hdout = NULL ;
@@ -202,11 +159,11 @@ char * get_kernel_version() {
 
   rc = runcommand( "uname -r" , NULL , &hdout , NULL );
   if( rc == 0 ) {
-    str = (char *) malloc((strlen(hdout[0])+1)*sizeof(char));
+    str = (char *) malloc((strlen(hdout[0])+1));
     strcpy( str, hdout[0]);
   }
   else {
-    str = (char *) malloc(10*sizeof(char));
+    str = (char *) malloc(10);
     strcpy( str , "not found");
   }
   freeresultbuf(hdout);
@@ -214,6 +171,7 @@ char * get_kernel_version() {
   _OSBASE_TRACE(4,("--- get_kernel_version() exited : %s",str));
   return str;
 }
+
 
 char * get_os_installdate() {
   struct tm    date;
@@ -235,10 +193,10 @@ char * get_os_installdate() {
       for( ptr = str ; (*ptr)!=' ' ; ptr++ ) {
 	if( *(ptr+1)==' ' ) { ptr ++; }
       }
-      dstr = (char *) malloc( (strlen(str)-strlen(ptr)+1)*sizeof(char));
+      dstr = (char *) malloc( (strlen(str)-strlen(ptr)+1));
       strncpy( dstr , str, strlen(str)-strlen(ptr)-1);
       strptime(dstr, "%A %d %B %Y %H:%M:%S %p %Z", &date);
-      str = (char*)malloc(26*sizeof(char));
+      str = (char*)malloc(26);
       strftime(str,26,"%Y%m%d%H%M%S.000000",&date);
       _cat_timezone(str, get_os_timezone());
       if(dstr) free(dstr);
@@ -264,7 +222,7 @@ char * get_os_lastbootup() {
     return NULL;
   }
   if( gmtime_r( &up, &uptm ) != NULL ) {
-    uptime = (char*)malloc(26+sizeof(char));
+    uptime = (char*)malloc(26);
     strftime(uptime,26,"%Y%m%d%H%M%S.000000",&uptm);
     _cat_timezone(uptime, get_os_timezone());
   }
@@ -286,7 +244,7 @@ char * get_os_localdatetime() {
   if( gettimeofday( &tv, &tz) == 0 ) {
     sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
     if( gmtime_r( &sec , &cttm) != NULL ) {
-      tm = (char*)malloc(26*sizeof(char));
+      tm = (char*)malloc(26);
       strftime(tm,26,"%Y%m%d%H%M%S.000000",&cttm);
       _cat_timezone(tm, get_os_timezone());
     }
@@ -298,17 +256,24 @@ char * get_os_localdatetime() {
 
 
 unsigned long get_os_numOfProcesses() {
-  char          ** hdout = NULL ;
-  unsigned long    np    = 0;
-  int              rc    = 0;
+  FILE          * fhd   = NULL;
+  char          * value = NULL;
+  char          * ptr   = NULL;
+  unsigned long   np    = 0;
 
   _OSBASE_TRACE(4,("--- get_os_numOfProcesses() called"));
 
-  rc = runcommand( "ps --no-headers -eo pid | wc -l" , NULL , &hdout , NULL );
-  if( rc == 0 ) {
-    np = atol(hdout[0]);
+  if ( (fhd=fopen("/proc/loadavg","r")) != NULL ) {
+    value = calloc(1,256);
+    fscanf(fhd, 
+	   "%*s %*s %*s %s",
+	   value);
+    fclose(fhd);
+    ptr = strchr(value,'/');
+    ptr++;
+    np = atol(ptr);
+    if(value) { free(value); }
   }
-  freeresultbuf(hdout);
 
   _OSBASE_TRACE(4,("--- get_os_numOfProcesses() exited : %lu",np));
   return np;

@@ -60,11 +60,10 @@ int enum_all_processor( struct processorlist ** lptr ) {
 
   _OSBASE_TRACE(3,("--- enum_all_processor() called"));
 
-  lptrhelp = (struct processorlist *) malloc (sizeof(struct processorlist));
-  memset(lptrhelp, 0, sizeof(struct processorlist));
+  lptrhelp = (struct processorlist *) calloc (1,sizeof(struct processorlist));
   *lptr = lptrhelp;
 
-  cmd = (char *)malloc((strlen(CPUINFO)+46)*sizeof(char));
+  cmd = (char *)malloc((strlen(CPUINFO)+46));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
 
@@ -89,8 +88,7 @@ int enum_all_processor( struct processorlist ** lptr ) {
   if( rc == 0 ) {
     while( hdout[i] != NULL ) { 
       if ( lptrhelp->sptr != NULL) { 
-	lptrhelp->next = (struct processorlist *) malloc (sizeof(struct processorlist));
-	memset(lptrhelp->next, 0, sizeof(struct processorlist));
+	lptrhelp->next = (struct processorlist *) calloc (1,sizeof(struct processorlist));
 	lptrhelp = lptrhelp->next;
       }
 
@@ -99,7 +97,7 @@ int enum_all_processor( struct processorlist ** lptr ) {
 #if defined (INTEL) || defined (PPC)
       id = ptr+1;
 #elif defined (S390)
-      id = (char*)malloc( (strlen(hdout[i])-strlen(ptr)+1)*sizeof(char) );
+      id = (char*)malloc( (strlen(hdout[i])-strlen(ptr)+1) );
       id = strncpy(id, hdout[i], strlen(hdout[i])-strlen(ptr));
 #endif
 
@@ -126,7 +124,7 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
 
   _OSBASE_TRACE(3,("--- _get_processor_data() called"));
 
-  cmd = (char *)malloc((strlen(CPUINFO)+23)*sizeof(char));
+  cmd = (char *)malloc((strlen(CPUINFO)+23));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);  
 
@@ -175,10 +173,9 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 
   _OSBASE_TRACE(4,("--- _processor_data() called"));
 
-  *sptr = (struct cim_processor *) malloc (sizeof(struct cim_processor));
-  memset(*sptr, 0, sizeof(struct cim_processor));
+  *sptr = (struct cim_processor *) calloc (1,sizeof(struct cim_processor));
 
-  (*sptr)->id = (char *) malloc (20*sizeof(char));
+  (*sptr)->id = (char*)malloc(20);
   sprintf((*sptr)->id, "%i", id);
 
   (*sptr)->stat = 1;
@@ -186,7 +183,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   /* Familiy */
   (*sptr)->family = _processor_family(id); 
 
-  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  cmd = (char *)malloc((strlen(CPUINFO)+64));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
 
@@ -196,7 +193,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   rc = runcommand( cmd , NULL , &hdout , NULL );
   if( rc == 0 ) {
     ptr = strrchr( hdout[id], ' ');
-    (*sptr)->step = (char*)malloc( (17+strlen((*sptr)->id)+strlen(ptr))*sizeof(char) );
+    (*sptr)->step = (char*)malloc( (17+strlen((*sptr)->id)+strlen(ptr)) );
     strcpy((*sptr)->step, "stepping level: ");
     strcat((*sptr)->step, ptr);
     ptr = strchr((*sptr)->step, '\n');
@@ -206,13 +203,13 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   if(cmd) free(cmd);
   rc = 0;
 #elif defined (S390) || defined (PPC)
-  (*sptr)->step = (char*)malloc( 12*sizeof(char) );
+  (*sptr)->step = (char*)malloc(12);
   strcpy((*sptr)->step,"no stepping");
 #endif
 
   /* ElementName */
 #if defined (INTEL)  
-  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  cmd = (char *)malloc((strlen(CPUINFO)+64));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
   strcat(cmd, " | grep '^model name'");
@@ -233,7 +230,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
     ptr = strchr( hdout[id], ':');
 #endif
     ptr = ptr+2;
-    (*sptr)->name = (char*)malloc( (1+strlen(ptr))*sizeof(char) );
+    (*sptr)->name = (char*)malloc((1+strlen(ptr)));
     strcpy((*sptr)->name, ptr);
     ptr = strchr((*sptr)->name, '\n');
     *ptr = '\0';
@@ -246,7 +243,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   (*sptr)->loadPct = _processor_load_perc(id); 
 
   /* MaxClockSpeed && CurrentClockSpeed */
-  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  cmd = (char *)malloc((strlen(CPUINFO)+64));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
 #if defined (INTEL)
@@ -286,7 +283,7 @@ static unsigned short _processor_family( int id ) {
 
   _OSBASE_TRACE(4,("--- _processor_family() called"));
 
-  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  cmd = (char *)malloc((strlen(CPUINFO)+64));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
 
@@ -301,7 +298,7 @@ static unsigned short _processor_family( int id ) {
 
   if( rc == 0 ) {
 
-    cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+    cmd = (char *)malloc((strlen(CPUINFO)+64));
     strcpy(cmd, "cat ");
     strcat(cmd, CPUINFO);
 
@@ -389,10 +386,10 @@ static unsigned short _processor_load_perc( int id ) {
 
   _OSBASE_TRACE(4,("--- _processor_load_perc() called"));
 
-  sid = (char *) malloc (5*sizeof(char));
+  sid = (char*)malloc(5);
   sprintf(sid, "%i", id);
 
-  cmd = (char*)malloc( (26+strlen(sid))*sizeof(char) );
+  cmd = (char*)malloc((26+strlen(sid)));
   strcpy(cmd, "cat /proc/stat");
   rc = runcommand( cmd , NULL , &hdout , &hderr );
   if( rc != 0 ) {

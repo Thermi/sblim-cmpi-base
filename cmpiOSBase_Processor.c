@@ -59,8 +59,7 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makePath_Processor() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data
   */ 
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -104,8 +103,7 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makeInst_Processor() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 

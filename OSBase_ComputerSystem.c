@@ -38,7 +38,7 @@ char * get_cs_primownername() {
 
   _OSBASE_TRACE(4,("--- get_cs_primownername() called"));
 
-  ptr = (char*)malloc(5*sizeof(char));
+  ptr = (char*)malloc(5);
   strcpy(ptr,"root");
 
   _OSBASE_TRACE(4,("--- get_cs_primownername() exited"));
@@ -57,7 +57,7 @@ char * get_cs_primownercontact() {
 
   if( (own = get_cs_primownername()) != NULL ) {
     host = get_system_name();
-    ptr = (char*)malloc( (strlen(own)+strlen(host)+2)*sizeof(char));
+    ptr = (char*)malloc( (strlen(own)+strlen(host)+2));
     strcpy( ptr, own);
     strcat( ptr,"@");
     strcat( ptr, host);

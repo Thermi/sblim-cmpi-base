@@ -272,6 +272,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
 			    CMPI_RC_ERR_FAILED, 
 			    "CMNewDateTimeFromChars for property LocalDateTime failed." );
       _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+      goto exit;
     }
     else { CMSetProperty( ci, "LocalDateTime", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
@@ -283,6 +284,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
 			    CMPI_RC_ERR_FAILED, 
 			    "CMNewDateTimeFromChars for property InstallDate failed." );
       _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+      goto exit;
     }
     else { CMSetProperty( ci, "InstallDate", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
@@ -294,6 +296,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
 			    CMPI_RC_ERR_FAILED, 
 			    "CMNewDateTimeFromChars for property LastBootUpTime failed." );
       _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+      goto exit;
     }
     else { CMSetProperty( ci, "LastBootUpTime", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
@@ -305,6 +308,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CMNewArray(_broker,1,CMPI_uint16,rc)" );
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+    goto exit;
   }
   else {
     if( pctcpu > 90 ) { opstatval = 4;  /* 4 ... Stressed */ }

@@ -103,7 +103,7 @@ char * get_system_name() {
 
     _OSBASE_TRACE(4,("--- get_system_name() called : init"));
 
-    host = (char *)malloc(255*sizeof(char));
+    host = calloc(1,255);
     if ( gethostname(host, 255 ) == -1 ) { return NULL ; }
     /* if host does not contain a '.' we can suppose, that the domain is not
      * available in the current value. but we try to get the full qualified
@@ -125,11 +125,11 @@ char * get_system_name() {
     /* initializes CIM_HOST_NAME */
     if( strlen(host) ) {
       if( !domain ) {
-	CIM_HOST_NAME = (char *)malloc( (strlen(host)+1)*sizeof(char) );
+	CIM_HOST_NAME = calloc(1,(strlen(host)+1));
 	strcpy( CIM_HOST_NAME, host);
       }
       else {
-	CIM_HOST_NAME = (char *)malloc( (strlen(host)+strlen(domain)+2)*sizeof(char) );
+	CIM_HOST_NAME = calloc(1,(strlen(host)+strlen(domain)+2));
 	strcpy( CIM_HOST_NAME, host);
 	strcat( CIM_HOST_NAME, ".");
 	strcat( CIM_HOST_NAME, domain );
@@ -158,7 +158,7 @@ char * get_os_name(){
 
     get_system_name();
     if( CIM_HOST_NAME ) {
-      CIM_OS_NAME = (char*) malloc (strlen(CIM_HOST_NAME)+1);
+      CIM_OS_NAME = calloc(1,strlen(CIM_HOST_NAME)+1);
       strcpy( CIM_OS_NAME, CIM_HOST_NAME );
     }
 
@@ -218,7 +218,7 @@ unsigned long _get_os_boottime() {
 void _cat_timezone( char * str , signed short zone ) {
   char * tz = NULL;
 
-  tz = (char *)malloc(5*sizeof(char));
+  tz = calloc(1,5);
   sprintf(tz, "%+04d", zone);
   if( str != NULL ) {
     if( str != NULL ) { strcat(str,tz); }
@@ -515,7 +515,7 @@ void _osbase_trace( int level, char * file, int line, char * msg) {
    
   if( gettimeofday( &tv, &tz) == 0 ) {
     sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
-    tm = (char*)malloc(20*sizeof(char));
+    tm = (char*)malloc(20);
     memset(tm, 0, 20*sizeof(char));
     if( gmtime_r( &sec , &cttm) != NULL ) {
       strftime(tm,20,"%m/%d/%Y %H:%M:%S",&cttm);

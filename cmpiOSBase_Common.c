@@ -223,8 +223,14 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   CMSetNameSpace(dtl.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
   ci = CBGetInstance(_broker, ctx, dtl.value.ref, NULL, rc);
   if( ci == NULL ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_FAILED, "GetInstance of left reference failed.");
+    if( rc->rc == CMPI_RC_ERR_FAILED ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, "GetInstance of left reference failed.");
+    }
+    if( rc->rc == CMPI_RC_ERR_NOT_FOUND ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_NOT_FOUND, "Left reference not found.");
+    }
     _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
@@ -240,8 +246,14 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   CMSetNameSpace(dtr.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
   ci = CBGetInstance(_broker, ctx, dtr.value.ref, NULL, rc);
   if( ci == NULL ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_FAILED, "GetInstance of right reference failed.");
+    if( rc->rc == CMPI_RC_ERR_FAILED ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, "GetInstance of right reference failed.");
+    }
+    if( rc->rc == CMPI_RC_ERR_NOT_FOUND ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_NOT_FOUND, "Right reference not found.");
+    }
     _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
@@ -315,7 +327,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
 
   op = _assoc_targetClass_OP(_broker,ref,_RefLeftClass,_RefRightClass,rc);
   if( op == NULL ) { 
-    _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() exited : referenced Class is not covered by this Association"));
+    _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() exited : _assoc_targetClass_OP() returned with NULL"));
     goto exit; 
   }
 
@@ -450,8 +462,13 @@ char * _assoc_targetClass_Name( CMPIBroker * _broker,
   _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() called"));
 
   sourceClass = CMGetClassName(ref, rc);
-  if( sourceClass == NULL ) { return NULL; }
-    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() : source class %s",CMGetCharPtr(sourceClass)));
+  if( sourceClass == NULL ) { 
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "Could not get classname of source object path." );
+    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() failed : %s",CMGetCharPtr(rc->msg)));
+    return NULL; 
+  }
+  _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() : source class %s",CMGetCharPtr(sourceClass)));
 
   if( strcmp(CMGetCharPtr(sourceClass), _RefLeftClass ) == 0 ) {
     /* pathName = left end -> get right end */
@@ -474,6 +491,8 @@ char * _assoc_targetClass_Name( CMPIBroker * _broker,
     return _RefLeftClass;
   }
 
+  CMSetStatusWithChars( _broker, rc,
+			CMPI_RC_ERR_FAILED, "referenced Class is not covered by this Association." );
   _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() exited : no target class found"));
   return NULL;
 }

@@ -71,8 +71,7 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makePath_UnixProcess() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data 
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -136,8 +135,7 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
 #endif
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -213,25 +211,39 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
 
   if( sptr->createdate != NULL ) {
     cdt = CMNewDateTimeFromChars(_broker,sptr->createdate,rc);
-    CMSetProperty( ci, "CreationDate", (CMPIValue*)&(cdt), CMPI_dateTime);
+    if(cdt == NULL) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, 
+			    "CMNewDateTimeFromChars for property CreationDate failed." );
+      _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
+      goto exit;
+    }
+    else { CMSetProperty( ci, "CreationDate", (CMPIValue*)&(cdt), CMPI_dateTime); }
   }
 
   /* Parameters */
   while( sptr->args[max] != NULL ) { max++; }
   if( max > 25 ) { max=25; }
-  args = CMNewArray(_broker,max,CMPI_stringA,rc);
-  for( ; i< max; i++ ) {
-    /* BMMU: Prevent segfaults */
-    if (sptr->args[i]) {
-      val = CMNewString(_broker,sptr->args[i],rc);
-      CMSetArrayElementAt(args,i,(CMPIValue*)&(val),CMPI_string);
-    }
-    else break;
+  args = CMNewArray(_broker,max,CMPI_string,rc); 
+  if(args == NULL) {
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "Create Array for Property Parameters failed." );
+    _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
+    goto exit;
   }
-  //  fprintf(stderr,"args %s\n",CMGetCharPtr(CDToString(_broker,args,rc)));
-  CMSetProperty( ci, "Parameters", (CMPIValue*)&(args), CMPI_stringA);
-
-
+  else {
+    for( ; i< max; i++ ) {
+      /* BMMU: Prevent segfaults */
+      if (sptr->args[i]) {
+	val = CMNewString(_broker,sptr->args[i],rc);
+	CMSetArrayElementAt(args,i,(CMPIValue*)&(val),CMPI_string);
+      }
+      else break;
+    }
+    //  fprintf(stderr,"args %s\n",CMGetCharPtr(CDToString(_broker,args,rc)));
+    CMSetProperty( ci, "Parameters", (CMPIValue*)&(args), CMPI_stringA);
+  }
+  
   /* 2.7 */
 #ifndef CIM26COMPAT
   CMSetProperty( ci, "ElementName", sptr->pcmd, CMPI_chars);

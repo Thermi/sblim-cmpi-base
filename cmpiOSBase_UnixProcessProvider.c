@@ -379,27 +379,34 @@ CMPIStatus OSBase_UnixProcessProviderInvokeMethod( CMPIMethodMI * mi,
       strcasecmp(methodName, "terminate") == 0 ) {
 
     valrc.uint8 = 0;
+
     pid = CMGetKey( ref, "Handle", &rc);
-
-    cmd = (char*)malloc( (strlen(CMGetCharPtr(pid.value.string))+9)*sizeof(char) );
-    strcpy(cmd, "kill -9 ");
-    strcat(cmd, CMGetCharPtr(pid.value.string));
-
-    cmdrc = runcommand( cmd, NULL, &hdout, &hderr );
-    free ( cmd );
-
-    /* something went wrong */
-    if( cmdrc != 0 ||  hderr[0] != NULL ) {
-      /* command execution failed */
+    if( pid.value.string == NULL ) {    
       valrc.uint8 = 1;
-      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() returned with %i",_ClassName,cmdrc));
-      if( hderr != NULL ) {
-	_OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() hderr[0] %s",_ClassName,hderr[0]));
-      }
+      CMSetStatusWithChars( _broker, &rc, 
+			    CMPI_RC_ERR_FAILED, "Could not get Process ID." ); 
+      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
     }
+    else {
+      cmd = calloc(1,(strlen(CMGetCharPtr(pid.value.string))+9));
+      strcpy(cmd, "kill -9 ");
+      strcat(cmd, CMGetCharPtr(pid.value.string));
+      cmdrc = runcommand( cmd, NULL, &hdout, &hderr );
+      free (cmd);
 
-    freeresultbuf(hdout);
-    freeresultbuf(hderr); 
+      /* something went wrong */
+      if( cmdrc != 0 ||  hderr[0] != NULL ) {
+	/* command execution failed */
+	valrc.uint8 = 1;
+	_OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() returned with %i",_ClassName,cmdrc));
+	if( hderr != NULL ) {
+	  _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() hderr[0] %s",_ClassName,hderr[0]));
+	}
+      }
+      
+      freeresultbuf(hdout);
+      freeresultbuf(hderr); 
+    }
     CMReturnData( rslt, &valrc, CMPI_uint8);
     _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() %s exited",_ClassName,methodName));
     CMReturnDone( rslt );
@@ -408,7 +415,7 @@ CMPIStatus OSBase_UnixProcessProviderInvokeMethod( CMPIMethodMI * mi,
     CMSetStatusWithChars( _broker, &rc, 
 			  CMPI_RC_ERR_NOT_FOUND, methodName ); 
   }
- 
+
   _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() exited",_ClassName));
   return rc;
 }

@@ -62,14 +62,12 @@ int enum_all_process( struct processlist ** lptr ){
   rc = runcommand( "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,comm,session,state,args" , NULL, &hdout, NULL );
 
   if( rc == 0 ) {
-    lptrhelp = (struct processlist *) malloc (sizeof(struct processlist));
-    memset(lptrhelp, 0, sizeof(struct processlist));
+    lptrhelp = (struct processlist *)calloc(1,sizeof(struct processlist));
     *lptr = lptrhelp;
     
     while( hdout[i] ) {
       if ( lptrhelp->p != NULL) { 
-	lptrhelp->next = (struct processlist *) malloc (sizeof(struct processlist));
-	memset(lptrhelp->next, 0, sizeof(struct processlist));
+	lptrhelp->next = (struct processlist *)calloc(1,sizeof(struct processlist));
 	lptrhelp = lptrhelp->next;
       }    
       ptr = strchr(hdout[i], '\n');
@@ -94,14 +92,14 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
 
   _OSBASE_TRACE(3,("--- get_process_data() called"));
 
-  cmd = (char*)malloc((strlen(pid)+7)*sizeof(char));
+  cmd = (char*)malloc((strlen(pid)+7));
   strcpy(cmd, "/proc/");
   strcat(cmd, pid);
   dpid=opendir(cmd);
   if(cmd) free(cmd);
 
   if ( dpid != NULL ) {
-    cmd = (char*)malloc((strlen(pid)+95)*sizeof(char));
+    cmd = (char*)malloc((strlen(pid)+95));
     strcpy(cmd, "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,comm,session,state | grep ");
     strcat(cmd, pid);
     rc = runcommand( cmd , NULL, &hdout, NULL );
@@ -147,8 +145,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
 
   _OSBASE_TRACE(4,("--- _process_data() called"));
 
-  (*sptr) = (struct cim_process *) malloc (sizeof(struct cim_process));
-  memset((*sptr), 0, sizeof(struct cim_process));
+  (*sptr) = (struct cim_process *)calloc(1,sizeof(struct cim_process));
 
   parr = calloc(1000,sizeof(char*));    
   end = phd + strlen(phd);
@@ -210,8 +207,8 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
 
   /* values for array of Parameters */
   if( parr[13] == NULL ) {
-    cmd = (char*)malloc((strlen((*sptr)->pid)+28)*sizeof(char));
-    memset(cmd, 0, (strlen((*sptr)->pid)+28)*sizeof(char));
+    cmd = (char*)malloc((strlen((*sptr)->pid)+28));
+    memset(cmd, 0, (strlen((*sptr)->pid)+28));
     strcpy(cmd, "ps -p");
     strcat(cmd, (*sptr)->pid);
     strcat(cmd, " --no-headers -o args");
@@ -243,7 +240,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
   (*sptr)->path = _get_process_execpath((*sptr)->pid,(*sptr)->pcmd);
 
   /* get UserModeTime, KernelModeTime and CreationDate */
-  cmd = (char*)malloc( (strlen((*sptr)->pid)+12)*sizeof(char));
+  cmd = (char*)malloc( (strlen((*sptr)->pid)+12));
   strcpy( cmd, "/proc/");
   strcat( cmd, (*sptr)->pid);
   strcat( cmd, "/stat");
@@ -262,7 +259,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
     else {
       ctime = (ctime/100)+uptime;
       if( gmtime_r( &ctime , &tmdate) != NULL ) {
-	(*sptr)->createdate = (char*)malloc(26+sizeof(char));
+	(*sptr)->createdate = (char*)malloc(26);
 	rc = strftime((*sptr)->createdate,26,"%Y%m%d%H%M%S.000000",&tmdate);
 	_cat_timezone((*sptr)->createdate, get_os_timezone());
       }
@@ -286,15 +283,15 @@ static char * _get_process_execpath( char * id , char * cmd ) {
 
   _OSBASE_TRACE(4,("--- _get_process_execpath() called"));
 
-  path = (char*)malloc((strlen(id)+11)*sizeof(char));
+  path = (char*)malloc((strlen(id)+11));
   strcpy(path, "/proc/");
   strcat(path, id);
   strcat(path, "/exe");
 
-  buf = (char*)malloc(1024*sizeof(char));
-  memset(buf, 0, 1024*sizeof(char));
+  buf = (char*)malloc(1024);
+  memset(buf, 0, 1024);
 
-  rc = readlink(path, buf, 1024*sizeof(char));
+  rc = readlink(path, buf, sizeof(buf));
   if( rc == -1 ) {
     free(buf);
     buf = strdup(cmd);
