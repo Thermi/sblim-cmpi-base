@@ -29,10 +29,7 @@
 
 #include "cmpiOSBase_Common.h"
 
-unsigned char CMPI_true  = 1;
-unsigned char CMPI_false = 0;
-
-CMPIBroker * _broker;
+static CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */

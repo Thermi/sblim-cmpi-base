@@ -34,17 +34,10 @@
 #include "cmpiOSBase_UnixProcess.h"
 #include "OSBase_UnixProcess.h"
 
-unsigned char CMPI_true  = 1;
-unsigned char CMPI_false = 0;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
 
-#ifdef DEBUG
-    int _debug = 1;
-#else
-    int _debug = 0;
-#endif
 
 /* ---------------------------------------------------------------------------*/
 

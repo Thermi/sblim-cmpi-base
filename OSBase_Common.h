@@ -32,6 +32,8 @@ extern "C" {
 
 /* ---------------------------------------------------------------------------*/
 
+extern int _debug;
+
 extern char * CIM_HOST_NAME;
 extern char * CIM_OS_NAME;
 

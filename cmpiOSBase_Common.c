@@ -37,14 +37,6 @@ unsigned char CMPI_false=0;
 
 /* ---------------------------------------------------------------------------*/
 
-#ifdef DEBUG
-    int _debug = 1;
-#else
-    int _debug = 0;
-#endif
-
-/* ---------------------------------------------------------------------------*/
-
 char * CSCreationClassName = "Linux_ComputerSystem";
 char * OSCreationClassName = "Linux_OperatingSystem";
 

@@ -32,7 +32,7 @@
 #include "cmpiOSBase_ComputerSystem.h"
 
 
-CMPIBroker * _broker;
+static CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */

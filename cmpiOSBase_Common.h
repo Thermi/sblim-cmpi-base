@@ -34,7 +34,6 @@ extern char * OSCreationClassName;
 
 extern unsigned char CMPI_true;
 extern unsigned char CMPI_false;
-extern          int _debug;
 
 /* ---------------------------------------------------------------------------*/
 

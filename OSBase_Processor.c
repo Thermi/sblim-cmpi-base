@@ -28,11 +28,6 @@
 /* ---------------------------------------------------------------------------*/
 // private declarations
 
-#ifdef DEBUG
-    int _debug = 1;
-#else
-    int _debug = 0;
-#endif
 
 static char* _FILENAME = "OSBase_Processor.c";
 

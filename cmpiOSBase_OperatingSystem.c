@@ -34,17 +34,9 @@
 #include "cmpiOSBase_OperatingSystem.h"
 #include "OSBase_OperatingSystem.h"
 
-unsigned char CMPI_true  = 1;
-unsigned char CMPI_false = 0;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
-
-#ifdef DEBUG
-    int _debug = 1;
-#else
-    int _debug = 0;
-#endif
 
 /* ---------------------------------------------------------------------------*/
 
