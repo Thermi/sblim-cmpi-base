@@ -16,6 +16,16 @@ ROOTDIR=$(HOME)/sblim
 # *********** SNIA CIMOM flavor ************* #
 
 
+# *********** OpenWBEM flavor ************* #
+
+#CIMOM=/usr/local/
+#CIMOMINC=$(CIMOM)/include/openwbem
+#CIMOMMOF=$(CIMOM)/share/openwbem
+#LOCALLIB=$(CIMOM)/lib
+#CIMOMLIB=$(CIMOM)/lib/openwbem/cmpiproviders
+
+# *********** OpenWBEM flavor ************* #
+
 
 # ************* Pegasus flavor ************** #
 
