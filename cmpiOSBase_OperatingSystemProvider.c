@@ -374,7 +374,7 @@ static char * _copy_buf( char ** hdbuf ) {
 
 #ifndef NOEVENTS
 
-#define INDCLASSNAME      "Linux_OperatingSystemIndication"
+#define INDCLASSNAME      "CIM_InstModification"
 #define INDNAMESPACE      "root/cimv2"
 #define IND_NUMBER_OF_DYNAMIC_PROPERTIES  5
 
@@ -384,6 +384,10 @@ static int ind_new     = 0;
 
 static int ind_OperationalStatus = 2;
 
+static CMPIInstance *sourceInstance   = NULL;
+static CMPIInstance *previousInstance = NULL;
+
+
 IndErrorT CIM_Indication_IndicationIdentifier(CMPIData *v)
 {
   CMPIString *str;
@@ -391,7 +395,7 @@ IndErrorT CIM_Indication_IndicationIdentifier(CMPIData *v)
 
   _OSBASE_TRACE(1,("--- %s CIM_Indication_IndicationIdentifier() called",_ClassName));
 
-  str = CMNewString(_broker,_ClassName, &rc);
+  str = CMNewString(_broker,INDCLASSNAME,&rc);
   v->type = CMPI_string;
   v->value.string = str;
   v->state = CMPI_goodValue;
@@ -429,44 +433,57 @@ IndErrorT CIM_Indication_IndicationTime(CMPIData *v)
   return IND_OK;
 }
 
-IndErrorT Linux_OperatingSystemIndication_Name(CMPIData *v)
+IndErrorT CIM_InstModification_SourceInstance(CMPIData *v)
 {
-  CMPIString *str = NULL;
   CMPIStatus rc;
 
-  _OSBASE_TRACE(1,("--- %s Linux_OperatingSystemIndication_Name() called",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CIM_InstModification_SourceInstance() called",_ClassName));
 
-  str = CMNewString(_broker,get_system_name(), &rc);
-  v->type = CMPI_string;
-  v->value.string = str;
+  v->type = CMPI_instance; 
+  v->value.inst = CMClone(sourceInstance,&rc);
   v->state = CMPI_goodValue;
 
   return IND_OK;
 }
 
-IndErrorT Linux_OperatingSystemIndication_OperationalStatus(CMPIData *v)
+IndErrorT CIM_InstModification_PreviousInstance(CMPIData *v)
 {
-  CMPIString *str = NULL;
   CMPIStatus rc;
 
-  _OSBASE_TRACE(1,("--- %s Linux_OperatingSystemIndication_OperationalStatus() called",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CIM_InstModification_PreviousInstance() called",_ClassName));
 
-  if(ind_OperationalStatus==2) { str = CMNewString(_broker,"OK", &rc); }
-  if(ind_OperationalStatus==4) { str = CMNewString(_broker,"Stressed", &rc); }
- 
-  v->type = CMPI_string;
-  v->value.string = str;
+  v->type = CMPI_instance; 
+  v->value.inst = CMClone(previousInstance,&rc);
   v->state = CMPI_goodValue;
 
   return IND_OK;
 }
+
 
 IndErrorT check(CMPIData *v)
 {
+  CMPIObjectPath *cop = NULL;
+  CMPIStatus      rc;
+
   _OSBASE_TRACE(1,("--- %s check() called",_ClassName));
 
   /* call function to check OperationalStatus */
   ind_new = check_OperationalStatus(&ind_OperationalStatus);
+  if(ind_new!=0) 
+    _OSBASE_TRACE(2,("--- %s check(): Event occured",_ClassName));
+
+  if(previousInstance) {
+    CMRelease(previousInstance);
+    previousInstance=NULL; 
+  }
+  if(sourceInstance) {
+    previousInstance = CMClone(sourceInstance,&rc);
+    CMRelease(sourceInstance);
+    sourceInstance=NULL;
+  }
+
+  cop = CMNewObjectPath( _broker,INDNAMESPACE,_ClassName,&rc);
+  sourceInstance = CMClone(_makeInst_OperatingSystem(_broker,NULL,cop,NULL,&rc),&rc);
 
   v->state = CMPI_goodValue;
   v->type = CMPI_uint16;
@@ -483,8 +500,8 @@ static char *Linux_OperatingSystemIndication_DYNAMIC_PROPERTIES[] =
   {"IndicationIdentifier",
    "CorrelatedIndications",
    "IndicationTime",
-   "Name",
-   "OperationalStatus"
+   "SourceInstance",
+   "PreviousInstance"
   };
 
 /* The list of property functions  */
@@ -492,20 +509,27 @@ static IndErrorT (* Linux_OperatingSystemIndication_DYNAMIC_FUNCTIONS[])(CMPIDat
   {CIM_Indication_IndicationIdentifier,
    CIM_Indication_CorrelatedIndications,
    CIM_Indication_IndicationTime,
-   Linux_OperatingSystemIndication_Name,
-   Linux_OperatingSystemIndication_OperationalStatus
+   CIM_InstModification_SourceInstance,
+   CIM_InstModification_PreviousInstance
   };
 
 
 static void ind_init(CMPIContext *ctx) {
 
+  CMPIObjectPath *cop = NULL;
+  CMPIStatus      rc;
+
   if (ind_inited==0) {
 
     _OSBASE_TRACE(1,("--- %s ind_init() called",_ClassName));
-    
+
+    cop = CMNewObjectPath( _broker,INDNAMESPACE,_ClassName,&rc);
+    sourceInstance = CMClone(_makeInst_OperatingSystem(_broker,NULL,cop,NULL,&rc),&rc);
+
     /* register the broker and context */
     if(ind_reg(_broker, ctx) != IND_OK) {
       _OSBASE_TRACE(1,("--- %s ind_init() failed",_ClassName));
+      CMRelease(sourceInstance);
       return; 
     }
 
@@ -515,6 +539,7 @@ static void ind_init(CMPIContext *ctx) {
 		       check,
 		       10) != IND_OK) {
       _OSBASE_TRACE(1,("--- %s ind_init() failed: register poll function",_ClassName));
+      CMRelease(sourceInstance);
       return;
     }
     
@@ -524,6 +549,7 @@ static void ind_init(CMPIContext *ctx) {
 			    Linux_OperatingSystemIndication_DYNAMIC_FUNCTIONS,
 			    IND_NUMBER_OF_DYNAMIC_PROPERTIES) != IND_OK) {
       _OSBASE_TRACE(1,("--- %s ind_init() failed: register functions of dynamic properties",_ClassName));
+      CMRelease(sourceInstance);
       return;
     }
     
@@ -532,6 +558,7 @@ static void ind_init(CMPIContext *ctx) {
 		       INDCLASSNAME,
 		       INDCLASSNAME) != IND_OK) { 
       _OSBASE_TRACE(1,("--- %s ind_init() failed: set connection between poll function and dynamic properties",_ClassName));
+      CMRelease(sourceInstance);
       return; 
     }
 
@@ -547,6 +574,8 @@ CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup(
            CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() called",_ClassName));
 
+  CMRelease(sourceInstance);
+  CMRelease(previousInstance);
   ind_shutdown();
   ind_inited = 0; 
   ind_enabled = 0;
@@ -631,7 +660,7 @@ CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter(
 
   if (strcasecmp(indType,INDCLASSNAME)==0) {
     if(ind_unreg_select(INDNAMESPACE, INDCLASSNAME, filter) == IND_OK) {
-      _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: filter deactivated",_ClassName));
+      _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited: filter deactivated",_ClassName));
       CMReturn(CMPI_RC_OK);
     }
   }  

@@ -61,5 +61,7 @@
 * updated README.INDICATION with better description and sample for
   openPegasus
 * restructured init process for SBLIM tracing into a file
+* ported OperatingSystem's process indication of OperationalStatus
+  to become a life-cycle indication
 
 // ===================================================================

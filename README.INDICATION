@@ -28,11 +28,9 @@ support now. To enable this, you need to do the following:
 - install the SBLIM package indication_helper. Please follow the instructions
   in the package.
 - remove -DNOEVENTS from the CFLAGS (makefile)
-- enable the class definition of Linux_OperatingSystemIndication in the
-  mof/Linux_Base.mof file
 - for PEGASUS:
   - edit mof/makefile.pegasus to enable the registration of the Indication 
-    class and provider
+    class and provider (SimpleDisplayConsumerR.mof, Linux_BaseIndicationReg.mof)
 - now build the cmpi-base package as described in the README
 
 

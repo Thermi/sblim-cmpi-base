@@ -145,9 +145,9 @@ static int getcpu(CpuSample * cps)
   unsigned long user, system, nice, idle;
   FILE * fcpuinfo = fopen("/proc/stat","r");
   if (cps && fcpuinfo) {
-    fscanf(fcpuinfo,"%*s %ld %ld %ld %ld",&user,&system,&nice,&idle);
+    fscanf(fcpuinfo,"%*s %ld %ld %ld %ld",&user,&nice,&system,&idle);
     fclose(fcpuinfo);
-    cps->total=user+system+nice+idle;
+    cps->total=user+system+idle;
     cps->cpu=cps->total - idle;
     return 0;
   }
@@ -172,6 +172,9 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   CMPIArray      *   opstat    = NULL;
   unsigned short     status    = 2; /* Enabled */
   unsigned short     opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
+#ifndef NOEVENTS
+  int                opval     = 2;
+#endif
 #endif
 
   _OSBASE_TRACE(2,("--- _makeOS() called"));
@@ -221,7 +224,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   free(keys);
 
   /* calculate cpu percentage */
-  if(getcpu(&cs) == 0) { pctcpu = 100*cs.cpu/cs.total; }
+  if(getcpu(&cs) == 0) { pctcpu = (100*cs.cpu)/cs.total; }
 
   CMSetProperty( ci, "CSCreationClassName", CSCreationClassName, CMPI_chars );
   CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
@@ -306,7 +309,12 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
     goto exit;
   }
   else {
+#ifndef NOEVENTS
+    check_OperationalStatus(&opval);
+    opstatval = opval;
+#else
     if( pctcpu > 90 ) { opstatval = 4; }
+#endif
     CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16);
     CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
   }
@@ -336,7 +344,9 @@ int check_OperationalStatus(int *OperationalStatus) {
 
   if(getcpu(&cs) == 0) { 
     pctcpu = 100*cs.cpu/cs.total;
+    _OSBASE_TRACE(2,("--- _check_OperationalStatus value : %d",pctcpu));
     if(pctcpu>=90 && *OperationalStatus!=4) {
+    //    if(pctcpu>=10 && *OperationalStatus!=4) {
       *OperationalStatus = 4;
       return 1;
     }
