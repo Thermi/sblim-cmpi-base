@@ -213,7 +213,7 @@ CMPIStatus Linux_UnixProcessGetInstance( CMPIInstanceMI * mi,
   name = CMGetKey( cop, "Handle", &rc).value.string;
   if( name == NULL ) {    
     CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_FOUND, "Could not get Process ID." ); 
+			  CMPI_RC_ERR_FAILED, "Could not get Process ID." ); 
     return rc;
   }
 
@@ -281,7 +281,7 @@ CMPIStatus Linux_UnixProcessSetInstance( CMPIInstanceMI * mi,
   pid = CMGetKey( cop, "Handle", &rc).value.string;
   if( pid == NULL ) {    
     CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_FOUND, "Could not get ProcessID." );
+			  CMPI_RC_ERR_FAILED, "Could not get ProcessID." );
     return rc;
   }
 
@@ -289,7 +289,7 @@ CMPIStatus Linux_UnixProcessSetInstance( CMPIInstanceMI * mi,
   cmdrc = get_process_data( CMGetCharPtr(pid) , &sptr );
   if( sptr == NULL ) {    
     CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_FOUND, "Process does not exist." );
+			  CMPI_RC_ERR_NOT_FOUND, "Process ID does not exist." );
     return rc;
   }
 
@@ -301,7 +301,7 @@ CMPIStatus Linux_UnixProcessSetInstance( CMPIInstanceMI * mi,
       if( rc.msg != NULL ) 
 	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
     }
-    CMReturn(CMPI_RC_ERR_NOT_FOUND);
+    CMReturn(CMPI_RC_ERR_FAILED);
   }
 
   /* get data of old process instance */

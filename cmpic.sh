@@ -232,7 +232,7 @@ case $assoc in
       if( rc.msg != NULL ) 
 	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
     }
-    CMReturn(CMPI_RC_ERR_NOT_FOUND); 
+    CMReturn(CMPI_RC_ERR_FAILED); 
   }
 
   CMReturnInstance( rslt, ci );' >> $1.c

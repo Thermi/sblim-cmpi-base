@@ -164,12 +164,23 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
 			  CMPI_RC_ERR_FAILED, "CMGetKey( cop, _RefLeft, rc)" ); 
     goto exit;
   }
+  /*
+  CMSetNameSpace(dtl.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
+  ci = CBGetInstance(_broker, ctx, dtl.value.ref, NULL, rc);
+  if( ci == NULL ) { return NULL; }
+  */
+
   dtr = CMGetKey( cop, _RefRight, rc);
   if( dtr.value.ref == NULL ) {
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "CMGetKey( cop, _RefRight, rc)" ); 
     goto exit; 
   }
+  /*
+  CMSetNameSpace(dtr.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
+  ci = CBGetInstance(_broker, ctx, dtr.value.ref, NULL, rc);
+  if( ci == NULL ) { return NULL; }
+  */
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)), 
 			_ClassName, rc );

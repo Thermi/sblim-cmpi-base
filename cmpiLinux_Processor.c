@@ -185,7 +185,7 @@ CMPIStatus Linux_ProcessorGetInstance( CMPIInstanceMI * mi,
   name = CMGetKey( cop, "DeviceID", &rc).value.string;
   if( CMGetCharPtr(name) == NULL ) {    
     CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_FOUND, "Could not get Processor ID." ); 
+			  CMPI_RC_ERR_FAILED, "Could not get Processor ID." ); 
     return rc;
   }
 
