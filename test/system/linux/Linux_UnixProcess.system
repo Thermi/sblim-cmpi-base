@@ -23,4 +23,4 @@ Status : -empty
 
 --------------------------------------------------------------------------------
 Instance Level : Linux_UnixProcess.pl
-Property Order : Handle ParentProcessID ProcessTTY Priority ProcessNiceValue RealUserID ProcessGroupID Name ProcessSessionID
+Property Order : Handle ParentProcessID ProcessTTY RealUserID ProcessGroupID Name ProcessSessionID

@@ -16,7 +16,7 @@ if(defined $IN) {
 }
 
 
-my @out=`ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,comm,session`;
+my @out=`ps --no-headers -eo pid,ppid,tty,uid,gid,comm,session`;
 
 if( !open($INST_FILE,'>', "$className")) {
   print "can not open $className\n"; 
