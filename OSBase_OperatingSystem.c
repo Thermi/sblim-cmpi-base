@@ -110,7 +110,7 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
   (*sptr)->langEd = get_os_langEd();
 
   /* DefaultPageSize */
-  (*sptr)->defPageSize = getpagesize();
+  (*sptr)->defPageSize = sysconf(_SC_PAGESIZE);
 
   _OSBASE_TRACE(3,("--- get_operatingsystem_data() exited"));
   return 0;
