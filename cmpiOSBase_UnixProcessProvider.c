@@ -85,7 +85,7 @@ CMPIStatus OSBase_UnixProcessProviderEnumInstanceNames( CMPIInstanceMI * mi,
   if( lptr ) {
     for ( ; lptr && rc.rc == CMPI_RC_OK ; lptr = lptr->next) {
       // method call to create the CMPIInstance object
-      op = _makePath( _broker, ctx, ref, lptr->p, &rc );
+      op = _makePath_UnixProcess( _broker, ctx, ref, lptr->p, &rc );
       if( op == NULL || rc.rc != CMPI_RC_OK ) { 
 	if( _debug ) {
 	  if( rc.msg != NULL ) 
@@ -131,7 +131,7 @@ CMPIStatus OSBase_UnixProcessProviderEnumInstances( CMPIInstanceMI * mi,
   if( lptr ) {
     for ( ; lptr && rc.rc == CMPI_RC_OK ; lptr = lptr->next) {
       // method call to create the CMPIInstance object
-      ci = _makeInst( _broker, ctx, ref, lptr->p, &rc );
+      ci = _makeInst_UnixProcess( _broker, ctx, ref, lptr->p, &rc );
       if( ci == NULL || rc.rc != CMPI_RC_OK ) { 
 	if( _debug ) {
 	  if( rc.msg != NULL ) 
@@ -184,7 +184,7 @@ CMPIStatus OSBase_UnixProcessProviderGetInstance( CMPIInstanceMI * mi,
     return rc;
   }
 
-  ci = _makeInst( _broker, ctx, cop, sptr, &rc );
+  ci = _makeInst_UnixProcess( _broker, ctx, cop, sptr, &rc );
   if(sptr) free_process(sptr);
 
   if( ci == NULL ) {

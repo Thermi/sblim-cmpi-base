@@ -60,11 +60,11 @@ static int installModule(char *namep);
 
 /* ---------- method to create a CMPIObjectPath of this class ----------------*/
 
-CMPIObjectPath * _makePath( CMPIBroker * _broker,
-                            CMPIContext * ctx, 
-                            CMPIObjectPath * ref,
-			    struct cim_process * sptr,
-			    CMPIStatus * rc) {
+CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
+                 CMPIContext * ctx, 
+                 CMPIObjectPath * ref,
+		 struct cim_process * sptr,
+		 CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
   /* the sblim-cmpi-base package offers some tool methods to get common
@@ -108,11 +108,11 @@ CMPIObjectPath * _makePath( CMPIBroker * _broker,
 
 /* ----------- method to create a CMPIInstance of this class ----------------*/
 
-CMPIInstance * _makeInst( CMPIBroker * _broker,
-                          CMPIContext * ctx, 
-                          CMPIObjectPath * ref,
-			  struct cim_process * sptr,
-			  CMPIStatus * rc) {
+CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
+               CMPIContext * ctx, 
+               CMPIObjectPath * ref,
+	       struct cim_process * sptr,
+	       CMPIStatus * rc) {
   CMPIObjectPath *  op     = NULL;
   CMPIInstance   *  ci     = NULL;
   CMPIDateTime   *  cdt    = NULL;

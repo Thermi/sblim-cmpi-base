@@ -72,10 +72,10 @@ void * statusLurker(void *);
 
 /* ---------- method to create a CMPIObjectPath of this class ----------------*/
 
-CMPIObjectPath * _makePath( CMPIBroker * _broker,
-                            CMPIContext * ctx, 
-                            CMPIObjectPath * ref,
-			    CMPIStatus * rc) {
+CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
+	         CMPIContext * ctx,  
+                 CMPIObjectPath * ref,
+	         CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
   /* the sblim-cmpi-base package offers some tool methods to get common
@@ -118,10 +118,10 @@ CMPIObjectPath * _makePath( CMPIBroker * _broker,
 /* ----------- method to create a CMPIInstance of this class ----------------*/
 
 
-CMPIInstance * _makeInst( CMPIBroker * _broker,
-                          CMPIContext * ctx, 
-                          CMPIObjectPath * ref,
-                          CMPIStatus * rc) {
+CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
+	       CMPIContext * ctx, 
+               CMPIObjectPath * ref,
+               CMPIStatus * rc) {
   CMPIInstance               * ci   = NULL;
   struct cim_operatingsystem * sptr = NULL;
   int                          frc  = 0;

@@ -66,20 +66,20 @@ int _sysman_data( char * pid , struct _SysMan * sm );
 
 /* method to create a CMPIObjectPath of this class                            */
 
-CMPIObjectPath * _makePath( CMPIBroker * _broker,
-                            CMPIContext * ctx, 
-                            CMPIObjectPath * cop,
-			    struct cim_process * sptr,
-                            CMPIStatus * rc);
+CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
+                 CMPIContext * ctx, 
+                 CMPIObjectPath * cop,
+		 struct cim_process * sptr,
+                 CMPIStatus * rc);
 
 
 /* method to create a CMPIInstance of this class                              */
 
-CMPIInstance * _makeInst( CMPIBroker * _broker,
-                          CMPIContext * ctx, 
-                          CMPIObjectPath * cop,
-			  struct cim_process * sptr,
-                          CMPIStatus * rc);
+CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
+               CMPIContext * ctx, 
+               CMPIObjectPath * cop,
+	       struct cim_process * sptr,
+               CMPIStatus * rc);
 
 
 /* ---------------------------------------------------------------------------*/

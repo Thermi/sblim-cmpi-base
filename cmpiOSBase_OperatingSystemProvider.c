@@ -91,7 +91,7 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstanceNames( CMPIInstanceMI * mi,
   if( _debug )
     fprintf( stderr, "--- %s : %s CMPI EnumInstanceNames()\n", _FILENAME, _ClassName );
 
-  op = _makePath( _broker, ctx, ref, &rc );
+  op = _makePath_OperatingSystem( _broker, ctx, ref, &rc );
 
   if( op == NULL ) {
     if( _debug ) {
@@ -117,7 +117,7 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstances( CMPIInstanceMI * mi,
   if( _debug )
     fprintf( stderr, "--- %s : %s CMPI EnumInstances()\n", _FILENAME, _ClassName );
 
-  ci = _makeInst( _broker, ctx, ref, &rc );
+  ci = _makeInst_OperatingSystem( _broker, ctx, ref, &rc );
 
   if( ci == NULL ) {
     if( _debug ) {
@@ -148,7 +148,7 @@ CMPIStatus OSBase_OperatingSystemProviderGetInstance( CMPIInstanceMI * mi,
   _check_system_key_value_pairs( _broker, cop, "CreationClassName", "Name", &rc );
   if( rc.rc != CMPI_RC_OK ) { return rc; }
 
-  ci = _makeInst( _broker, ctx, cop, &rc );
+  ci = _makeInst_OperatingSystem( _broker, ctx, cop, &rc );
 
   if( ci == NULL ) {
     if( _debug ) {
