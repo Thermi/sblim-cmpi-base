@@ -55,7 +55,8 @@ class Linux_OperatingSystem : CIM_OperatingSystem
     "is a standard international numeric abbrevation for a country or "
     "region. Each language has a unique language identifier (LANGID), "
     "a 16-bit value that consists of a primary language identifier "
-    "and a secondary language identifier.")
+    "and a secondary language identifier. An example for "
+    "LanguageEdition would be 'en-US' for English.")
   ]
   string LanguageEdition;
 
@@ -63,10 +64,11 @@ class Linux_OperatingSystem : CIM_OperatingSystem
     "used by the operating system. A code page contains a character "
     "table used by the operating system to translate strings for "
     "different languages. The American National Standards Institute "
-    "(ANSI) lists values that represent defined code pages. If the "
-    "operating system does not use an ANSI code page, this member "
-    "will be set to 0. The CodeSet string can use up to six "
-    "characters to define the code page value. Example : 1255")
+    "(ANSI) lists values that represent defined code pages. "
+    "Examples are ISO-8859-1, UTF-8 or IBM1047. If the operating "
+    "system does not use an ANSI code page, this member will be set "
+    "to 0."),
+    MaxLen(64)
   ]
   string CodeSet;
 
