@@ -252,15 +252,15 @@ int runcommand(const char *cmd, char **in, char ***out, char ***err)
 
   /* make the filenames for I/O redirection */
   if (in != NULL && ((fdin=mkstemp(fcltinname)) < 0 || close(fdin))) {
-    perror("Couldn't create input file");
+    _OSBASE_TRACE(4,("%s ... Couldn't create input file",strerror(errno)));
     return -1;
   }
   if (out != NULL && ((fdout=mkstemp(fcltoutname)) < 0 || close(fdout))) {
-    perror("Couldn't create output file");
+    _OSBASE_TRACE(4,("%s ... Couldn't create output file",strerror(errno)));
     return -1;
   }
   if (err != NULL && ((fderr=mkstemp(fclterrname)) < 0 || close(fderr))) {
-    perror("Couldn't create error file");
+    _OSBASE_TRACE(4,("%s ... Couldn't create error file",strerror(errno)));
     return -1;
   }
 
@@ -268,7 +268,7 @@ int runcommand(const char *cmd, char **in, char ***out, char ***err)
   if (in != NULL) {
     fcltin = fopen(fcltinname,"w");
     if (fcltin==NULL) {
-      perror("Couldn't open client's input for writing");
+      _OSBASE_TRACE(4,("%s ... Couldn't open client's input for writing",strerror(errno)));
       return -1;
     }
     while (*in != NULL)
@@ -319,7 +319,7 @@ int runcommand(const char *cmd, char **in, char ***out, char ***err)
       /* close out file */
       fclose(fcltout);
     } else
-      perror("Couldn't open client's output for reading");
+      _OSBASE_TRACE(4,("%s ... Couldn't open client's output for reading",strerror(errno)));
     unlink(fcltoutname);
   }
   if (err != NULL) {
@@ -337,7 +337,7 @@ int runcommand(const char *cmd, char **in, char ***out, char ***err)
 	/* close err file */
 	fclose(fclterr);
     } else
-      perror("Couldn't open client's error output for reading");
+      _OSBASE_TRACE(4,("%s ... Couldn't open client's error for reading",strerror(errno)));
     unlink(fclterrname);
   }
   if (buffer != NULL)

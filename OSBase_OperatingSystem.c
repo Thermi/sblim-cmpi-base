@@ -128,7 +128,7 @@ char * get_os_distro() {
 	i++;
       }	
       i=0;
-      CIM_OS_DISTRO = (char *) malloc( strl*sizeof(char));
+      CIM_OS_DISTRO = calloc(1,strl);
       strcpy( CIM_OS_DISTRO , hdout[0] );
       i++;
       while ( hdout[i]) {
@@ -138,7 +138,7 @@ char * get_os_distro() {
       }
     }
     else {
-      CIM_OS_DISTRO = (char *) malloc( 6*sizeof(char));
+      CIM_OS_DISTRO = calloc(1,6);
       strcpy( CIM_OS_DISTRO , "Linux" );
     }
     freeresultbuf(hdout);

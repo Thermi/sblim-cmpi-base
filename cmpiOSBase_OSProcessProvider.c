@@ -79,7 +79,7 @@ CMPIStatus OSBase_OSProcessProviderEnumInstanceNames( CMPIInstanceMI * mi,
     else {
       _OSBASE_TRACE(1,("--- %s CMPI EnumInstanceNames() failed",_ClassName));
     }
-    CMReturn(CMPI_RC_ERR_FAILED); 
+    return rc;
   }
 
   CMReturnDone( rslt );
@@ -108,7 +108,7 @@ CMPIStatus OSBase_OSProcessProviderEnumInstances( CMPIInstanceMI * mi,
     else {
       _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() failed",_ClassName));
     }
-    CMReturn(CMPI_RC_ERR_FAILED); 
+    return rc;
   }
 
   CMReturnDone( rslt );
@@ -135,7 +135,7 @@ CMPIStatus OSBase_OSProcessProviderGetInstance( CMPIInstanceMI * mi,
     else {
       _OSBASE_TRACE(1,("--- %s CMPI GetInstance() failed",_ClassName));
     }
-    CMReturn(CMPI_RC_ERR_NOT_FOUND); 
+    return rc;
   }
 
   CMReturnInstance( rslt, ci );
@@ -294,6 +294,12 @@ CMPIStatus OSBase_OSProcessProviderAssociators( CMPIAssociationMI * mi,
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
 			  _ClassName, &rc );
+    if( op==NULL ) {
+      CMSetStatusWithChars( _broker, &rc,
+			    CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+      _OSBASE_TRACE(2,("--- %s CMPI Associators() failed : %s",CMGetCharPtr(rc.msg)));
+      return rc;
+    }
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -314,7 +320,7 @@ CMPIStatus OSBase_OSProcessProviderAssociators( CMPIAssociationMI * mi,
       else {
 	_OSBASE_TRACE(1,("--- %s CMPI Associators() failed",_ClassName));
       }
-      CMReturn(CMPI_RC_ERR_FAILED); 
+      return rc;
     }
   }
 
@@ -341,6 +347,12 @@ CMPIStatus OSBase_OSProcessProviderAssociatorNames( CMPIAssociationMI * mi,
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
 			  _ClassName, &rc );
+    if( op==NULL ) {
+      CMSetStatusWithChars( _broker, &rc,
+			    CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+      _OSBASE_TRACE(2,("--- %s CMPI AssociatorNames() failed : %s",CMGetCharPtr(rc.msg)));
+      return rc;
+    }
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -361,7 +373,7 @@ CMPIStatus OSBase_OSProcessProviderAssociatorNames( CMPIAssociationMI * mi,
       else {
 	_OSBASE_TRACE(1,("--- %s CMPI AssociatorNames() failed",_ClassName));
       }
-      CMReturn(CMPI_RC_ERR_FAILED); 
+      return rc;
     }
   }
 
@@ -396,6 +408,12 @@ CMPIStatus OSBase_OSProcessProviderReferences( CMPIAssociationMI * mi,
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
 			  _ClassName, &rc );
+    if( op==NULL ) {
+      CMSetStatusWithChars( _broker, &rc,
+			    CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+      _OSBASE_TRACE(2,("--- %s CMPI References() failed : %s",CMGetCharPtr(rc.msg)));
+      return rc;
+    }
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -416,7 +434,7 @@ CMPIStatus OSBase_OSProcessProviderReferences( CMPIAssociationMI * mi,
       else {
 	_OSBASE_TRACE(1,("--- %s CMPI References() failed",_ClassName));
       }
-      CMReturn(CMPI_RC_ERR_FAILED); 
+      return rc;
     }
   }
 
@@ -441,6 +459,12 @@ CMPIStatus OSBase_OSProcessProviderReferenceNames( CMPIAssociationMI * mi,
   if( assocClass ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
 			  _ClassName, &rc );
+    if( op==NULL ) {
+      CMSetStatusWithChars( _broker, &rc,
+			    CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+      _OSBASE_TRACE(2,("--- %s CMPI ReferenceNames() failed : %s",CMGetCharPtr(rc.msg)));
+      return rc;
+    }
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -461,7 +485,7 @@ CMPIStatus OSBase_OSProcessProviderReferenceNames( CMPIAssociationMI * mi,
       else {
 	_OSBASE_TRACE(1,("--- %s CMPI ReferenceNames() failed",_ClassName));
       }
-      CMReturn(CMPI_RC_ERR_FAILED); 
+      return rc;
     }
   }
 
