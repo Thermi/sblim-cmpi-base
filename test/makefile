@@ -7,40 +7,27 @@ TESTSUITE=$(HOME)/sblim/testsuite
 TESTSUITECIM=$(TESTSUITE)/cim
 TESTSUITESYSTEM=$(TESTSUITE)/system/linux
 
+all:
 
-# in most cases it is not necessary to change the following stuff
+clean:
 
-all: 	test
-
-install: all
-	install test-cmpi-base.sh $(TESTSUITE)
-	install cim/*.cim $(TESTSUITECIM)
-	install system/linux/*.system $(TESTSUITESYSTEM)
-	install system/linux/*.sh $(TESTSUITESYSTEM)
-	install system/linux/*.pl $(TESTSUITESYSTEM)
-
-test:
+install:
 	@[ -d $(TESTSUITE) ] || ( echo $(TESTSUITE) does not exist && false)
 	@[ -d $(TESTSUITECIM) ] || ( echo $(TESTSUITECIM) does not exist && false)
 	@[ -d $(TESTSUITESYSTEM) ] || ( echo $(TESTSUITESYSTEM) does not exist && false)
+	$(foreach FILE, $(shell ls -1 *.sh), install -m 755 $(FILE) $(TESTSUITE); )
+	$(foreach FILE, $(shell ls -1 cim/*.cim), install -m 644 $(FILE) $(TESTSUITECIM); )
+	$(foreach FILE, $(shell ls -1 system/linux/*.system), install -m 644 $(FILE) $(TESTSUITESYSTEM); )
+	$(foreach FILE, $(shell ls -1 system/linux/*.pl), install -m 755 $(FILE) $(TESTSUITESYSTEM); )
+	$(foreach FILE, $(shell ls -1 system/linux/*.sh), install -m 755 $(FILE) $(TESTSUITESYSTEM); )
 
-uninstall: 
-	$(RM) $(TESTSUITE)/test-cmpi-base.sh \
-	$(RM) $(TESTSUITECIM)/Linux_ComputerSystem.cim \
-	$(RM) $(TESTSUITECIM)/Linux_OperatingSystem.cim \
-	$(RM) $(TESTSUITECIM)/Linux_UnixProcess.cim \
-	$(RM) $(TESTSUITECIM)/Linux_Processor.cim \
-	$(RM) $(TESTSUITECIM)/Linux_RunningOS.cim \
-	$(RM) $(TESTSUITECIM)/Linux_OSProcess.cim \
-	$(RM) $(TESTSUITECIM)/Linux_CSProcessor.cim \
-	$(RM) $(TESTSUITESYSTEM)/Linux_ComputerSystem.system \
-	$(RM) $(TESTSUITESYSTEM)/Linux_OperatingSystem.system \
-	$(RM) $(TESTSUITESYSTEM)/Linux_UnixProcess.system \
-	$(RM) $(TESTSUITESYSTEM)/Linux_UnixProcess.pl \
-	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.system \
-	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.pl \
-	$(RM) $(TESTSUITESYSTEM)/createKeyFiles.sh \
-	$(RM) $(TESTSUITESYSTEM)/Linux_RunningOS.system \
-	$(RM) $(TESTSUITESYSTEM)/Linux_OSProcess.system \
-	$(RM) $(TESTSUITESYSTEM)/Linux_CSProcessor.system
+uninstall:
+	$(foreach FILE, $(shell find *.sh -printf '%f\n'), $(RM) $(TESTSUITE)/$(FILE); )
+	$(foreach FILE, $(shell find cim/*.cim -printf '%f\n'), $(RM) $(TESTSUITECIM)/$(FILE); )
+	$(foreach FILE, $(shell find system/linux/*.system -printf '%f\n'), $(RM) $(TESTSUITESYSTEM)/$(FILE); )
+	$(foreach FILE, $(shell find system/linux/*.pl -printf '%f\n'), $(RM) $(TESTSUITESYSTEM)/$(FILE); )
+	$(foreach FILE, $(shell find system/linux/*.sh -printf '%f\n'), $(RM) $(TESTSUITESYSTEM)/$(FILE); )
 
+test:
+	@[ -d $(TESTSUITE) ] || ( echo $(TESTSUITE) does not exist && false)
+	$(foreach FILE, $(shell ls -1 *.sh), cd $(TESTSUITE); ./$(FILE); cd -; )
