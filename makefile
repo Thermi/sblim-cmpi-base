@@ -52,8 +52,7 @@ all: 	testfiles \
 	libcmpiOSBase_RunningOSProvider.so \
 	libcmpiOSBase_OSProcessProvider.so \
 	libcmpiOSBase_CSProcessorProvider.so \
-	libcmpiOSBase_CSBaseBoardProvider.so \
-	libcmpiOSBase_CSMemoryProvider.so
+	libcmpiOSBase_CSBaseBoardProvider.so
 
 
 
@@ -153,5 +152,4 @@ uninstall:
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_RunningOSProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_OSProcessProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSProcessorProvider.so \
-	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSBaseBoardProvider.so \
-	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSMemoryProvider.so
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSBaseBoardProvider.so

@@ -1,0 +1,31 @@
+/* ---------------------------------------------------------------------------*/
+(C) Copyright IBM Corp. 2005
+
+THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+
+You can obtain a current copy of the Common Public License from
+http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+
+Author:       Heidi Neumann <heidineu@de.ibm.com>
+Date  :	      01/03/2005
+
+/* ---------------------------------------------------------------------------*/
+
+
+SBLIM CMPI Base Instrumentation README.INDICATION
+-------------------------------------------------
+
+The provider cmpiOSBase_OperatingSystemProvider also comes with Indication
+support now. To enable this, you need to do the following:
+
+- install the SBLIM package indication_helper. Please follow the instructions
+  in the package.
+- remove -DNOEVENTS from the CFLAGS (makefile)
+- enable the class definition of Linux_OperatingSystemIndication in the
+  mof/Linux_Base.mof file
+- for PEGASUS:
+  enable the registration of the Indication Interface for the provider
+  cmpiOSBase_OperatingSystemProvider
+- now build the cmpi-base package as described in the README

@@ -53,6 +53,12 @@ CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
 	       const char ** properties,
                CMPIStatus * rc);
 
+/* ---------------------------------------------------------------------------*/
+
+/* Indication support : check OperationalStatus */
+#ifndef NOEVENTS
+int check_OperationalStatus(int *OperationalStatus);
+#endif
 
 /* ---------------------------------------------------------------------------*/
 

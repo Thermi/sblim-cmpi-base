@@ -38,3 +38,16 @@
   functionality !)
 
 // ===================================================================
+// new in version 1.4.1 :
+
+* implemented Indication support for Linux_OperatingSystem property
+  OperationalStatus - default disabled by -DNOEVENTS
+  -> see README.IDICATION for more information
+
+// ===================================================================
+// new in version 1.4.2 : FUTURE
+
+* added class Linux_Memory
+* added association Linux_CSMemory
+
+// ===================================================================

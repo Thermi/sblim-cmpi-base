@@ -47,7 +47,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
                                CMPIStatus * rc);
 
 /* ---------------------------------------------------------------------------*/
-/* --- CPU utilization with event support                                     */
+/* --- CPU utilization                                                        */
 /* ---------------------------------------------------------------------------*/
 
 typedef struct _CpuSample {
@@ -59,13 +59,6 @@ static int getcpu(CpuSample * cps);
 
 /* ---------------------------------------------------------------------------*/
 
-#ifndef NOEVENTS
-int checkProviderThread();
-void stopProviderThread();
-void * statusLurker(void *);
-#endif
-
-/* ---------------------------------------------------------------------------*/
 
 /* ---------------------------------------------------------------------------*/
 /*                            Factory functions                               */
@@ -180,9 +173,6 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   unsigned short     status    = 2; /* Enabled */
   unsigned short     opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
 #endif
-#ifndef NOEVENTS
-  int                i         = 0;
-#endif
 
   _OSBASE_TRACE(2,("--- _makeOS() called"));
 
@@ -231,22 +221,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   free(keys);
 
   /* calculate cpu percentage */
-#ifdef NOEVENTS
   if(getcpu(&cs) == 0) { pctcpu = 100*cs.cpu/cs.total; }
-#else
-  if (!checkProviderThread()) {
-    if (getcpu(&cs)==0) { pctcpu = cs.cpu*100/cs.total; }
-  }
-  else {
-    pctcpu=0;
-    if (!pthread_mutex_lock(&mutex)) {
-      for (i=0;i<histlen;i++)
-	pctcpu+=histcpu[i];
-      pthread_mutex_unlock(&mutex);
-    }
-    pctcpu/=histlen;
-  }
-#endif
 
   CMSetProperty( ci, "CSCreationClassName", CSCreationClassName, CMPI_chars );
   CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
@@ -349,124 +324,31 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   return ci;
 }
 
-
+/* ---------------------------------------------------------------------------*/
+/* Indication support                                                         */
+/* ---------------------------------------------------------------------------*/
 
 #ifndef NOEVENTS
 
+int check_OperationalStatus(int *OperationalStatus) {
+  CpuSample      cs;
+  unsigned short pctcpu = 0;
 
-int checkProviderThread() {
-  int status;
-  if (pthread_mutex_lock(&mutex)) {
-    fprintf(stderr,"Linux_OperatingSystem: couldn't obtain mutex lock");
-    return -1;
-  }
-  status = threadActive;
-  pthread_mutex_unlock(&mutex);
-  return status;
-}
-
-
-void startProviderThread(NPIHandle* nh)
-{
-  NPIHandle* tnh;
-  if (pthread_mutex_lock(&mutex)) {
-    fprintf(stderr,"Linux_OperatingSystem: couldn't obtain mutex lock");
-    return;
-  }
-  if (threadActive==0) {
-    fprintf(stderr,"Linux_OperatingSystem: starting status thread\n");
-    tnh=CIMOMPrepareAttach(nh);
-    if (errorCheck(tnh))
-      CIMOMCancelAttach(tnh);
-    else if (pthread_create(&tid,NULL,&statusLurker,tnh)==0)
-      threadActive=1;
-  }
-  pthread_mutex_unlock(&mutex);
-}
-
-void stopProviderThread()
-{
-  if (pthread_mutex_lock(&mutex)) {
-    fprintf(stderr,"Linux_OperatingSystem: couldn't obtain mutex lock");
-    return;
-  }
-  if (threadActive) {
-    fprintf(stderr,"Linux_OperatingSystem: stopping status thread\n");
-    threadActive=0;
-    threadCancelPending+=1;
-  }
-  pthread_mutex_unlock(&mutex);
-}
-
-
-void * statusLurker(void * args)
-{
-  int rc=0;
-  int cancelstatus=0;
-  NPIHandle* nh=args;
-  struct cim_operatingsystem * refptr=NULL, * actptr=NULL;
-  CIMInstance ciprev,cisrc,cimod;
-  CIMObjectPath cop;
-  CIMClass cc;
-  CpuSample cs1, cs2;
-
-  CIMOMAttachThread(nh);
-  fprintf(stderr,"Linux_OperatingSystem: status thread starting\n");
-  getcpu(&cs1);
-  while(!cancelstatus) {
-    fprintf(stderr,"Linux_OperatingSystem: status thread blip\n");
-
-  /* Get Initial Operating System */
-    if (refptr==NULL)
-     rc=get_operatingsystem_data(&refptr);
-    sleep(60);
-    if (!pthread_mutex_lock(&mutex) && !getcpu(&cs2)) {
-      histcpu[histindex]=100*(cs2.cpu-cs1.cpu)/(cs2.total-cs1.total);
-      histindex=(histindex+1)%histlen;
-      pthread_mutex_unlock(&mutex);
-      cs1=cs2;
+  if(getcpu(&cs) == 0) { 
+    pctcpu = 100*cs.cpu/cs.total;
+    if(pctcpu>=90 && *OperationalStatus!=4) {
+      *OperationalStatus = 4;
+      return 1;
     }
-    cop=CIMObjectPathNew(nh,"cim_instmodification");
-    CIMObjectPathSetNameSpace(nh,cop,"root/cimv2");
-    cc=CIMOMGetClass(nh,cop,0);
-    if (errorCheck(nh)) {
-      fprintf(stderr,"Linux_OperatingSystem: couldn't get indication class\n");
-      stopProviderThread();
-    } else {
-      /* lookout for modifications */
-      rc=get_operatingsystem_data(&actptr);
-      if (1 /* calc change state*/) {
-	fprintf(stderr,"Linux_OperatingSystem: beginning the indication.\n");
-	cimod=CIMClassNewInstance(nh,cc);
-	ciprev=_makeOS(nh,refptr,"root/cimv2");
-	cisrc=_makeOS(nh,actptr,"root/cimv2");
-	CIMOMDeliverInstanceEvent(nh,"root/cimv2",cimod,cisrc,ciprev);
-	if (errorCheck(nh)) {
-	  fprintf(stderr,"Linux_OperatingSystem: indication not delivered\n");
-	  /* we do not exit here - could be a transient problem */
-	  errorReset(nh);
-	}
-	free_os_data(refptr);
-	refptr=actptr;
-      }
+    if(pctcpu<90 && *OperationalStatus==4) {
+      *OperationalStatus = 2;
+      return 1;
     }
-    if (pthread_mutex_lock(&mutex)) {
-      fprintf(stderr,"Linux_OperatingSystem: couldn't obtain mutex lock");
-      break;
-    }
-    if (threadCancelPending) {
-      cancelstatus=1;
-      threadCancelPending-=1;
-    }
-    pthread_mutex_unlock(&mutex);
   }
-  fprintf(stderr,"Linux_OperatingSystem: status thread terminating\n");
-  CIMOMDetachThread(nh);
-  return NULL;
+  return 0;
 }
 
 #endif
-
 
 /* ---------------------------------------------------------------------------*/
 /*                   end of cmpiOSBase_OperatingSystem.c                      */

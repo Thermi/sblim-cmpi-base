@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef NOEVENTS
+#define CMPI_VER_86 1
+#endif
+
 #include "cmpidt.h"
 #include "cmpift.h"
 #include "cmpimacs.h"
@@ -30,6 +34,10 @@
 #include "OSBase_Common.h"
 #include "cmpiOSBase_Common.h"
 #include "cmpiOSBase_OperatingSystem.h"
+
+#ifndef NOEVENTS
+#include <ind_helper.h>
+#endif
 
 static CMPIBroker * _broker;
 
@@ -364,11 +372,185 @@ static char * _copy_buf( char ** hdbuf ) {
 /*                       Indication Provider Interface                        */
 /* ---------------------------------------------------------------------------*/
 
+#ifndef NOEVENTS
+
+#define INDCLASSNAME      "Linux_OperatingSystemIndication"
+#define INDNAMESPACE      "root/cimv2"
+#define IND_NUMBER_OF_DYNAMIC_PROPERTIES  5
+
+static int ind_inited  = 0;
+static int ind_enabled = 0;
+static int ind_new     = 0;
+
+static int ind_OperationalStatus = 2;
+
+IndErrorT CIM_Indication_IndicationIdentifier(CMPIData *v)
+{
+  CMPIString *str;
+  CMPIStatus rc;
+
+  _OSBASE_TRACE(1,("--- %s CIM_Indication_IndicationIdentifier() called",_ClassName));
+
+  str = CMNewString(_broker,_ClassName, &rc);
+  v->type = CMPI_string;
+  v->value.string = str;
+  v->state = CMPI_goodValue;
+
+  return IND_OK;
+}
+
+IndErrorT CIM_Indication_CorrelatedIndications(CMPIData *v)
+{
+  CMPIArray *a;
+  CMPIStatus rc;
+  
+  _OSBASE_TRACE(1,("--- %s CIM_Indication_CorrelatedIndications() called",_ClassName));
+  
+  a = CMNewArray(_broker, 0, CMPI_string, &rc);
+  v->type= CMPI_stringA;
+  v->value.array = a;
+  v->state = CMPI_goodValue;
+  
+  return IND_OK;
+}
+
+IndErrorT CIM_Indication_IndicationTime(CMPIData *v)
+{
+  CMPIStatus rc;
+  CMPIDateTime *localTime = NULL;
+
+  _OSBASE_TRACE(1,("--- %s CIM_Indication_IndicationTime() called",_ClassName));
+
+  localTime = CMNewDateTime(_broker, &rc);
+  v->type=CMPI_dateTime;
+  v->value.dateTime = localTime;
+  v->state = CMPI_goodValue;
+
+  return IND_OK;
+}
+
+IndErrorT Linux_OperatingSystemIndication_Name(CMPIData *v)
+{
+  CMPIString *str = NULL;
+  CMPIStatus rc;
+
+  _OSBASE_TRACE(1,("--- %s Linux_OperatingSystemIndication_Name() called",_ClassName));
+
+  str = CMNewString(_broker,get_system_name(), &rc);
+  v->type = CMPI_string;
+  v->value.string = str;
+  v->state = CMPI_goodValue;
+
+  return IND_OK;
+}
+
+IndErrorT Linux_OperatingSystemIndication_OperationalStatus(CMPIData *v)
+{
+  CMPIString *str = NULL;
+  CMPIStatus rc;
+
+  _OSBASE_TRACE(1,("--- %s Linux_OperatingSystemIndication_OperationalStatus() called",_ClassName));
+
+  if(ind_OperationalStatus==2) { str = CMNewString(_broker,"OK", &rc); }
+  if(ind_OperationalStatus==4) { str = CMNewString(_broker,"Stressed", &rc); }
+ 
+  v->type = CMPI_string;
+  v->value.string = str;
+  v->state = CMPI_goodValue;
+
+  return IND_OK;
+}
+
+IndErrorT check(CMPIData *v)
+{
+  _OSBASE_TRACE(1,("--- %s check() called",_ClassName));
+
+  /* call function to check OperationalStatus */
+  ind_new = check_OperationalStatus(&ind_OperationalStatus);
+
+  v->state = CMPI_goodValue;
+  v->type = CMPI_uint16;
+  v->value.uint16 = ind_new;
+
+  ind_new = 0;
+  _OSBASE_TRACE(1,("--- %s check() exited",_ClassName));
+  return IND_OK;
+}
+
+
+/* The list of property names for the functions */
+static char *Linux_OperatingSystemIndication_DYNAMIC_PROPERTIES[] =
+  {"IndicationIdentifier",
+   "CorrelatedIndications",
+   "IndicationTime",
+   "Name",
+   "OperationalStatus"
+  };
+
+/* The list of property functions  */
+static IndErrorT (* Linux_OperatingSystemIndication_DYNAMIC_FUNCTIONS[])(CMPIData *v) =
+  {CIM_Indication_IndicationIdentifier,
+   CIM_Indication_CorrelatedIndications,
+   CIM_Indication_IndicationTime,
+   Linux_OperatingSystemIndication_Name,
+   Linux_OperatingSystemIndication_OperationalStatus
+  };
+
+
+static void ind_init(CMPIContext *ctx) {
+
+  if (ind_inited==0) {
+
+    _OSBASE_TRACE(1,("--- %s ind_init() called",_ClassName));
+    
+    /* register the broker and context */
+    if(ind_reg(_broker, ctx) != IND_OK) {
+      _OSBASE_TRACE(1,("--- %s ind_init() failed",_ClassName));
+      return; 
+    }
+
+    /* register the poll function. check every 10 seconds. */
+    if(ind_reg_pollfnc(INDCLASSNAME,
+		       "Poll function",
+		       check,
+		       10) != IND_OK) {
+      _OSBASE_TRACE(1,("--- %s ind_init() failed: register poll function",_ClassName));
+      return;
+    }
+    
+    /* register the dynamic properties and its functions to retrieve data */
+    if(ind_set_properties_f(INDNAMESPACE,INDCLASSNAME,
+			    Linux_OperatingSystemIndication_DYNAMIC_PROPERTIES,
+			    Linux_OperatingSystemIndication_DYNAMIC_FUNCTIONS,
+			    IND_NUMBER_OF_DYNAMIC_PROPERTIES) != IND_OK) {
+      _OSBASE_TRACE(1,("--- %s ind_init() failed: register functions of dynamic properties",_ClassName));
+      return;
+    }
+    
+    /* tie the properties and polling function together */  
+    if(ind_set_classes(INDNAMESPACE,
+		       INDCLASSNAME,
+		       INDCLASSNAME) != IND_OK) { 
+      _OSBASE_TRACE(1,("--- %s ind_init() failed: set connection between poll function and dynamic properties",_ClassName));
+      return; 
+    }
+
+    ind_inited = 1; 
+    _OSBASE_TRACE(1,("--- %s ind_init() exited",_ClassName));
+  }
+}
+
+/* ---------------------------------------------------------------------------*/
 
 CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup( 
            CMPIIndicationMI * mi, 
            CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() called",_ClassName));
+
+  ind_shutdown();
+  ind_inited = 0; 
+  ind_enabled = 0;
+
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
@@ -382,6 +564,17 @@ CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter(
            CMPIObjectPath * classPath,
            const char * owner) {
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() called",_ClassName));
+
+  if (strcasecmp(indType,INDCLASSNAME)==0) {     
+    ind_init(ctx);
+    _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter(): successfully authorized filter",_ClassName));
+    CMReturnData(rslt,(CMPIValue*)&(CMPI_true),CMPI_boolean);
+  } else {
+    _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter(): refused to authorize filter",_ClassName));
+    CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
+  }
+  CMReturnDone(rslt);
+
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
@@ -393,7 +586,9 @@ CMPIStatus OSBase_OperatingSystemProviderMustPoll(
            CMPISelectExp * filter, 
            const char * indType, 
            CMPIObjectPath * classPath) {
-  _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called: NO POLLING",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called: NO POLLING",_ClassName));  
+  CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
+  CMReturnDone(rslt);
   _OSBASE_TRACE(1,("--- %s CMPI MustPoll() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
@@ -406,8 +601,21 @@ CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
            const char * indType, 
            CMPIObjectPath * classPath,
            CMPIBoolean firstActivation) {
+
+  CMPIStatus rc = {CMPI_RC_OK, NULL};
   _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() called",_ClassName));
-  _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: not activated",_ClassName));
+  
+  ind_init(ctx);
+  if (strcasecmp(indType,INDCLASSNAME)==0) {
+    if(ind_set_select(INDNAMESPACE, INDCLASSNAME, filter) == IND_OK) {
+      _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: filter activated (%s)",
+		       _ClassName,CMGetCharPtr(CMGetSelExpString(filter,&rc))));
+      CMReturn(CMPI_RC_OK);
+    }
+  }  
+
+  _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: filter not activated (%s)",
+		   _ClassName,CMGetCharPtr(CMGetSelExpString(filter,&rc))));
   CMReturn(CMPI_RC_ERR_FAILED);
 }
 
@@ -420,20 +628,49 @@ CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter(
            CMPIObjectPath *classPath,
            CMPIBoolean lastActivation) {
   _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() called",_ClassName));
-  _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited",_ClassName));
+
+  if (strcasecmp(indType,INDCLASSNAME)==0) {
+    if(ind_unreg_select(INDNAMESPACE, INDCLASSNAME, filter) == IND_OK) {
+      _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: filter deactivated",_ClassName));
+      CMReturn(CMPI_RC_OK);
+    }
+  }  
+
+  _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited: filter not deactivated",_ClassName));
   CMReturn(CMPI_RC_ERR_FAILED);
 }
 
 void OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi) {
   _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() called",_ClassName));
+
+  if(!ind_enabled) {
+    /* start the polling mechanism */
+    if(ind_start() != IND_OK) { 
+      _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() failed: start indication helper",_ClassName));
+      return; 
+    }
+    ind_enabled = 1;
+  }
+
   _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() exited",_ClassName));
 }
 
 void OSBase_OperatingSystemProviderDisableIndications(CMPIIndicationMI * mi) {
   _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() called",_ClassName));
+
+  if(ind_enabled) {
+    /* stop the polling mechanism */
+    if(ind_stop() != IND_OK) { 
+      _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() failed: stop indication helper",_ClassName));
+      return; 
+    }
+    ind_enabled = 0;
+  }
+
   _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() exited",_ClassName));
 }
 
+#endif
 
 /* ---------------------------------------------------------------------------*/
 /*                              Provider Factory                              */
@@ -449,10 +686,12 @@ CMMethodMIStub( OSBase_OperatingSystemProvider,
                 _broker, 
                 CMNoHook);
 
+#ifndef NOEVENTS
 CMIndicationMIStub( OSBase_OperatingSystemProvider,
                     OSBase_OperatingSystemProvider, 
                     _broker, 
                     CMNoHook);
+#endif
 
 /* ---------------------------------------------------------------------------*/
 /*             end of cmpiOSBase_OperatingSystemProvider                      */

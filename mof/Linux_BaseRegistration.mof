@@ -138,6 +138,21 @@ instance of PG_ProviderCapabilities
    SupportedMethods = NULL; // All methods
 };
 
+//instance of PG_ProviderCapabilities
+//{
+//   //The provider module as defined in PG_ProviderModule
+//   ProviderModuleName = "OSBase_OperatingSystemProviderModule";
+//   //The provider name as defined in PG_Provider
+//   ProviderName = "OSBase_OperatingSystemProvider";
+//   CapabilityID = "2";
+//   //Name of the CIM class as defined in the mof
+//   ClassName = "Linux_OperatingSystemIndication";
+//   Namespaces = {"root/cimv2"};
+//   ProviderType = { 4 }; // Indication
+//   SupportedProperties = NULL; // All properties
+//   SupportedMethods = NULL; // All methods
+//};
+
 
 // ===================================================================
 // 	Linux_UnixProcess
@@ -382,4 +397,3 @@ instance of PG_ProviderCapabilities
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
-

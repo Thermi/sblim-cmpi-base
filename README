@@ -58,6 +58,8 @@ Prerequisites
 - CMPI enabled CIMOM
 - CIM Schema Version 2.7 and higher loaded into the CIMOM's
   repository
+- to enable Indication support:
+  SBLIM package indication_helper installed
 
 
 Building CIMOM and CMPI for this CIMOM

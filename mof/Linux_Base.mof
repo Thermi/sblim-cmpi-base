@@ -105,6 +105,19 @@ class Linux_OperatingSystem : CIM_OperatingSystem
 };
 
 
+//[ Indication,
+//  Description ("Metric Process Indication"),
+//  Provider("cmpi:OSBase_OperatingSystemProvider")
+//]
+//class Linux_OperatingSystemIndication : CIM_ProcessIndication
+//{
+//  [Description("OS Name for Indication")]
+//  string Name;
+//  [Description("OperationalStatus for Indication")]
+//  string OperationalStatus;
+//};
+
+
 // ===================================================================
 // 	Linux_UnixProcess
 // ===================================================================
@@ -220,3 +233,5 @@ class Linux_CSProcessor : CIM_SystemDevice
   ]
   Linux_Processor REF PartComponent;
 };
+
+
