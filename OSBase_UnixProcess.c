@@ -93,7 +93,7 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
   int     i     = 0;
   int     rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_process()\n",_FILENAME); }   
+  if( _debug ) { fprintf(stderr, "--- %s : get_process_data()\n",_FILENAME); }   
 
   cmd = (char*)malloc((strlen(pid)+7)*sizeof(char));
   strcpy(cmd, "/proc/");
@@ -117,7 +117,6 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
       }
       i++;
     }
-    if(cmd) free(cmd);
     freeresultbuf( hdout );
     closedir(dpid);
   }
@@ -232,7 +231,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
       (*sptr)->args[j]=strdup(parr[i]);
       //     fprintf(stderr,"(*sptr)->args[%i] : %s\n",j,(*sptr)->args[j]);
       j++;
-    i++;
+      i++;
     }
   }
 
@@ -321,7 +320,7 @@ void free_process( struct cim_process * sptr ) {
   if(sptr->path)   free(sptr->path);
   if(sptr->createdate) free(sptr->createdate);
   freeresultbuf(sptr->args);
-  free(sptr);
+  if(sptr) free(sptr);
 }
 
 

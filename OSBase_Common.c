@@ -156,7 +156,7 @@ signed short get_os_timezone() {
       ptr = hdout[0]+3;
       strncpy(min,ptr,2);
       CIM_OS_TIMEZONE = (atoi(hour)*60)+atoi(min);
-      freeresultbuf(hdout);
+      //      freeresultbuf(hdout);
     }
     else {
       fprintf(stderr, "--- %s : command date +z not successful returned - Timezone set to 0\n",_FILENAME);
