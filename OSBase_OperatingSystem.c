@@ -336,41 +336,42 @@ unsigned long long get_os_maxProcMemSize() {
 
 char * get_os_codeSet() {
   char * codeSet = NULL;
-  //  char * var     = NULL;
-  //  char * str     = NULL;
 
   _OSBASE_TRACE(4,("--- get_os_codeSet() called"));
 
   codeSet = nl_langinfo(CODESET);
-  /*
-  var = getenv("LANG");
-  if( var != NULL ) {
-    str = strchr(var,'.');
-    codeSet = strdup(str+1);
-  }
-  */
 
-  _OSBASE_TRACE(4,("--- get_os_codeSet() exited : %s\n",codeSet));
+  _OSBASE_TRACE(4,("--- get_os_codeSet() exited : %s",codeSet));
   return codeSet;
 }
 
 char * get_os_langEd() {
-  char * langEd = NULL;
-  char * var     = NULL;
-  char * str     = NULL;
+  char ** hdout  = NULL;
+  char *  langEd = NULL;
+  char *  var    = NULL;
+  char *  str    = NULL;
+  char *  ptr    = NULL;
+  int     rc     = 0;
 
   _OSBASE_TRACE(4,("--- get_os_langEd() called"));
 
   var = getenv("LANG");
+  if(!var) { 
+    rc = runcommand( "locale | grep LC_CTYPE" , NULL , &hdout , NULL );
+    if( rc == 0 ) { var = hdout[0]; }
+  }
   if( var != NULL ) {
+    if( (ptr=strchr(var,'"')) ) {
+      var = ptr+1;
+    }
     str = strchr(var,'.');
     langEd = calloc(1,strlen(var)-strlen(str)+1);
     strncpy(langEd,var,strlen(var)-strlen(str));
-    str = strchr(langEd,'_');
-    *str = '-';
+    if( (str = strchr(langEd,'_')) ) { *str = '-'; }
   }
+  freeresultbuf(hdout);
 
-  _OSBASE_TRACE(4,("--- get_os_langEd() exited : %s\n",langEd));
+  _OSBASE_TRACE(4,("--- get_os_langEd() exited : %s",langEd));
   return langEd;
 }
 

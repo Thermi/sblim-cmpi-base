@@ -3,7 +3,6 @@
 
 # Change the following lines to match your system
 
-ROOTDIR=$(HOME)/sblim
 
 # *********** SNIA CIMOM flavor ************* #
 
