@@ -50,13 +50,16 @@ class Linux_ComputerSystem : CIM_ComputerSystem
 [ Provider("cmpi:cmpiOSBase_OperatingSystemProvider") ]
 class Linux_OperatingSystem : CIM_OperatingSystem
 {
-  [ Description("The LanguageEdition property indicates the language "
-    "identifier used by the operating system. A language identifier "
-    "is a standard international numeric abbrevation for a country or "
-    "region. Each language has a unique language identifier (LANGID), "
-    "a 16-bit value that consists of a primary language identifier "
-    "and a secondary language identifier. An example for "
-    "LanguageEdition would be 'en-US' for English.")
+  [ Description("The LanguageEdition property indicates the national "
+    "language version of the installed operating system, for example "
+    "US English. For many operating systems this value is given as a "
+    "standard international numeric abbrevation for a country or "
+    "region. Each language has a unique language identifier that "
+    "consists of a primary language identifier and a secondary "
+    "language identifier, for example en-US."
+    "If such a language identifier is not available for an operating "
+    "system the native value from the operating system, that "
+    "expresses its language version is used, for example ENU.")
   ]
   string LanguageEdition;
 

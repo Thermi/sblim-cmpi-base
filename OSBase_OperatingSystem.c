@@ -339,7 +339,7 @@ char * get_os_codeSet() {
 
   _OSBASE_TRACE(4,("--- get_os_codeSet() called"));
 
-  codeSet = nl_langinfo(CODESET);
+  codeSet = strdup(nl_langinfo(CODESET));
 
   _OSBASE_TRACE(4,("--- get_os_codeSet() exited : %s",codeSet));
   return codeSet;
@@ -356,18 +356,29 @@ char * get_os_langEd() {
   _OSBASE_TRACE(4,("--- get_os_langEd() called"));
 
   var = getenv("LANG");
-  if(!var) { 
+  if(!var) {
     rc = runcommand( "locale | grep LC_CTYPE" , NULL , &hdout , NULL );
     if( rc == 0 ) { var = hdout[0]; }
   }
   if( var != NULL ) {
+
+    if( (ptr=strchr(var,'=')) ) { var = ptr+1; }
     if( (ptr=strchr(var,'"')) ) {
       var = ptr+1;
     }
     str = strchr(var,'.');
-    langEd = calloc(1,strlen(var)-strlen(str)+1);
-    strncpy(langEd,var,strlen(var)-strlen(str));
-    if( (str = strchr(langEd,'_')) ) { *str = '-'; }
+
+    if(str) {
+      langEd = calloc(1,strlen(var)-strlen(str)+1);
+      strncpy(langEd,var,strlen(var)-strlen(str));
+    }
+    else {
+      langEd = calloc(1,strlen(var)+1);
+      strcpy(langEd,var);
+    }
+
+    if( (str = strchr(langEd,'\n')) ) { *str='\0'; }
+    if( (str = strchr(langEd,'_')) )  { *str = '-'; }
   }
   freeresultbuf(hdout);
 
