@@ -292,8 +292,8 @@ CMPIStatus Linux_RunningOSAssociators( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI Associators()\n", _ClassName ); 
 
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -341,8 +341,8 @@ CMPIStatus Linux_RunningOSAssociatorNames( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI AssociatorNames()\n", _ClassName ); 
 
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			  CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -398,8 +398,8 @@ CMPIStatus Linux_RunningOSReferences( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI References()\n", _ClassName ); 
 
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -446,8 +446,8 @@ CMPIStatus Linux_RunningOSReferenceNames( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI ReferenceNames()\n", _ClassName ); 
   
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {

@@ -383,8 +383,8 @@ CMPIStatus '$1'Associators( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI Associators()\n", _ClassName ); 
     
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -409,8 +409,8 @@ CMPIStatus '$1'AssociatorNames( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI AssociatorNames()\n", _ClassName ); 
     
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -443,8 +443,8 @@ CMPIStatus '$1'References( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI References()\n", _ClassName ); 
     
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -467,8 +467,8 @@ CMPIStatus '$1'ReferenceNames( CMPIAssociationMI * mi,
     fprintf( stderr, "--- %s.c : CMPI ReferenceNames()\n", _ClassName ); 
     
   if( assocClass ) {
-    op = CMNewObjectPath( _broker, _ClassName,
-			    CMGetCharPtr(CMGetNameSpace(cop,&rc)), &rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,&rc)),
+			  _ClassName, &rc );
   }
 
   if( ( assocClass==NULL ) || ( CMClassPathIsA(_broker,op,assocClass,&rc) == 1 ) ) {
@@ -631,8 +631,8 @@ static CMPIObjectPath * _makePath( CMPIObjectPath * ref,
     }
   }
 
-  op = CMNewObjectPath( _broker, _ClassName,
-			CMGetCharPtr(CMGetNameSpace(ref,rc)), rc );
+  op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
+			_ClassName, rc );
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
@@ -664,8 +664,8 @@ static CMPIInstance * _makeInst( CMPIObjectPath * ref,
     }
   }
 
-  op = CMNewObjectPath( _broker, _ClassName,
-			CMGetCharPtr(CMGetNameSpace(ref,rc)), rc );
+  op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
+			_ClassName, rc );
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 

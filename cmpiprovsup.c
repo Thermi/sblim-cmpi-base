@@ -91,12 +91,12 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
     fprintf( stderr, "--- %s : _assoc_create_inst_1toN()\n",_FILENAME);
 
   if( left == 0 ) {
-    op = CMNewObjectPath( _broker, _RefRightClass,
-			  CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
+			  _RefRightClass, rc );
   }
   else { /* left == 1 */
-    op = CMNewObjectPath( _broker, _RefLeftClass,
-			  CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
+			  _RefLeftClass, rc );
   }
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
@@ -171,8 +171,8 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
     goto exit; 
   }
 
-  op = CMNewObjectPath( _broker, _ClassName,
-			 CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+  op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)), 
+			_ClassName, rc );
   if( CMIsNullObject(op) ) {
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
@@ -243,8 +243,8 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
   op = _assoc_targetClass_OP(_broker,ref,_RefLeftClass,_RefRightClass,rc);
   if( op == NULL ) { goto exit; }
 
-  rop = CMNewObjectPath( _broker, _ClassName,
-			 CMGetCharPtr(CMGetNameSpace(ref,rc)), rc );
+  rop = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)),
+			 _ClassName, rc );
   if( CMIsNullObject(rop) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
@@ -399,8 +399,8 @@ CMPIObjectPath * _assoc_targetClass_OP( CMPIBroker * _broker,
   targetName = _assoc_targetClass_Name(_broker,ref,_RefLeftClass,_RefRightClass,rc);
  
   if( targetName != NULL ) {
-    op = CMNewObjectPath( _broker, targetName,
-			  CMGetCharPtr(CMGetNameSpace(ref,rc)), rc );
+    op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
+			  targetName, rc );
   }
   return op;
 }
@@ -436,26 +436,26 @@ int _assoc_check_parameter_const( CMPIBroker * _broker,
   if( resultClass || role || resultRole) {
     
     sourceClass = CMGetClassName(cop, rc);
-    scop = CMNewObjectPath( _broker, CMGetCharPtr(sourceClass),
-			    CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+    scop = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)), 
+			    CMGetCharPtr(sourceClass), rc );
 
     /* check if resultClass is parent or the class itslef of the target class */
     if( resultClass ) {
 
       if( strcasecmp(CMGetCharPtr(sourceClass),_RefLeftClass) == 0 ||
 	  CMClassPathIsA(_broker,scop,_RefLeftClass,rc) == 1 ) {
-	op = CMNewObjectPath( _broker, _RefRightClass,
-			      CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+	op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
+			      _RefRightClass, rc );
       }
       else if( strcasecmp(CMGetCharPtr(sourceClass),_RefRightClass) == 0 ||
 	       CMClassPathIsA(_broker,scop,_RefRightClass,rc) == 1 ) {
-	op = CMNewObjectPath( _broker, _RefLeftClass,
-			      CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+	op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
+			      _RefLeftClass, rc );
       }
       else { goto exit; }
 
-      rcop = CMNewObjectPath( _broker, resultClass,
-			      CMGetCharPtr(CMGetNameSpace(cop,rc)), rc );
+      rcop = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
+			      resultClass, rc );
     
       if( CMClassPathIsA(_broker,op,resultClass,rc) == 1 ) { intrc = 1; }
       else if( ( CMClassPathIsA(_broker,rcop,_RefRightClass,rc) == 1 && 

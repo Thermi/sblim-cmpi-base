@@ -491,8 +491,8 @@ static CMPIObjectPath * _makePath( CMPIObjectPath * ref,
     goto exit;
   }
 
-  op = CMNewObjectPath( _broker, _ClassName,
-			CMGetCharPtr(CMGetNameSpace(ref,rc)), rc );
+  op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
+			_ClassName, rc );
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
@@ -584,8 +584,8 @@ static CMPIInstance * _makeOS( CMPIObjectPath * ref,
     goto exit;
   }
 
-  op = CMNewObjectPath( _broker, _ClassName,
-			CMGetCharPtr(CMGetNameSpace(ref,rc)), rc );
+  op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
+			_ClassName, rc );
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
