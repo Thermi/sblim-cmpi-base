@@ -1,6 +1,8 @@
 #!/bin/sh
 
 
+DOMAIN=`dnsdomainname`;
+
 #***********************************************************************#
 #                          ComputerSystem                               #
 #-----------------------------------------------------------------------#
@@ -11,10 +13,13 @@ echo 'Linux_ComputerSystem' > ComputerSystem.keys
 
 # Name
 
-echo `hostname` | grep `dnsdomainname` >/dev/null\
-&& echo `hostname` >> ComputerSystem.keys \
-|| echo `hostname`'.'`dnsdomainname` >> ComputerSystem.keys
-
+if [[ -n $DOMAIN ]]; then
+    echo `hostname` | grep $DOMAIN >/dev/null\
+	&& echo `hostname` >> ComputerSystem.keys \
+	|| echo `hostname`.$DOMAIN >> ComputerSystem.keys
+else 
+    echo `hostname` >> ComputerSystem.keys
+fi
 
 #-----------------------------------------------------------------------#
 
@@ -30,10 +35,12 @@ echo 'Linux_OperatingSystem' > OperatingSystem.keys
 
 # Name
 
-
-echo `hostname` | grep `dnsdomainname` >/dev/null\
-&& echo `hostname` >> OperatingSystem.keys \
-|| echo `hostname`'.'`dnsdomainname` >> OperatingSystem.keys
-
+if [[ -n $DOMAIN ]]; then
+    echo `hostname` | grep $DOMAIN >/dev/null\
+	&& echo `hostname` >> OperatingSystem.keys \
+	|| echo `hostname`.$DOMAIN >> OperatingSystem.keys
+else 
+    echo `hostname` >> OperatingSystem.keys
+fi
 
 #-----------------------------------------------------------------------#
