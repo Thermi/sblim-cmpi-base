@@ -14,4 +14,7 @@
 
 * fixed algorithm to retrieve Version of Linux_OperatingSystem
 
+* Processor instrumentation ported to GENERIC and X86_64 hardware 
+  platform
+
 // ===================================================================
