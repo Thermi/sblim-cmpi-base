@@ -4,7 +4,7 @@
 /*
  * OSBase_ComputerSystem.h
  *
- * Copyright (c) 2002, International Business Machines
+ * (C) Copyright IBM Corp. 2002
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
