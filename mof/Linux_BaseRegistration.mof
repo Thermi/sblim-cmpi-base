@@ -1,0 +1,261 @@
+//
+// Linux_Base.mof
+//
+// Copyright (c) 2002, International Business Machines
+//
+// THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+// ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+// CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+//
+// You can obtain a current copy of the Common Public License from
+// http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+//
+// Author:       Heidi Neumann <heidineu@de.ibm.com>
+// Contributors:
+//
+// Description:
+// CIM classes for Linux Base System Instrumentation
+//
+
+
+#pragma locale ("en_US")
+
+// ===================================================================
+// 	Linux_ComputerSystem
+// ===================================================================
+
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_ComputerSystemProviderModule";
+   Location = "cmpiLinux_ComputerSystem";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_ComputerSystemProviderModule";
+   Name = "Linux_ComputerSystem";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_ComputerSystemProviderModule";
+   ProviderName = "Linux_ComputerSystem";
+   CapabilityID = "1";
+   ClassName = "Linux_ComputerSystem";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2 }; // Instance
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
+// 	Linux_OperatingSystem
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_OperatingSystemProviderModule";
+   Location = "cmpiLinux_OperatingSystem";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_OperatingSystemProviderModule";
+   Name = "Linux_OperatingSystem";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_OperatingSystemProviderModule";
+   ProviderName = "Linux_OperatingSystem";
+   CapabilityID = "1";
+   ClassName = "Linux_OperatingSystem";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2 }; // Instance
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
+// 	Linux_UnixProcess
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_UnixProcessProviderModule";
+   Location = "cmpiLinux_UnixProcess";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_UnixProcessProviderModule";
+   Name = "Linux_UnixProcess";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_UnixProcessProviderModule";
+   ProviderName = "Linux_UnixProcess";
+   CapabilityID = "1";
+   ClassName = "Linux_UnixProcess";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2 }; // Instance
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
+// 	Linux_Processor
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_ProcessorProviderModule";
+   Location = "cmpiLinux_Processor";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_ProcessorProviderModule";
+   Name = "Linux_Processor";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_ProcessorProviderModule";
+   ProviderName = "Linux_Processor";
+   CapabilityID = "1";
+   ClassName = "Linux_Processor";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2 }; // Instance
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+
+// -------------------------------------------------------------------
+// *******************************************************************
+// 	Associations
+// *******************************************************************
+// -------------------------------------------------------------------
+
+
+// ===================================================================
+// 	Linux_RunningOS
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_RunningOSProviderModule";
+   Location = "cmpiLinux_RunningOS";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_RunningOSProviderModule";
+   Name = "Linux_RunningOS";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_RunningOSProviderModule";
+   ProviderName = "Linux_RunningOS";
+   CapabilityID = "1";
+   ClassName = "Linux_RunningOS";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2,3 }; // Association
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
+// 	Linux_OSProcess
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_OSProcessProviderModule";
+   Location = "cmpiLinux_OSProcess";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_OSProcessProviderModule";
+   Name = "Linux_OSProcess";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_OSProcessProviderModule";
+   ProviderName = "Linux_OSProcess";
+   CapabilityID = "1";
+   ClassName = "Linux_OSProcess";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2,3 }; // Association
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
+// 	Linux_CSProcessor
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name = "Linux_CSProcessorProviderModule";
+   Location = "cmpiLinux_CSProcessor";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+instance of PG_Provider
+{
+   ProviderModuleName = "Linux_CSProcessorProviderModule";
+   Name = "Linux_CSProcessor";
+};
+
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "Linux_CSProcessorProviderModule";
+   ProviderName = "Linux_CSProcessor";
+   CapabilityID = "1";
+   ClassName = "Linux_CSProcessor";
+   Namespaces = {"root/cimv2"};
+   ProviderType = { 2,3 }; // Association
+   SupportedProperties = NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+

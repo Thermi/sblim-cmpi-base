@@ -1,0 +1,12 @@
+# Settings for SBLIM FSVOL Instrumentation 
+
+# SNIA CIMOM flavor
+
+# Change the following lines to match your system
+CIMOM=openCimom
+ROOTDIR=/usr/sniacimom
+ROOTDIRLIB=$(ROOTDIR)/lib
+ROOTDIRINC=$(ROOTDIR)/include
+ROOTDIRMOF=$(ROOTDIR)/lib/mof
+
+

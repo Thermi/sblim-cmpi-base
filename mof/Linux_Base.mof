@@ -1,0 +1,148 @@
+//
+// Linux_Base.mof
+//
+// Copyright (c) 2002, International Business Machines
+//
+// THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE 
+// ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE 
+// CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+//
+// You can obtain a current copy of the Common Public License from
+// http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+//
+// Author:       Heidi Neumann <heidineu@de.ibm.com>
+// Contributors:
+//
+// Description: 
+// CIM classes for Linux Base System Instrumentation
+//
+
+
+#pragma locale ("en_US")
+
+
+// -------------------------------------------------------------------
+// *******************************************************************
+// 	Classes
+// *******************************************************************
+// -------------------------------------------------------------------
+
+
+
+// ===================================================================
+// 	Linux_ComputerSystem
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_ComputerSystem"),
+  Description ("A class derived from ComputerSystem"
+  " to represent the GNU/Linux OS on a Desktop, Mobile, NetPC,"
+  " Server or other type of a single node Computer System ." )
+] 
+class Linux_ComputerSystem : CIM_ComputerSystem
+{ };
+
+
+// ===================================================================
+// 	Linux_OperatingSystem
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_OperatingSystem") ] 
+class Linux_OperatingSystem : CIM_OperatingSystem
+{
+  [ Description("Average total cpu time in percents."), 
+    Units("Percent") 
+  ]
+  uint16 PctTotalCPUTime;
+
+  uint8 execCmd([IN] string cmd, [OUT] string out);
+};
+
+
+// ===================================================================
+// 	Linux_UnixProcess
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_UnixProcess") ] 
+class Linux_UnixProcess : CIM_UnixProcess
+{
+  uint32 MaxNumberOfChildProcesses ;
+  uint32 MaxNumberOfOpenFiles ;
+  uint32 MaxRealStack ;
+
+  uint8 terminate();
+};
+
+
+// ===================================================================
+// 	Linux_Processor
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_Processor") ] 
+class Linux_Processor : CIM_Processor
+{ };
+
+
+
+// -------------------------------------------------------------------
+// *******************************************************************
+// 	Associations
+// *******************************************************************
+// -------------------------------------------------------------------
+
+
+// ===================================================================
+// 	Linux_RunningOS
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_RunningOS") ] 
+class Linux_RunningOS : CIM_RunningOS
+{
+  [ Override ("Antecedent"),
+    Description ("The current running OS.")
+  ]
+  Linux_OperatingSystem REF Antecedent;
+
+  [ Override ("Dependent"),
+    Description ("The Computer System Container.")
+  ]
+  Linux_ComputerSystem REF Dependent; 
+};
+
+
+// ===================================================================
+// 	Linux_OSProcess
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_OSProcess") ] 
+class Linux_OSProcess : CIM_OSProcess
+{
+  [ Override ("GroupComponent"),
+    Description ("The current running OS.")
+  ]
+  Linux_OperatingSystem REF GroupComponent;
+
+  [ Override ("PartComponent"),
+    Description ("The current running Processes.")
+  ]
+  Linux_UnixProcess REF PartComponent;
+};
+
+
+// ===================================================================
+// 	Linux_CSProcessor
+// ===================================================================
+
+[ Provider("cmpi:cmpiLinux_CSProcessor") ] 
+class Linux_CSProcessor : CIM_SystemDevice
+{ 
+  [ Override ("GroupComponent"),
+    Description ("The Computer System Container.")
+  ]
+  Linux_ComputerSystem REF GroupComponent;
+
+  [ Override ("PartComponent"),
+    Description ("The Processors, available to the CS.")
+  ]
+  Linux_Processor REF PartComponent;
+};
+

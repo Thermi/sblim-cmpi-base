@@ -1,0 +1,54 @@
+SBLIM Base Instrumentation for CMPI README
+
+The Base Instrumentation allows to get information about the system
+itself via CIMOM .
+
+
+Prerequisites are : 
+
+- CIM Schema Version 2.7.1 (preliminary)
+- CMPI : Common Manageablity Programming Interface
+
+
+Base Instrumentation specific libraries :
+
+- CimBase ... implements the resource access and is responsible
+  for data gathering 
+- cimprovsup ... implements tool functionality to write generic 
+  CMPI Provider
+
+
+Linux Base Schema : 
+
+- mof/Linux_Base.mof
+
+
+Instrumentation Libraries :
+
+- cmpiLinux_ComputerSystem.c
+- cmpiLinux_OperatingSystem.c
+- cmpiLinux_Process.c
+- cmpiLinux_Processor.c
+
+- cmpiLinux_RunningOS.c
+- cmpiLinux_OSProcess.c
+- cmpiLinux_CSProcessor.c
+
+
+Test Script :
+
+semantictest_OSBaseStage1.sh
+semantictest_OSBaseStage2_Processor.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
