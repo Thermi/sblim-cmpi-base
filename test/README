@@ -23,5 +23,5 @@ directories
 
 
 
-Run the test in the testsuite dir by executing ./test-cmpi-base.sh
+Run the test in the testsuite dir by executing . test-cmpi-base.sh
 
