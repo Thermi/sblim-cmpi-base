@@ -3,10 +3,8 @@
 # SNIA CIMOM flavor
 
 # Change the following lines to match your system
-CIMOM=openCimom
-ROOTDIR=/usr/sniacimom
-ROOTDIRLIB=$(ROOTDIR)/lib
+ROOTDIR=$(HOME)/sblim
+ROOTDIRLIB=$(PEGASUS_HOME)/lib
 ROOTDIRINC=$(ROOTDIR)/include
 ROOTDIRMOF=$(ROOTDIR)/lib/mof
-
 
