@@ -21,11 +21,13 @@ endif
 
 #------------------------------------------------------------------------------#
 
-ifndef PEGASUS_HOME
-  ERROR = pegasus_home_undefined
+ifdef PEGASUS
+  ifndef PEGASUS_HOME
+    ERROR = pegasus_home_undefined
 pegasus_home_undefined:
 	@ echo PEGASUS_HOME environment variable must be set to the Pegasus installation directory
 	@ exit 1
+  endif
 endif
 
 # define the Hardware Platform the compile will run on
@@ -104,7 +106,9 @@ ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
 	$(MAKE) -C mof -f makefile.cmpi install
+ifdef PEGASUS
 	$(MAKE) -C mof -f makefile.pegasus install
+endif
 
 test:
 	@[ -d $(CIMOMLIB) ] || ( echo $(CIMOMLIB) does not exist && false)
