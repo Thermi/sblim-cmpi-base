@@ -396,7 +396,7 @@ static CMPIInstance * _makeInst( CMPIObjectPath * ref,
   CMPIObjectPath * op     = NULL;
   CMPIInstance   * ci     = NULL;
 #ifndef CIM26COMPAT
-  int              status = 2; /* Enabled */
+  unsigned short   status = 2; /* Enabled */
 #endif
 
   /* tool method call to get the unique name of the system */

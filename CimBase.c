@@ -171,7 +171,7 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
   memset(*sptr, 0, sizeof(struct cim_operatingsystem));
   
   if( !CIM_OS_DISTRO ) { get_os_distro(); }
-  (*sptr)->version = CIM_OS_DISTRO+15;
+  (*sptr)->version = CIM_OS_DISTRO;
   (*sptr)->osType = 36;
   
   (*sptr)->numOfProcesses = get_os_numOfProcesses();
@@ -226,13 +226,16 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 char * get_os_distro() {
   char ** hdout   = NULL;
   char *  ptr     = NULL;
+  int     strl    = 0;
+  int     i       = 0;
   int     rc      = 0;
 
   if( _debug && !CIM_OS_DISTRO ) 
     { fprintf(stderr, "--- %s : get_os_distro()\n",_FILENAME); }
 
   /* check if Red Hat */
-  if( !CIM_OS_DISTRO ) {    
+  /*
+    if( !CIM_OS_DISTRO ) {    
     rc = runcommand( "rpm -q redhat-release" , NULL , &hdout , NULL );
     if( rc == 0 && ( strstr(hdout[0],"not installed") == NULL) ) {
       CIM_OS_DISTRO = (char *) malloc( strlen(hdout[0])*sizeof(char));
@@ -242,9 +245,11 @@ char * get_os_distro() {
       freeresultbuf(hdout);
     }
   }
-
+  */
   /* check if SuSE */
-  if( !CIM_OS_DISTRO ) {   
+  /*
+  if( !CIM_OS_DISTRO ) {
+#ifdef INTEL 
     rc = runcommand( "rpm -q SuSE-release" , NULL , &hdout , NULL );
     if( rc == 0 && ( strstr(hdout[0],"not installed") == NULL) ) {
       CIM_OS_DISTRO = (char *) malloc( strlen(hdout[0])*sizeof(char));
@@ -253,11 +258,46 @@ char * get_os_distro() {
       strcpy( CIM_OS_DISTRO , hdout[0] );
       freeresultbuf(hdout);
     }
+#elif S390
+    rc = runcommand( "cat /etc/SuSE-release" , NULL , &hdout , NULL );
+    if( rc == 0 ) {
+      CIM_OS_DISTRO = (char *) malloc( strlen(hdout[0]+strlen(hdout[1]))*sizeof(char));
+      ptr = strchr(hdout[0], '\n');
+      *ptr = '\0';
+      strcpy( CIM_OS_DISTRO , hdout[0] );
+      strcat( CIM_OS_DISTRO , hdout[1] );     
+      ptr = strchr(CIM_OS_DISTRO, '\n');
+      *ptr = '\0';
+      freeresultbuf(hdout);
+    }
+#endif
   }
-  
-  if( !CIM_OS_DISTRO ) {     
-    CIM_OS_DISTRO = (char *) malloc( 6*sizeof(char));
-    strcpy( CIM_OS_DISTRO, "Linux");
+  */
+
+  if( !CIM_OS_DISTRO ) { 
+    rc = runcommand( "cat /etc/`ls /etc/ | grep release`" , NULL , &hdout , NULL );
+    if( rc == 0 ) {
+      while ( hdout[i]) {
+	strl = strl+strlen(hdout[i])+1; 
+	ptr = strchr(hdout[i], '\n');
+	*ptr = '\0';
+	i++;
+      }	
+      i=0;
+      CIM_OS_DISTRO = (char *) malloc( strl*sizeof(char));
+      strcpy( CIM_OS_DISTRO , hdout[0] );
+      i++;
+      while ( hdout[i]) {
+	strcat( CIM_OS_DISTRO , " " ); 
+	strcat( CIM_OS_DISTRO , hdout[i] );  
+	i++;   
+      }
+      freeresultbuf(hdout);
+    }
+    else {
+      CIM_OS_DISTRO = (char *) malloc( 6*sizeof(char));
+      strcpy( CIM_OS_DISTRO , "Linux" );
+    }
   }
 
   return CIM_OS_DISTRO;
@@ -332,7 +372,7 @@ char * get_os_installdate() {
   return str;
 }
 
-int get_os_timezone() {
+signed short get_os_timezone() {
   char ** hdout = NULL;
   int     rc    = 0;
 
@@ -355,7 +395,7 @@ int get_os_timezone() {
 /* add timezone to datetime 'str'of format %Y%m%d%H%M%S.000000
  * out : yyyyMMddHHmmss.SSSSSSsutc, e.g. 20030112152345.000000+100
  */
-void _cat_timezone( char * str , int zone ) {
+void _cat_timezone( char * str , signed short zone ) {
   char * tz = NULL;
 
   tz = (char *)malloc(5*sizeof(char));
@@ -446,10 +486,10 @@ unsigned long get_os_maxNumOfProc() {
   return max; 
 }
 
-unsigned long get_os_maxProcMemSize() {
-  struct rlimit rlim;
-  unsigned long max = 0;
-  int           rc  = 0;
+unsigned long long get_os_maxProcMemSize() {
+  struct rlimit      rlim;
+  unsigned long long max = 0;
+  int                rc  = 0;
 
   if( _debug ) { fprintf(stderr, "--- %s : get_os_maxProcMemSize()\n",_FILENAME); }  
 
@@ -820,13 +860,14 @@ int set_system_parameter(char *path, char *entry, char *value) {
 // -----------------------------------------------------------------------------
 
 static int _processor_data( int, struct cim_processor ** );
-static int _processor_family( int );
-static int _processor_load_perc( int );
+static unsigned short _processor_family( int );
+static unsigned short _processor_load_perc( int );
 
 int enum_all_processor( struct processorlist ** lptr ) {
   struct processorlist *  lptrhelp = NULL;
   char                 ** hdout    = NULL;
-  char                 ** line     = NULL;
+  char                 *  ptr      = NULL;
+  char                 *  id       = NULL;
   int                     i        = 0;
   int                     rc       = 0;
 
@@ -836,19 +877,24 @@ int enum_all_processor( struct processorlist ** lptr ) {
   memset(lptrhelp, 0, sizeof(struct processorlist));
   *lptr = lptrhelp;
 
-  rc = runcommand( "cat /proc/cpuinfo | grep processor" , NULL , &hdout , NULL );
+  rc = runcommand( "cat /proc/cpuinfo | grep ^processor | sed -e s/processor//" , NULL , &hdout , NULL );
   if( rc == 0 ) {
-    while( hdout[i] != NULL ) {
-      line = line_to_array( hdout[i], ':');
-      
+    while( hdout[i] != NULL ) { 
       if ( lptrhelp->sptr != NULL) { 
 	lptrhelp->next = (struct processorlist *) malloc (sizeof(struct processorlist));
 	memset(lptrhelp->next, 0, sizeof(struct processorlist));
 	lptrhelp = lptrhelp->next;
       }
-      
-      rc = _processor_data( atoi(line[1]), &(lptrhelp->sptr) );
-      freeresultbuf(line);
+
+      ptr = hdout[i];
+      ptr = strchr( ptr , ':' );
+#ifdef INTEL
+      id = ptr++;
+#elif S390
+      id = (char*)malloc( (strlen(hdout[i])-strlen(ptr)+1)*sizeof(char) );
+      id = strncpy(id, hdout[i], strlen(hdout[i])-strlen(ptr));
+#endif
+      rc = _processor_data( atoi(id), &(lptrhelp->sptr) );
       i++;
     }
     freeresultbuf(hdout);
@@ -864,7 +910,7 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
 
   if( _debug ) { fprintf(stderr, "--- %s : get_processor_data()\n",_FILENAME); }  
 
-  rc = runcommand( "cat /proc/cpuinfo | grep processor" , NULL , &hdout , NULL );
+  rc = runcommand( "cat /proc/cpuinfo | grep ^processor" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     while( hdout[i] != NULL ) {
       if( strstr(hdout[i],id) != NULL ) { 
@@ -897,6 +943,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   (*sptr)->family = _processor_family(id); 
 
   /* Stepping */
+#ifdef INTEL 
   rc = runcommand( "cat /proc/cpuinfo | grep stepping" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     ptr = strrchr( hdout[id], ' ');
@@ -908,9 +955,17 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   }
   freeresultbuf(hdout);
   rc = 0;
+#elif S390
+  (*sptr)->step = (char*)malloc( 12*sizeof(char) );
+  strcpy((*sptr)->step,"no stepping");
+#endif
 
   /* ElementName */
+#ifdef INTEL 
   rc = runcommand( "cat /proc/cpuinfo | grep 'model name'" , NULL , &hdout , NULL );
+#elif S390
+  rc = runcommand( "cat /proc/cpuinfo | grep 'vendor_id'" , NULL , &hdout , NULL );
+#endif
   if( rc == 0 ) {
     ptr = strchr( hdout[id], ':');
     ptr = ptr+2;
@@ -926,7 +981,11 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   (*sptr)->loadPct = _processor_load_perc(id); 
 
   /* MaxClockSpeed && CurrentClockSpeed */
+#ifdef INTEL 
   rc = runcommand( "cat /proc/cpuinfo | grep 'cpu MHz'" , NULL , &hdout , NULL );
+#elif S390
+  rc = runcommand( "cat /proc/cpuinfo | grep 'bogomips per cpu'" , NULL , &hdout , NULL );
+#endif
   if( rc == 0 ) {
     ptr = strchr( hdout[id], ':');
     ptr = ptr+1;
@@ -935,14 +994,14 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   }
   freeresultbuf(hdout);
 
-  return rc;
+  return 0;
 }
 
 /* map model name of the processor 'id' to the respective representation in CIM */
-static int _processor_family( int id ) {
-  char ** hdout = NULL;
-  int     rv    = 0;
-  int     rc    = 0;
+static unsigned short _processor_family( int id ) {
+  char **        hdout = NULL;
+  unsigned short rv    = 0;
+  int            rc    = 0;
 
   if( _debug ) { fprintf(stderr, "--- %s : _processor_family()\n",_FILENAME); }  
 
@@ -990,6 +1049,11 @@ static int _processor_family( int id ) {
       else if( strstr( hdout[id], "K6") != NULL ) rv = 26; /* K6 Family */
       else if( strstr( hdout[id], "Athlon") != NULL ) rv = 26; /* AMD Athlon(TM) Processor Family */
     }
+
+    /* S390 Family */
+    else if( strstr( hdout[id], "S390") != NULL ) {
+      rv = 200;
+    }
   }
   else rv = 2; /* Unknown */
   freeresultbuf(hdout);
@@ -997,15 +1061,15 @@ static int _processor_family( int id ) {
 }
 
 /* calculates the load of the processor 'id' in percent */
-static int _processor_load_perc( int id ) {
+static unsigned short _processor_load_perc( int id ) {
   char ** hdout = NULL;
   char ** data  = NULL;
   char *  sid   = NULL;
   char *  cmd   = NULL;
-  unsigned long load      = 0;
-  unsigned long loadTotal = 0;
-  int           loadPct   = 0;
-  int           rc        = 0;
+  unsigned long  load      = 0;
+  unsigned long  loadTotal = 0;
+  unsigned short loadPct   = 0;
+  int            rc        = 0;
 
   if( _debug ) { fprintf(stderr, "--- %s : _processor_load_perc()\n",_FILENAME); }  
 

@@ -57,41 +57,41 @@ char * get_cs_primownercontact();
 // ------------------------------------------------------------------
 
 struct cim_operatingsystem {
-  char * version ;                    // major.minor
-  int    osType ;                     // 36
-  unsigned long numOfProcesses ;      // ps
-  unsigned long numOfUsers ;          // who -u
+  char *         version;              // major.minor
+  unsigned short osType;               // 36
+  unsigned long  numOfProcesses;       // ps
+  unsigned long  numOfUsers;           // who -u
 
-  char * installDate;
-  char * lastBootUp;
-  char * localDate;
-  int    curTimeZone;                // CurrentTimeZone
+  char *       installDate;
+  char *       lastBootUp;
+  char *       localDate;
+  signed short curTimeZone;            // CurrentTimeZone
 
-  unsigned long long maxNumOfProc;   // MaxNumberOfProcesses
-  unsigned long long maxProcMemSize; // MaxProcessMemorySize
+  unsigned long maxNumOfProc;          // MaxNumberOfProcesses
+  unsigned long long maxProcMemSize;   // MaxProcessMemorySize
 
-  unsigned long long totalVirtMem;   // TotalVirtualMemorySize
-  unsigned long long freeVirtMem;    // FreeVirtualMemory
-  unsigned long long totalPhysMem;   // TotalVisibleMemorySize
-  unsigned long long freePhysMem;    // FreePhysicalMemory
-  unsigned long long totalSwapMem;   // SizeStoredInPagingFiles
-  unsigned long long freeSwapMem;    // FreeSpaceInPagingFiles
+  unsigned long long totalVirtMem;     // TotalVirtualMemorySize
+  unsigned long long freeVirtMem;      // FreeVirtualMemory
+  unsigned long long totalPhysMem;     // TotalVisibleMemorySize
+  unsigned long long freePhysMem;      // FreePhysicalMemory
+  unsigned long long totalSwapMem;     // SizeStoredInPagingFiles
+  unsigned long long freeSwapMem;      // FreeSpaceInPagingFiles
 
 };
 
 int get_operatingsystem_data( struct cim_operatingsystem ** );
 void free_os_data( struct cim_operatingsystem * );
 
-void   _cat_timezone( char * str, int zone );
+void   _cat_timezone( char * str, signed short zone );
 char * get_os_distro();
 char * get_os_name();
 char * get_os_installdate();
 char * get_os_lastbootup();
-int    get_os_timezone();
+signed short  get_os_timezone();
 unsigned long get_os_numOfProcesses();
 unsigned long get_os_numOfUsers();
 unsigned long get_os_maxNumOfProc();
-unsigned long get_os_maxProcMemSize();
+unsigned long long get_os_maxProcMemSize();
 
 char * get_kernel_version();
 
@@ -105,23 +105,24 @@ char * get_kernel_version();
 // ------------------------------------------------------------------
 
 struct cim_process{
-  char * pid ;                   // Process ID
-  char * ppid;                   // Parent Process ID
-  char * ptty;                   // TTY
-  char * pcmd;                   // command
+  char * pid ;                   // Handle (Process ID)
+  char * ppid;                   // ParentProcessID
+  char * ptty;                   // ProcessTTY
+  char * pcmd;                   // Name
   char * path;                   // ModulePath
-  char ** args;                  // args[]
+  char ** args;                  // Parameters
   char * createdate;             // CreationDate
   unsigned long prio ;           // Priority
-  long      nice ;               // Nice value
-  long long uid ;                // User ID
-  long long gid ;                // Group ID
-  long long pmem ;               // Real Data
-  long      pcpu ;               // CPU Time
-  long long sid ;                // Session ID
-  int       state ;              // currenty execution state
-  unsigned long long kmtime ;    // Kernel Mode Time
-  unsigned long long umtime ;    // User Mode Time
+  unsigned long nice ;           // ProcessNiceValue
+  unsigned long long uid ;       // RealUserID
+  unsigned long long gid ;       // ProcessGroupID
+  unsigned long long sid ;       // ProcessSessionID
+  unsigned short     state ;     // ExecutionState
+  unsigned long long kmtime ;    // KernelModeTime
+  unsigned long long umtime ;    // UserModeTime
+
+  unsigned long long pmem ;      // Real Data
+  unsigned long      pcpu ;      // CPU Time
 };
 
 struct processlist{
@@ -149,11 +150,11 @@ struct cim_processor {
   char * id;
   char * step;
   char * name;
-  int    family;
-  int    loadPct;
-  int    stat;
-  unsigned long maxClockSpeed;
-  unsigned long curClockSpeed;
+  unsigned short family;
+  unsigned short loadPct;
+  unsigned short stat;
+  unsigned long  maxClockSpeed;
+  unsigned long  curClockSpeed;
 };
 
 struct processorlist {

@@ -3,6 +3,9 @@
 
 include setting.cmpi
 
+# define the Hardware Platform the compile will run on
+HW=$(shell ./platform.sh)
+
 # insert only when using the sysman module
 #SYSMAN = 1
 
@@ -20,10 +23,10 @@ endif
 
 # No changes necessary below this line
 # support CIM Schema Version 2.7
-CFLAGS=-Wall -I . -I $(ROOTDIRINC) -D_COMPILE_UNIX -DDEBUG -DNOEVENTS $(CFLAG_SYSMAN)
+CFLAGS=-Wall -I . -I $(CIMOMINC) -D_COMPILE_UNIX -D$(HW) -DDEBUG -DNOEVENTS $(CFLAG_SYSMAN)
 # support CIM Schema Version 2.6
-#CFLAGS=-Wall -I . -I $(ROOTDIRINC) -D_COMPILE_UNIX -DDEBUG -DNOEVENTS -DCIM26COMPAT $(CFLAG_SYSMAN)
-LDFLAGS=-L . -L$(ROOTDIRLIB) -shared -lpthread -lCimBase -lcmpiprovsup
+#CFLAGS=-Wall -I . -I $(CIMOMINC) -D_COMPILE_UNIX -DDEBUG -DNOEVENTS -DCIM26COMPAT $(CFLAG_SYSMAN)
+LDFLAGS=-L . -L$(CIMOMLIB) -shared -lpthread -lCimBase -lcmpiprovsup
 
 lib%.so: %.c 
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $?
@@ -54,37 +57,37 @@ libcmpiprovsup.so: cmpiprovsup.c
 	$(CC) $(CFLAGS) -shared -o $@ $^
 
 install: all
-	install libCimBase.so $(ROOTDIRLIB)
-	install libcmpiprovsup.so $(ROOTDIRLIB)
-	install libcmpiLinux_*.so $(ROOTDIRLIB)
+	install libCimBase.so $(CIMOMLIB)
+	install libcmpiprovsup.so $(CIMOMLIB)
+	install libcmpiLinux_*.so $(CIMOMLIB)
 ifdef SYSMAN
-	install sysman.o $(ROOTDIRLIB)
+	install sysman.o $(CIMOMLIB)
 endif
-	install -m 644 mlogsup.h $(ROOTDIRINC)
-	install -m 644 cimibase.h $(ROOTDIRINC)
-	install -m 644 cmpiprovsup.h $(ROOTDIRINC)
+	install -m 644 mlogsup.h $(CIMOMINC)
+	install -m 644 cimibase.h $(CIMOMINC)
+	install -m 644 cmpiprovsup.h $(CIMOMINC)
 	$(MAKE) -C mof -f makefile.cmpi install
 
 test:
-	@[ -d $(ROOTDIRLIB) ] || ( echo $(ROOTDIRLIB) does not exist && false)
-	@[ -d $(ROOTDIRINC) ] || ( echo $(ROOTDIRINC) does not exist && false)
-	@[ -d $(ROOTDIRMOF) ] || ( echo $(ROOTDIRMOF) does not exist && false)
+	@[ -d $(CIMOMLIB) ] || ( echo $(CIMOMLIB) does not exist && false)
+	@[ -d $(CIMOMINC) ] || ( echo $(CIMOMINC) does not exist && false)
+	@[ -d $(CIMOMMOF) ] || ( echo $(CIMOMMOF) does not exist && false)
 
 clean:
 	$(RM)	*.so *.o
 
 uninstall: 
 	$(MAKE) -C mof -f makefile.cmpi uninstall;
-	$(RM) $(ROOTDIRINC)/cimibase.h \
-	$(RM) $(ROOTDIRINC)/cmpiprovsup.h \
-	$(RM) $(ROOTDIRINC)/mlogsup.h \
-	$(RM) $(ROOTDIRLIB)/libCimBase.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiprovsup.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_ComputerSystem.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_OperatingSystem.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_UnixProcess.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_Processor.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_RunningOS.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_OSProcess.so \
-	$(RM) $(ROOTDIRLIB)/libcmpiLinux_CSProcessor.so
+	$(RM) $(CIMOMINC)/cimibase.h \
+	$(RM) $(CIMOMINC)/cmpiprovsup.h \
+	$(RM) $(CIMOMINC)/mlogsup.h \
+	$(RM) $(CIMOMLIB)/libCimBase.so \
+	$(RM) $(CIMOMLIB)/libcmpiprovsup.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_ComputerSystem.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_OperatingSystem.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_UnixProcess.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_Processor.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_RunningOS.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_OSProcess.so \
+	$(RM) $(CIMOMLIB)/libcmpiLinux_CSProcessor.so
 

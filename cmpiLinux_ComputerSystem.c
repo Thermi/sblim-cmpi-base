@@ -294,14 +294,14 @@ static CMPIObjectPath * _makePath( CMPIObjectPath * ref,
 
 static CMPIInstance * _makeInst( CMPIObjectPath * ref,
 				 CMPIStatus * rc) {
-  CMPIObjectPath * op    = NULL;
-  CMPIInstance   * ci    = NULL;
-  char * owner           = NULL;
-  char * contact         = NULL;
+  CMPIObjectPath * op        = NULL;
+  CMPIInstance   * ci        = NULL;
+  char * owner               = NULL;
+  char * contact             = NULL;
 #ifndef CIM26COMPAT
-  CMPIArray      * dedic = NULL;
-  int    status          = 2;       /* Enabled */
-  int    dedicated       = 0;       /* Not Dedicated */
+  CMPIArray      * dedic     = NULL;
+  unsigned short   status    = 2; /* Enabled */
+  unsigned short   dedicated = 0; /* Not Dedicated */
 #endif
 
   /* tool method call to get the unique name of the system */

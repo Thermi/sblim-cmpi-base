@@ -495,7 +495,7 @@ static CMPIInstance * _makeInst( CMPIObjectPath * ref,
   int               i      = 0;
   int               max    = 0;
 #ifndef CIM26COMPAT
-  int               status = 2; /* Enabled */
+  unsigned short    status  = 2; /* Enabled */
 #endif
 #ifdef MODULE_SYSMAN
   int               sysrc  = 0;

@@ -558,11 +558,11 @@ static CMPIInstance * _makeOS( CMPIObjectPath * ref,
   CMPIDateTime   * dt = NULL;
   CpuSample        cs; 
   unsigned long long totalSwap = 0;
-  int                pctcpu    = 0;
+  unsigned short     pctcpu    = 0;
 #ifndef CIM26COMPAT
-  CMPIArray      * opstat = NULL;
-  int                status    = 2; /* Enabled */
-  int                opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
+  CMPIArray      * opstat    = NULL;
+  unsigned short   status    = 2; /* Enabled */
+  unsigned short   opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
 #endif
 #ifndef NOEVENTS
   int                i         = 0;

@@ -4,12 +4,22 @@
 # Change the following lines to match your system
 
 ROOTDIR=$(HOME)/sblim
-ROOTDIRINC=$(ROOTDIR)/include
-ROOTDIRMOF=$(ROOTDIR)/lib/mof
 
-# SNIA CIMOM flavor
-ROOTDIRLIB=/usr/sniacimom/lib
+# *********** SNIA CIMOM flavor ************* #
 
-# Pegasus flavor
-#ROOTDIRLIB=$(PEGASUS_HOME)/lib
+CIMOM=/usr/sniacimom
+CIMOMINC=$(CIMOM)/include
+CIMOMMOF=$(CIMOM)/lib/mof
 
+CIMOMLIB=$(CIMOM)/lib
+
+# *********** SNIA CIMOM flavor ************* #
+
+
+
+# ************* Pegasus flavor ************** #
+
+#CIMOMLIB=$(PEGASUS_HOME)/lib
+
+
+# ************* Pegasus flavor ************** #
