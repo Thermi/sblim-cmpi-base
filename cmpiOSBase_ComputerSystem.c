@@ -57,8 +57,7 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data 
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -103,8 +102,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -154,7 +152,12 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "EnabledDefault", (CMPIValue*)&(status), CMPI_uint16);
 
-  dedic = CMNewArray(_broker,1,CMPI_uint16A,rc);
+  dedic = CMNewArray(_broker,1,CMPI_uint16,rc);
+  if(dedic == NULL) {
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "Create Array for Property Dedicated failed." );
+    _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
+  }
   CMSetArrayElementAt(dedic,0,(CMPIValue*)&(dedicated),CMPI_uint16);
   CMSetProperty( ci, "Dedicated", (CMPIValue*)&(dedic), CMPI_uint16A);
 #endif
