@@ -60,5 +60,6 @@
 * added sample subscriptions to test/indication directory
 * updated README.INDICATION with better description and sample for
   openPegasus
+* restructured init process for SBLIM tracing into a file
 
 // ===================================================================

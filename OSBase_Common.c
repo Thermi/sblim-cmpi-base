@@ -48,41 +48,70 @@ unsigned long CIM_OS_BOOTTIME = 0;
 
 /* ---------------------------------------------------------------------------*/
 
-int    _debug             = 0;
-char * _SBLIM_TRACE_FILE = NULL;
+int    _debug                    = 0;
+int    _SBLIM_TRACE_ENABLED      = 0;
+int    _SBLIM_TRACE_FILE_ENABLED = 0;
+char * _SBLIM_TRACE_FILE         = NULL;
+
+void _init_trace_level() {
+
+  char *var = NULL;
+
+  if(_SBLIM_TRACE_ENABLED == 1) return;
+
+  var = getenv("SBLIM_TRACE");
+  if(var != NULL) {
+    _debug = atoi(var);
+    fprintf(stderr,"SBLIM TRACE LEVEL: %i\n",_debug);
+    _SBLIM_TRACE_ENABLED = 1;
+  } 
+  else { _debug = 0; }
+
+  return;
+}
+
+void _init_trace_file() {
+
+  char *var = NULL;
+  FILE *fhd = NULL;
+
+  if(_SBLIM_TRACE_FILE_ENABLED == 1) return;
+
+  var = getenv("SBLIM_TRACE_FILE");
+  if( var != NULL ) {
+    if( ( ((fhd=fopen(var,"a")) == NULL) || fclose(fhd) ) ) {
+      fprintf(stderr,"Couldn't open/create trace file: %s\n",var);
+      return;
+    }
+    _SBLIM_TRACE_FILE = strdup(var);
+    fprintf(stderr,"SBLIM TRACE FILE created: %s\n",_SBLIM_TRACE_FILE);
+    _SBLIM_TRACE_FILE_ENABLED = 1;
+  } 
+  else { 
+    _SBLIM_TRACE_FILE_ENABLED = 0;
+    _SBLIM_TRACE_FILE = NULL; 
+  }
+  return;
+}
 
 /* initialization routine */
 void _init() {
-
-  char * var  = NULL;
-  char * err  = NULL;
-  FILE * ferr = NULL;
-
-  var = getenv("SBLIM_TRACE");
-  if( var != NULL ) {
-    _debug = atoi(var);
-  } 
-  else { _debug = 0; }
-  
-  err = getenv("SBLIM_TRACE_FILE");
-  if( err != NULL ) {
-    if( ( ((ferr=fopen(err,"a")) == NULL) || fclose(ferr) ) ) {
-      fprintf(stderr,"Couldn't create trace file\n");
-      return;
-    }
-    _SBLIM_TRACE_FILE = strdup(err);
-  } 
-  else { 
-    if(_SBLIM_TRACE_FILE) free(_SBLIM_TRACE_FILE);
-    _SBLIM_TRACE_FILE = NULL ; 
-  }
+  _init_trace_level();
+  _init_trace_file();
+  return;
 }
 
 /* deinitialization routine */
 void _fini() { 
   free ( CIM_HOST_NAME );
   free ( CIM_OS_NAME );
-  if(_SBLIM_TRACE_FILE) free(_SBLIM_TRACE_FILE);
+  _debug = 0;
+  _SBLIM_TRACE_ENABLED = 0;
+  _SBLIM_TRACE_FILE_ENABLED = 0;
+  if(_SBLIM_TRACE_FILE) { 
+    free(_SBLIM_TRACE_FILE);
+    _SBLIM_TRACE_FILE = NULL;
+  }
 }
 
 /* ---------------------------------------------------------------------------*/
@@ -526,14 +555,9 @@ void _osbase_trace( int level, char * file, int line, char * msg) {
   char           * tm   = NULL;
   FILE           * ferr = NULL;
   
-  if( (_SBLIM_TRACE_FILE != NULL) ) {
-    if( (ferr=fopen(_SBLIM_TRACE_FILE,"a")) == NULL ) {
-      fprintf(stderr,"Couldn't open trace file");
-      return;
-    }
-  }
-  else { ferr = stderr; } 
-   
+  _init_trace_level();
+  _init_trace_file();
+
   if( gettimeofday( &tv, &tz) == 0 ) {
     sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
     tm = (char*)malloc(20);
@@ -541,11 +565,26 @@ void _osbase_trace( int level, char * file, int line, char * msg) {
     if( gmtime_r( &sec , &cttm) != NULL ) {
       strftime(tm,20,"%m/%d/%Y %H:%M:%S",&cttm);
     }
+  }
+
+  if( (_SBLIM_TRACE_FILE != NULL) ) {
+    if( (ferr=fopen(_SBLIM_TRACE_FILE,"a")) == NULL ) {
+      perror("perror: Couldn't open/create trace file %s\n");
+      if(tm)
+	fprintf(stderr,"[%s] Couldn't open/create trace file %s\n",tm,_SBLIM_TRACE_FILE);
+      else
+	fprintf(stderr,"Couldn't open/create trace file %s\n",_SBLIM_TRACE_FILE);	
+      return;
+    }
+  }
+  else { ferr = stderr; } 
+
+  if(tm) {
     fprintf(ferr,"[%i] [%s] --- %s(%i) : %s\n", level, tm, file, line, msg);
   }
   else {
     fprintf(ferr,"[%i] --- %s(%i) : %s\n", level, file, line, msg);
-  }  
+  }
   
   if( (_SBLIM_TRACE_FILE != NULL) ) {
     fclose(ferr);
