@@ -47,14 +47,16 @@ char * get_cs_primownername() {
  * always root@host.domain
  */
 char * get_cs_primownercontact() {
-  char * ptr = NULL;
-  char * own = NULL;
+  char * ptr  = NULL;
+  char * own  = NULL;
+  char * host = NULL;
   if( _debug ) { fprintf(stderr, "--- %s : get_cs_primownercontact()\n",_FILENAME); }
   if( (own = get_cs_primownername()) != NULL ) {
-    ptr = (char*)malloc( (strlen(own)+strlen(CIM_HOST_NAME)+2)*sizeof(char));
+    host = get_system_name();
+    ptr = (char*)malloc( (strlen(own)+strlen(host)+2)*sizeof(char));
     strcpy( ptr, own);
     strcat( ptr,"@");
-    strcat( ptr, CIM_HOST_NAME);
+    strcat( ptr, host);
     if(own) free(own);
     return ptr;
   }

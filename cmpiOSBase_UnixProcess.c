@@ -72,20 +72,16 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) {
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
-  if( !CIM_OS_NAME ) {
-    if( !get_os_name() ) {
-      CMSetStatusWithChars( _broker, rc,
-			    CMPI_RC_ERR_FAILED, "no OS name found" );
-      goto exit;
-    }
+  if( !get_os_name() ) {
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -97,9 +93,9 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CSCreationClassName", CSCreationClassName, CMPI_chars);
-  CMAddKey(op, "CSName", CIM_HOST_NAME, CMPI_chars);
+  CMAddKey(op, "CSName", get_system_name(), CMPI_chars);
   CMAddKey(op, "OSCreationClassName", OSCreationClassName, CMPI_chars);
-  CMAddKey(op, "OSName", CIM_OS_NAME, CMPI_chars);
+  CMAddKey(op, "OSName", get_os_name(), CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
   CMAddKey(op, "Handle", sptr->pid, CMPI_chars);
     
@@ -134,20 +130,16 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) { 
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
-  if( !CIM_OS_NAME ) {
-    if( !get_os_name() ) {
-      CMSetStatusWithChars( _broker, rc,
-			    CMPI_RC_ERR_FAILED, "no OS name found" );
-      goto exit;
-    }
+  if( !get_os_name() ) {
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -166,9 +158,9 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
   }
 
   CMSetProperty( ci, "CSCreationClassName",CSCreationClassName , CMPI_chars );
-  CMSetProperty( ci, "CSName", CIM_HOST_NAME, CMPI_chars );
+  CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
   CMSetProperty( ci, "OSCreationClassName", OSCreationClassName, CMPI_chars );
-  CMSetProperty( ci, "OSName", CIM_OS_NAME, CMPI_chars );
+  CMSetProperty( ci, "OSName", get_os_name(), CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
   CMSetProperty( ci, "Handle", sptr->pid, CMPI_chars );
 

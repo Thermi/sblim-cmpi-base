@@ -82,20 +82,16 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) {
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
-  if( !CIM_OS_NAME ) {
-    if( !get_os_name() ) {
-      CMSetStatusWithChars( _broker, rc,
-			    CMPI_RC_ERR_FAILED, "no OS name found" );
-      goto exit;
-    }
+  if( !get_os_name() ) {
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -107,9 +103,9 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CSCreationClassName", CSCreationClassName, CMPI_chars);
-  CMAddKey(op, "CSName", CIM_HOST_NAME, CMPI_chars);
+  CMAddKey(op, "CSName", get_system_name(), CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
-  CMAddKey(op, "Name", CIM_OS_NAME, CMPI_chars);
+  CMAddKey(op, "Name", get_os_name(), CMPI_chars);
 
  exit:
   return op;                
@@ -178,28 +174,16 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) {
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
-  if( !CIM_OS_NAME ) {
-    if( !get_os_name() ) {
-      CMSetStatusWithChars( _broker, rc,
-			    CMPI_RC_ERR_FAILED, "no OS name found" );
-      goto exit;
-    }
-  }
-
-  if( !CIM_OS_DISTRO ) {
-    if( !get_os_distro() ) {
-      CMSetStatusWithChars( _broker, rc,
-			    CMPI_RC_ERR_FAILED, "no distro name found" );
-      goto exit;
-    }
+  if( !get_os_name() ) {
+    CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)),
@@ -236,9 +220,9 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
 #endif
 
   CMSetProperty( ci, "CSCreationClassName", CSCreationClassName, CMPI_chars );
-  CMSetProperty( ci, "CSName", CIM_HOST_NAME, CMPI_chars );
+  CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
-  CMSetProperty( ci, "Name", CIM_OS_NAME, CMPI_chars );
+  CMSetProperty( ci, "Name", get_os_name(), CMPI_chars );
 
   CMSetProperty( ci, "Status", "NULL", CMPI_chars);
   CMSetProperty( ci, "Caption", "Operating System", CMPI_chars);
@@ -299,7 +283,10 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   }
   CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
 
-  CMSetProperty( ci, "ElementName", CIM_OS_DISTRO, CMPI_chars);
+
+  if( get_os_distro() != NULL ) {
+    CMSetProperty( ci, "ElementName", CIM_OS_DISTRO, CMPI_chars);  
+  }
   CMSetProperty( ci, "EnabledState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);
@@ -430,6 +417,6 @@ void * statusLurker(void * args)
 
 
 /* ---------------------------------------------------------------------------*/
-/*          end of cmpiOSBase_OperatingSystem.c                      */
+/*                   end of cmpiOSBase_OperatingSystem.c                      */
 /* ---------------------------------------------------------------------------*/
 

@@ -58,12 +58,10 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) {
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -75,7 +73,7 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
-  CMAddKey(op, "Name", CIM_HOST_NAME, CMPI_chars);
+  CMAddKey(op, "Name", get_system_name(), CMPI_chars);
     
  exit:
   return op;                
@@ -101,12 +99,10 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) { 
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -125,7 +121,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   }
   
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
-  CMSetProperty( ci, "Name", CIM_HOST_NAME, CMPI_chars );
+  CMSetProperty( ci, "Name", get_system_name(), CMPI_chars );
   CMSetProperty( ci, "Status", "NULL", CMPI_chars);
   CMSetProperty( ci, "NameFormat", "IP", CMPI_chars);
   CMSetProperty( ci, "Caption", "Computer System", CMPI_chars);
@@ -142,7 +138,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
 
   /* 2.7 */
 #ifndef CIM26COMPAT
-  CMSetProperty( ci, "ElementName", CIM_HOST_NAME, CMPI_chars);
+  CMSetProperty( ci, "ElementName", get_system_name(), CMPI_chars);
   CMSetProperty( ci, "EnabledState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);

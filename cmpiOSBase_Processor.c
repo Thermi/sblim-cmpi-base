@@ -59,12 +59,10 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */ 
-  if( !CIM_HOST_NAME ) {
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -76,7 +74,7 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
   }
 
   CMAddKey(op, "SystemCreationClassName", CSCreationClassName, CMPI_chars);  
-  CMAddKey(op, "SystemName", CIM_HOST_NAME, CMPI_chars);
+  CMAddKey(op, "SystemName", get_system_name(), CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);  
   CMAddKey(op, "DeviceID", sptr->id, CMPI_chars);
     
@@ -101,12 +99,10 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
   */
-  if( !CIM_HOST_NAME ) { 
-    if( !get_system_name() ) {   
-      CMSetStatusWithChars( _broker, rc, 
-			    CMPI_RC_ERR_FAILED, "no host name found" );
-      goto exit;
-    }
+  if( !get_system_name() ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "no host name found" );
+    goto exit;
   }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)), 
@@ -125,7 +121,7 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   }
       
   CMSetProperty( ci, "SystemCreationClassName",CSCreationClassName , CMPI_chars ); 
-  CMSetProperty( ci, "SystemName", CIM_HOST_NAME, CMPI_chars );
+  CMSetProperty( ci, "SystemName", get_system_name(), CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars ); 
   CMSetProperty( ci, "DeviceID", sptr->id, CMPI_chars );
 

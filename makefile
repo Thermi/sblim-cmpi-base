@@ -107,7 +107,7 @@ ifdef SYSMAN
 endif
 	$(MAKE) -C mof -f makefile.cmpi install
 ifdef PEGASUS
-	$(MAKE) -C mof -f makefile.pegasus install
+#	$(MAKE) -C mof -f makefile.pegasus install
 endif
 
 test:

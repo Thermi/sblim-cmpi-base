@@ -66,9 +66,9 @@ void _check_system_key_value_pairs( CMPIBroker * _broker,
                             CMPI_RC_ERR_FAILED, "Could not get CS/OS Name of instance." );
       return;
    }
-   get_system_name();
-   if (( strcasecmp(CMGetCharPtr(name),CIM_HOST_NAME) != 0 ) &&
-       ( strcasecmp(CMGetCharPtr(name),CIM_OS_NAME) != 0 )) {
+
+   if (( strcasecmp(CMGetCharPtr(name),get_system_name()) != 0 ) &&
+       ( strcasecmp(CMGetCharPtr(name),get_os_name()) != 0 )) {
       CMSetStatusWithChars( _broker, rc,
                             CMPI_RC_ERR_NOT_FOUND, "This instance does not exist (wrong CS/OS Name)." );
       return;
