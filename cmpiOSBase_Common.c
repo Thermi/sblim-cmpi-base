@@ -315,6 +315,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
 			     int associators,
 			     CMPIStatus * rc) {
 
+  CMPIInstance    * cis = NULL;
   CMPIInstance    * ci  = NULL;
   CMPIObjectPath  * op  = NULL;
   CMPIObjectPath  * rop = NULL;
@@ -324,6 +325,21 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
   char            * targetName = NULL;
 
   _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() called"));
+
+  /* check if source instance does exist */
+  cis = CBGetInstance(_broker, ctx, ref, NULL, rc);
+  if( cis == NULL ) {
+    if( rc->rc == CMPI_RC_ERR_FAILED ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, "GetInstance of source object failed.");
+    }
+    if( rc->rc == CMPI_RC_ERR_NOT_FOUND ) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_NOT_FOUND, "Source object not found.");
+    }
+    _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
+    return -1;
+  }
 
   op = _assoc_targetClass_OP(_broker,ref,_RefLeftClass,_RefRightClass,rc);
   if( op == NULL ) { 
