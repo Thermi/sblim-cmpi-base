@@ -37,11 +37,23 @@ static int _processor_data( int, struct cim_processor ** );
 static unsigned short _processor_family( int );
 static unsigned short _processor_load_perc( int );
 
+char * CPUINFO = "/proc/cpuinfo";
+
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/2x86_ibm_xSeries";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/4x86_ibm_xSeries";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/power_ibm_iSeries";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/power_ibm_iSeries_2x";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/power_ibm_pSeries";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/power_ibm_pSeries_2x";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/s390_ibm_s390";
+//char * CPUINFO = "/home/heidineu/sblim/cmpi-base-cpuinfo/s390_ibm_s390_2x";
+
 /* ---------------------------------------------------------------------------*/
 
 int enum_all_processor( struct processorlist ** lptr ) {
   struct processorlist *  lptrhelp = NULL;
   char                 ** hdout    = NULL;
+  char                 *  cmd      = NULL;
   char                 *  ptr      = NULL;
   char                 *  id       = NULL;
   int                     i        = 0;
@@ -53,7 +65,12 @@ int enum_all_processor( struct processorlist ** lptr ) {
   memset(lptrhelp, 0, sizeof(struct processorlist));
   *lptr = lptrhelp;
 
-  rc = runcommand( "cat /proc/cpuinfo | grep ^processor | sed -e s/processor//" , NULL , &hdout , NULL );
+  cmd = (char *)malloc((strlen(CPUINFO)+46)*sizeof(char));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
+  strcat(cmd, " | grep ^processor | sed -e s/processor//");
+
+  rc = runcommand( cmd , NULL , &hdout , NULL );
   if( rc == 0 ) {
     while( hdout[i] != NULL ) { 
       if ( lptrhelp->sptr != NULL) { 
@@ -65,28 +82,39 @@ int enum_all_processor( struct processorlist ** lptr ) {
       ptr = hdout[i];
       ptr = strchr( ptr , ':' );
 #if defined (INTEL) || defined (PPC)
-      id = ptr++;
+      id = ptr+1;
 #elif defined (S390)
       id = (char*)malloc( (strlen(hdout[i])-strlen(ptr)+1)*sizeof(char) );
       id = strncpy(id, hdout[i], strlen(hdout[i])-strlen(ptr));
 #endif
+
       rc = _processor_data( atoi(id), &(lptrhelp->sptr) );
       i++;
+#if defined (S390)
+      if(id) free(id);
+#endif
     }
     freeresultbuf(hdout);
   }
 
+  if(cmd) free(cmd);
   return rc;
 }
 
 int get_processor_data( char * id, struct cim_processor ** sptr ) {
   char ** hdout = NULL;
+  char *  cmd   = NULL;
   int     i     = 0;
   int     rc    = 0;
 
   if( _debug ) { fprintf(stderr, "--- %s : get_processor_data()\n",_FILENAME); }  
 
-  rc = runcommand( "cat /proc/cpuinfo | grep ^processor" , NULL , &hdout , NULL );
+  cmd = (char *)malloc((strlen(CPUINFO)+23)*sizeof(char));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
+  strcat(cmd, " | grep ^processor");
+
+  rc = runcommand( cmd, NULL, &hdout, NULL );
   if( rc == 0 ) {
     while( hdout[i] != NULL ) {
       if( strstr(hdout[i],id) != NULL ) { 
@@ -97,11 +125,13 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
     }
     freeresultbuf(hdout);
   }
+  if(cmd) free(cmd);
   return rc;
 }
 
 static int _processor_data( int id, struct cim_processor ** sptr ) {
   char ** hdout = NULL;
+  char *  cmd   = NULL;
   char *  ptr   = NULL;
   int     rc    = 0;
 
@@ -118,9 +148,14 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   /* Familiy */
   (*sptr)->family = _processor_family(id); 
 
+  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
+
   /* Stepping */
 #if defined (INTEL)
-  rc = runcommand( "cat /proc/cpuinfo | grep stepping" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep stepping");
+  rc = runcommand( cmd , NULL , &hdout , NULL );
   if( rc == 0 ) {
     ptr = strrchr( hdout[id], ' ');
     (*sptr)->step = (char*)malloc( (17+strlen((*sptr)->id)+strlen(ptr))*sizeof(char) );
@@ -130,6 +165,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
     *ptr = '\0';
   }
   freeresultbuf(hdout);
+  if(cmd) free(cmd);
   rc = 0;
 #elif defined (S390) || defined (PPC)
   (*sptr)->step = (char*)malloc( 12*sizeof(char) );
@@ -137,15 +173,27 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 #endif
 
   /* ElementName */
-#if defined (INTEL)
-  rc = runcommand( "cat /proc/cpuinfo | grep '^model name'" , NULL , &hdout , NULL );
+#if defined (INTEL)  
+  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
+  strcat(cmd, " | grep '^model name'");
+  rc = runcommand( cmd , NULL , &hdout , NULL );
 #elif defined (S390)
-  rc = runcommand( "cat /proc/cpuinfo | grep '^vendor_id'" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep '^vendor_id'");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (PPC)
-  rc = runcommand( "cat /proc/cpuinfo | grep '^cpu'" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep '^cpu'");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #endif
+
   if( rc == 0 ) {
+
+#if defined (S390)
+    ptr = strchr( hdout[0], ':');
+#elif defined (INTEL) || defined (PPC)
     ptr = strchr( hdout[id], ':');
+#endif
     ptr = ptr+2;
     (*sptr)->name = (char*)malloc( (1+strlen(ptr))*sizeof(char) );
     strcpy((*sptr)->name, ptr);
@@ -153,26 +201,39 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
     *ptr = '\0';
   }
   freeresultbuf(hdout);
+  if(cmd) free(cmd);
   rc = 0;
 
   /* LoadPercentage */
   (*sptr)->loadPct = _processor_load_perc(id); 
 
   /* MaxClockSpeed && CurrentClockSpeed */
+  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
 #if defined (INTEL)
-  rc = runcommand( "cat /proc/cpuinfo | grep 'cpu MHz'" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep 'cpu MHz'");
+  rc = runcommand( cmd , NULL , &hdout , NULL );
 #elif defined (S390)
-  rc = runcommand( "cat /proc/cpuinfo | grep 'bogomips per cpu'" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep 'bogomips per cpu'");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (PPC)
-  rc = runcommand( "cat /proc/cpuinfo | grep '^clock' | sed -e s/mhz//i" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep '^clock' | sed -e s/mhz//i");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #endif
+
   if( rc == 0 ) {
+#if defined (S390)
+    ptr = strchr( hdout[0], ':');
+#elif defined (INTEL) || defined (PPC)
     ptr = strchr( hdout[id], ':');
+#endif
     ptr = ptr+1;
     (*sptr)->curClockSpeed = atol(ptr);
     (*sptr)->maxClockSpeed = atol(ptr);
   }
   freeresultbuf(hdout);
+  if(cmd) free(cmd);
 
   return 0;
 }
@@ -180,21 +241,44 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 /* map model name of the processor 'id' to the respective representation in CIM */
 static unsigned short _processor_family( int id ) {
   char **        hdout = NULL;
+  char *         cmd   = NULL;
   unsigned short rv    = 0;
   int            rc    = 0;
 
   if( _debug ) { fprintf(stderr, "--- %s : _processor_family()\n",_FILENAME); }  
 
+  cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
+
 #if defined (INTEL) || defined (S390)
-  rc = runcommand( "cat /proc/cpuinfo | grep vendor_id" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep vendor_id");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (PPC)
-  rc = runcommand( "cat /proc/cpuinfo | grep cpu" , NULL , &hdout , NULL );
+  strcat(cmd, " | grep cpu");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #endif
+  if(cmd) free(cmd);
+
   if( rc == 0 ) {
+
+    cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
+    strcpy(cmd, "cat ");
+    strcat(cmd, CPUINFO);
+
+#if defined (S390)
+    /* S390 Family */
+    if( strstr( hdout[0], "S390") != NULL ) {
+      rv = 200;
+    }
+
+#elif defined (INTEL) || defined (PPC)
+
     /* Intel Family */
     if( strstr( hdout[id], "Intel") != NULL ) {
       freeresultbuf(hdout);
-      rc = runcommand( "cat /proc/cpuinfo | grep 'model name'" , NULL , &hdout , NULL );
+      strcat(cmd, " | grep 'model name'");
+      rc = runcommand( cmd, NULL , &hdout , NULL );
       /* 486 */
       if(  strstr( hdout[id], "486") != NULL ) rv = 6; /* 80486 */
       /* Pentium */
@@ -223,7 +307,8 @@ static unsigned short _processor_family( int id ) {
     /* AMD Family */
     else if( strstr( hdout[id], "AMD") != NULL ) {
       freeresultbuf(hdout);
-      rc = runcommand( "cat /proc/cpuinfo | grep 'model name'" , NULL , &hdout , NULL );
+      strcat(cmd, " | grep 'model name'");
+      rc = runcommand( cmd, NULL , &hdout , NULL );
       /* 486 */
       if(  strstr( hdout[id], "486") != NULL ) rv = 24; /* AMD Duron(TM) Processor Family */
       /*  */
@@ -234,15 +319,15 @@ static unsigned short _processor_family( int id ) {
       else if( strstr( hdout[id], "Athlon") != NULL ) rv = 26; /* AMD Athlon(TM) Processor Family */
     }
 
-    /* S390 Family */
-    else if( strstr( hdout[id], "S390") != NULL ) {
-      rv = 200;
-    }
-
     /* Power PC Family */
     else if( strstr( hdout[id], "POWER") != NULL ) {
       rv = 32;
     }
+
+#endif
+
+    if(cmd) free(cmd);
+
   }
   else rv = 2; /* Unknown */
   freeresultbuf(hdout);
@@ -282,6 +367,7 @@ static unsigned short _processor_load_perc( int id ) {
 
   return loadPct;
 }
+
 
 /* ---------------------------------------------------------------------------*/
 
