@@ -488,9 +488,10 @@ int set_system_parameter(char *path, char *entry, char *value) {
 
 char * _format_trace(char *fmt,...) {
    va_list ap;
-   char *msg=(char*)malloc(512);
+   char *msg=(char*)malloc(1024);
    va_start(ap,fmt);
-   vsnprintf(msg,512,fmt,ap);
+   vsnprintf(msg,1024,fmt,ap);
+   va_end(ap);
    return msg;
 }
 
@@ -520,7 +521,7 @@ void _osbase_trace( int level, char * file, int line, char * msg) {
     }
   }
   
-  fprintf(ferr,"[%i] [%s] --- %s:(%i) : %s\n", level, tm, file, line, msg);
+  fprintf(ferr,"[%i] [%s] --- %s(%i) : %s\n", level, tm, file, line, msg);
   
   if( (_SBLIM_TRACE_FILE != NULL) ) {
     fclose(ferr);

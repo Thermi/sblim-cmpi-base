@@ -92,11 +92,9 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
   /* InstallDate */
   (*sptr)->installDate = get_os_installdate();
-  _cat_timezone((*sptr)->installDate, (*sptr)->curTimeZone);
 
   /* LastBootUp */
   (*sptr)->lastBootUp = get_os_lastbootup();
-  _cat_timezone((*sptr)->lastBootUp, (*sptr)->curTimeZone);
 
 
   _OSBASE_TRACE(3,("--- get_operatingsystem_data() exited"));
@@ -221,7 +219,7 @@ char * get_os_installdate() {
 
   get_os_distro();
 
-  if( strstr( CIM_OS_DISTRO, "redhat" ) != NULL ) {
+  if( strstr( CIM_OS_DISTRO, "Red Hat" ) != NULL ) {
     rc = runcommand( "rpm -qi redhat-release | grep Install" , NULL , &hdout , NULL );
     if( rc == 0 ) {
       str = strstr( hdout[0], ": ");
@@ -234,6 +232,7 @@ char * get_os_installdate() {
       strptime(dstr, "%A %d %B %Y %H:%M:%S %p %Z", &date);
       str = (char*)malloc(26*sizeof(char));
       strftime(str,26,"%Y%m%d%H%M%S.000000",&date);
+      _cat_timezone(str, get_os_timezone());
       if(dstr) free(dstr);
       freeresultbuf(hdout);
     }
@@ -259,7 +258,9 @@ char * get_os_lastbootup() {
   if( gmtime_r( &up, &uptm ) != NULL ) {
     uptime = (char*)malloc(26+sizeof(char));
     strftime(uptime,26,"%Y%m%d%H%M%S.000000",&uptm);
+    _cat_timezone(uptime, get_os_timezone());
   }
+
   _OSBASE_TRACE(4,("--- get_os_lastbootup() exited : %s",uptime));
   return uptime;
 }
@@ -301,7 +302,7 @@ unsigned long get_os_numOfProcesses() {
     freeresultbuf(hdout);
   }
 
-  _OSBASE_TRACE(4,("--- get_os_numOfProcesses() exited : %l",np));
+  _OSBASE_TRACE(4,("--- get_os_numOfProcesses() exited : %lu",np));
   return np;
 }
 
@@ -318,7 +319,7 @@ unsigned long get_os_numOfUsers() {
     freeresultbuf(hdout);
   }
 
-  _OSBASE_TRACE(4,("--- get_os_numOfUsers() exited : %l",np));
+  _OSBASE_TRACE(4,("--- get_os_numOfUsers() exited : %lu",np));
   return np;
 }
 
@@ -333,7 +334,7 @@ unsigned long get_os_maxNumOfProc() {
     fclose(ffilemax);
   }
 
-  _OSBASE_TRACE(4,("--- get_os_maxNumOfProc() exited : %l",max));
+  _OSBASE_TRACE(4,("--- get_os_maxNumOfProc() exited : %lu",max));
   return max;
 }
 
@@ -347,7 +348,7 @@ unsigned long long get_os_maxProcMemSize() {
   rc = getrlimit(RLIMIT_DATA,&rlim);
   if( rc == 0 ) { max = rlim.rlim_max; }
 
-  _OSBASE_TRACE(4,("--- get_os_maxProcMemSize() exited : %l",max));
+  _OSBASE_TRACE(4,("--- get_os_maxProcMemSize() exited : %Ld",max));
   return max;
 }
 
