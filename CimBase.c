@@ -888,9 +888,9 @@ int enum_all_processor( struct processorlist ** lptr ) {
 
       ptr = hdout[i];
       ptr = strchr( ptr , ':' );
-#ifdef INTEL
+#if defined (INTEL) || defined (PPC)
       id = ptr++;
-#elif S390
+#elif defined (S390)
       id = (char*)malloc( (strlen(hdout[i])-strlen(ptr)+1)*sizeof(char) );
       id = strncpy(id, hdout[i], strlen(hdout[i])-strlen(ptr));
 #endif
@@ -943,7 +943,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   (*sptr)->family = _processor_family(id); 
 
   /* Stepping */
-#ifdef INTEL 
+#if defined (INTEL)
   rc = runcommand( "cat /proc/cpuinfo | grep stepping" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     ptr = strrchr( hdout[id], ' ');
@@ -955,16 +955,18 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   }
   freeresultbuf(hdout);
   rc = 0;
-#elif S390
+#elif defined (S390) || defined (PPC)
   (*sptr)->step = (char*)malloc( 12*sizeof(char) );
   strcpy((*sptr)->step,"no stepping");
 #endif
 
   /* ElementName */
-#ifdef INTEL 
-  rc = runcommand( "cat /proc/cpuinfo | grep 'model name'" , NULL , &hdout , NULL );
-#elif S390
-  rc = runcommand( "cat /proc/cpuinfo | grep 'vendor_id'" , NULL , &hdout , NULL );
+#if defined (INTEL)
+  rc = runcommand( "cat /proc/cpuinfo | grep '^model name'" , NULL , &hdout , NULL );
+#elif defined (S390)
+  rc = runcommand( "cat /proc/cpuinfo | grep '^vendor_id'" , NULL , &hdout , NULL );
+#elif defined (PPC)
+  rc = runcommand( "cat /proc/cpuinfo | grep '^cpu'" , NULL , &hdout , NULL );
 #endif
   if( rc == 0 ) {
     ptr = strchr( hdout[id], ':');
@@ -981,10 +983,12 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   (*sptr)->loadPct = _processor_load_perc(id); 
 
   /* MaxClockSpeed && CurrentClockSpeed */
-#ifdef INTEL 
+#if defined (INTEL)
   rc = runcommand( "cat /proc/cpuinfo | grep 'cpu MHz'" , NULL , &hdout , NULL );
-#elif S390
+#elif defined (S390)
   rc = runcommand( "cat /proc/cpuinfo | grep 'bogomips per cpu'" , NULL , &hdout , NULL );
+#elif defined (PPC)
+  rc = runcommand( "cat /proc/cpuinfo | grep '^clock' | sed -e s/mhz//i" , NULL , &hdout , NULL );
 #endif
   if( rc == 0 ) {
     ptr = strchr( hdout[id], ':');
@@ -1005,7 +1009,11 @@ static unsigned short _processor_family( int id ) {
 
   if( _debug ) { fprintf(stderr, "--- %s : _processor_family()\n",_FILENAME); }  
 
+#if defined (INTEL) || defined (S390)
   rc = runcommand( "cat /proc/cpuinfo | grep vendor_id" , NULL , &hdout , NULL );
+#elif defined (PPC)
+  rc = runcommand( "cat /proc/cpuinfo | grep cpu" , NULL , &hdout , NULL );
+#endif
   if( rc == 0 ) {
     /* Intel Family */
     if( strstr( hdout[id], "Intel") != NULL ) {
@@ -1053,6 +1061,11 @@ static unsigned short _processor_family( int id ) {
     /* S390 Family */
     else if( strstr( hdout[id], "S390") != NULL ) {
       rv = 200;
+    }
+
+    /* Power PC Family */
+    else if( strstr( hdout[id], "POWER") != NULL ) {
+      rv = 32;
     }
   }
   else rv = 2; /* Unknown */
