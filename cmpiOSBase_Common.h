@@ -32,6 +32,10 @@
 extern char * CSCreationClassName;
 extern char * OSCreationClassName;
 
+extern unsigned char CMPI_true;
+extern unsigned char CMPI_false;
+extern          int _debug;
+
 /* ---------------------------------------------------------------------------*/
 
 void _check_system_key_value_pairs( CMPIBroker * _broker,

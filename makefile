@@ -44,7 +44,6 @@ all: 	test \
 	libOSBase_Common.so \
 	libcmpiOSBase_Common.so \
 	libOSBase_ComputerSystem.so \
-	libcmpiOSBase_ComputerSystem.so \
 	libcmpiOSBase_ComputerSystemProvider.so \
 	libOSBase_OperatingSystem.so \
 	libcmpiOSBase_OperatingSystem.so \
@@ -67,10 +66,8 @@ libcmpiOSBase_Common.so: cmpiOSBase_Common.c
 	$(CC) $(CFLAGS) -L . -lOSBase_Common -shared -o $@ $^
 
 
-libcmpiOSBase_ComputerSystem.so: cmpiOSBase_ComputerSystem.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -lOSBase_ComputerSystem -o $@ $^
-
-libcmpiOSBase_ComputerSystemProvider.so: cmpiOSBase_ComputerSystemProvider.c
+libcmpiOSBase_ComputerSystemProvider.so: cmpiOSBase_ComputerSystemProvider.c \
+					cmpiOSBase_ComputerSystem.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -lcmpiOSBase_ComputerSystem -o $@ $^
 
 

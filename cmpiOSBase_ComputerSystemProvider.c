@@ -31,19 +31,12 @@
 #include "cmpiOSBase_Common.h"
 #include "cmpiOSBase_ComputerSystem.h"
 
-unsigned char CMPI_true  = 1;
-unsigned char CMPI_false = 0;
 
 CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
 
-#ifdef DEBUG
-    int _debug = 1;
-#else
-    int _debug = 0;
-#endif
 
 static char * _FILENAME = "cmpiOSBase_ComputerSystemProvider.c";
 
