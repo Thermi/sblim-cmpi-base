@@ -158,8 +158,11 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
 			  CMPI_RC_ERR_FAILED, "Create Array for Property Dedicated failed." );
     _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
   }
-  CMSetArrayElementAt(dedic,0,(CMPIValue*)&(dedicated),CMPI_uint16);
-  CMSetProperty( ci, "Dedicated", (CMPIValue*)&(dedic), CMPI_uint16A);
+  else {
+    CMSetArrayElementAt(dedic,0,(CMPIValue*)&(dedicated),CMPI_uint16);
+    CMSetProperty( ci, "Dedicated", (CMPIValue*)&(dedic), CMPI_uint16A);
+  }
+
 #endif
 
  exit:

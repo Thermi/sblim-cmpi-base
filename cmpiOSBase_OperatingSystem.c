@@ -81,8 +81,7 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data 
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -183,8 +182,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   _OSBASE_TRACE(2,("--- _makeOS() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
-   * system datas 
-   * CIM_HOST_NAME contains the unique hostname of the local system 
+   * system data 
   */
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
@@ -266,45 +264,55 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   CMSetProperty( ci, "FreeSpaceInPagingFiles", (CMPIValue*)&(sptr->freeSwapMem), CMPI_uint64);
 
   CMSetProperty( ci, "CurrentTimeZone", (CMPIValue*)&(sptr->curTimeZone), CMPI_sint16);
+
   if( sptr->localDate != NULL ) {
     dt = CMNewDateTimeFromChars(_broker,sptr->localDate,rc);
-    CMSetProperty( ci, "LocalDateTime", (CMPIValue*)&(dt), CMPI_dateTime);
+    if(dt == NULL) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, 
+			    "CMNewDateTimeFromChars for property LocalDateTime failed." );
+      _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+    }
+    else { CMSetProperty( ci, "LocalDateTime", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
+
   if( sptr->installDate != NULL ) {
     dt = CMNewDateTimeFromChars(_broker,sptr->installDate,rc);
-    CMSetProperty( ci, "InstallDate", (CMPIValue*)&(dt), CMPI_dateTime);
+    if(dt == NULL) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, 
+			    "CMNewDateTimeFromChars for property InstallDate failed." );
+      _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+    }
+    else { CMSetProperty( ci, "InstallDate", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
+
   if( sptr->lastBootUp != NULL ) {
-    dt = CMNewDateTimeFromChars(_broker,sptr->lastBootUp,rc);
-    CMSetProperty( ci, "LastBootUpTime", (CMPIValue*)&(dt), CMPI_dateTime);
+    dt = CMNewDateTimeFromChars(_broker,sptr->lastBootUp,rc);    
+    if(dt == NULL) {
+      CMSetStatusWithChars( _broker, rc,
+			    CMPI_RC_ERR_FAILED, 
+			    "CMNewDateTimeFromChars for property LastBootUpTime failed." );
+      _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
+    }
+    else { CMSetProperty( ci, "LastBootUpTime", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
 
   /* 2.7 */
-
 #ifndef CIM26COMPAT
-  opstat = CMNewArray(_broker,1,CMPI_uint16A,rc);
-  if( rc->rc != CMPI_RC_OK ) {
+  opstat = CMNewArray(_broker,1,CMPI_uint16,rc);
+  if( opstat == NULL ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CMNewArray(_broker,1,CMPI_uint16,rc)" );
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
-    ci = NULL;
-    goto exit;
   }
-  if( pctcpu > 90 ) { opstatval = 4;  /* 4 ... Stressed */ }
-  CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16);
-  if( rc->rc != CMPI_RC_OK ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_FAILED, "CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16)" );
-    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
-    ci = NULL;
-    goto exit;
+  else {
+    if( pctcpu > 90 ) { opstatval = 4;  /* 4 ... Stressed */ }
+    CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16);
+    CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
   }
-  CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
 
-
-  if( get_os_distro() != NULL ) {
-    CMSetProperty( ci, "ElementName", CIM_OS_DISTRO, CMPI_chars);  
-  }
+  CMSetProperty( ci, "ElementName", get_os_distro(), CMPI_chars);  
   CMSetProperty( ci, "EnabledState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);
