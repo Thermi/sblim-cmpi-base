@@ -51,6 +51,7 @@ char * CPUINFO = "/proc/cpuinfo";
 int enum_all_processor( struct processorlist ** lptr ) {
   struct processorlist *  lptrhelp = NULL;
   char                 ** hdout    = NULL;
+  char                 ** hderr    = NULL;
   char                 *  cmd      = NULL;
   char                 *  ptr      = NULL;
   char                 *  id       = NULL;
@@ -66,6 +67,19 @@ int enum_all_processor( struct processorlist ** lptr ) {
   cmd = (char *)malloc((strlen(CPUINFO)+46)*sizeof(char));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
+
+  rc = runcommand( cmd , NULL , &hdout , &hderr );
+  if( rc != 0 ) {
+    if(hdout != NULL) {
+      if( hdout[0] != NULL )
+	{ _OSBASE_TRACE(3,("--- enum_all_processor() failed : %s",hdout[0])); }
+      return rc;
+    }
+  }
+  rc = 0;
+  freeresultbuf(hdout);
+  freeresultbuf(hderr);
+
   strcat(cmd, " | grep ^processor | sed -e s/processor//");
 
   rc = runcommand( cmd , NULL , &hdout , NULL );
@@ -102,6 +116,7 @@ int enum_all_processor( struct processorlist ** lptr ) {
 
 int get_processor_data( char * id, struct cim_processor ** sptr ) {
   char ** hdout = NULL;
+  char ** hderr = NULL;
   char *  cmd   = NULL;
   int     i     = 0;
   int     rc    = 0;
@@ -110,7 +125,20 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
 
   cmd = (char *)malloc((strlen(CPUINFO)+23)*sizeof(char));
   strcpy(cmd, "cat ");
-  strcat(cmd, CPUINFO);
+  strcat(cmd, CPUINFO);  
+
+  rc = runcommand( cmd , NULL , &hdout , &hderr );
+  if( rc != 0 ) {
+    if(hdout != NULL) {
+      if( hdout[0] != NULL )
+	{ _OSBASE_TRACE(3,("--- _get_processor_data() failed : %s",hdout[0])); }
+      return rc;
+    }
+  }
+  rc = 0;
+  freeresultbuf(hdout);
+  freeresultbuf(hderr);
+
   strcat(cmd, " | grep ^processor");
 
   rc = runcommand( cmd, NULL, &hdout, NULL );
@@ -344,6 +372,7 @@ static unsigned short _processor_family( int id ) {
 /* calculates the load of the processor 'id' in percent */
 static unsigned short _processor_load_perc( int id ) {
   char ** hdout = NULL;
+  char ** hderr = NULL;
   char ** data  = NULL;
   char *  sid   = NULL;
   char *  cmd   = NULL;
@@ -358,7 +387,20 @@ static unsigned short _processor_load_perc( int id ) {
   sprintf(sid, "%i", id);
 
   cmd = (char*)malloc( (26+strlen(sid))*sizeof(char) );
-  strcpy(cmd, "cat /proc/stat | grep cpu");
+  strcpy(cmd, "cat /proc/stat");
+  rc = runcommand( cmd , NULL , &hdout , &hderr );
+  if( rc != 0 ) {
+    if(hdout != NULL) {
+      if( hdout[0] != NULL )
+	{ _OSBASE_TRACE(3,("--- _processor_load_perc() failed : %s",hdout[0])); }
+      return rc;
+    }
+  }
+  rc = 0;
+  freeresultbuf(hdout);
+  freeresultbuf(hderr);
+
+  strcat(cmd, " | grep cpu");
   strcat(cmd, sid);
   rc = runcommand( cmd , NULL , &hdout , NULL );
   if(cmd) free(cmd);
