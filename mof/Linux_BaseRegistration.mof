@@ -55,7 +55,7 @@ instance of PG_ProviderCapabilities
    //Name of the CIM class as defined in the mof
    ClassName = "Linux_ComputerSystem";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,4 }; // Instance, Method
+   ProviderType = { 2,5 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -93,7 +93,7 @@ instance of PG_ProviderCapabilities
    //Name of the CIM class as defined in the mof
    ClassName = "Linux_OperatingSystem";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,4 }; // Instance, Method
+   ProviderType = { 2,5 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -132,7 +132,7 @@ instance of PG_ProviderCapabilities
    //Name of the CIM class as defined in the mof
    ClassName = "Linux_UnixProcess";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,4 }; // Instance, Method
+   ProviderType = { 2,5 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -171,7 +171,7 @@ instance of PG_ProviderCapabilities
    //Name of the CIM class as defined in the mof
    ClassName = "Linux_Processor";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,4 }; // Instance, Method
+   ProviderType = { 2,5 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
