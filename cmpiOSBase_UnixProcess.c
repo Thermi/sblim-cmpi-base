@@ -221,8 +221,12 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
   if( max > 25 ) { max=25; }
   args = CMNewArray(_broker,max,CMPI_stringA,rc);
   for( ; i< max; i++ ) {
-    val = CMNewString(_broker,sptr->args[i],rc);
-    CMSetArrayElementAt(args,i,(CMPIValue*)&(val),CMPI_string);
+    /* BMMU: Prevent segfaults */
+    if (sptr->args[i]) {
+      val = CMNewString(_broker,sptr->args[i],rc);
+      CMSetArrayElementAt(args,i,(CMPIValue*)&(val),CMPI_string);
+    }
+    else break;
   }
   //  fprintf(stderr,"args %s\n",CMGetCharPtr(CDToString(_broker,args,rc)));
   CMSetProperty( ci, "Parameters", (CMPIValue*)&(args), CMPI_stringA);
