@@ -51,6 +51,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
 /* - method to create CMPIInstance out of the CMPIObjectPath of an            */
 /*   association instance                                                     */
 CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
+				CMPIContext * ctx,
 				CMPIObjectPath * cop,
 				char * _ClassName,
 				char * _RefLeft,

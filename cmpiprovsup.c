@@ -197,6 +197,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
 /* ---------------------------------------------------------------------------*/
 
 CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
+				CMPIContext * ctx,
 				CMPIObjectPath * cop,
 				char * _ClassName,
 				char * _RefLeft,
@@ -209,29 +210,35 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   
   if( _debug ) { fprintf( stderr, "--- %s : _assoc_get_inst()\n",_FILENAME); }
 
-  dtl = CMGetKey( cop, _RefLeft, rc);    
+  dtl = CMGetKey( cop, _RefLeft, rc); 
   if( dtl.value.ref == NULL ) {
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "CMGetKey( cop, _RefLeft, rc)" ); 
     goto exit;
   }
-  /*
+
   CMSetNameSpace(dtl.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
   ci = CBGetInstance(_broker, ctx, dtl.value.ref, NULL, rc);
-  if( ci == NULL ) { return NULL; }
-  */
-
+  if( ci == NULL ) { 
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "GetInstance of left reference failed."); 
+    goto exit;
+  }
+  
   dtr = CMGetKey( cop, _RefRight, rc);
   if( dtr.value.ref == NULL ) {
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "CMGetKey( cop, _RefRight, rc)" ); 
     goto exit; 
   }
-  /*
+
   CMSetNameSpace(dtr.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
   ci = CBGetInstance(_broker, ctx, dtr.value.ref, NULL, rc);
-  if( ci == NULL ) { return NULL; }
-  */
+  if( ci == NULL ) { 
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "GetInstance of right reference failed."); 
+    goto exit;
+  }
 
   op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)), 
 			_ClassName, rc );
@@ -247,9 +254,6 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
 			  CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." );
     goto exit; 
   }
-
-  CMSetNameSpace(dtl.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
-  CMSetNameSpace(dtr.value.ref,CMGetCharPtr(CMGetNameSpace(cop,rc)));
 
   CMSetProperty( ci, _RefLeft, (CMPIValue*)&(dtl.value.ref), CMPI_ref ); 
   CMSetProperty( ci, _RefRight, (CMPIValue*)&(dtr.value.ref), CMPI_ref );

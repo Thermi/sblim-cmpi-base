@@ -130,7 +130,7 @@ CMPIStatus Linux_OSProcessGetInstance( CMPIInstanceMI * mi,
   if( _debug )
     fprintf( stderr, "--- %s.c : CMPI GetInstance()\n", _ClassName ); 
   
-  ci = _assoc_get_inst( _broker,cop,_ClassName,_RefLeft,_RefRight,&rc);
+  ci = _assoc_get_inst( _broker,ctx,cop,_ClassName,_RefLeft,_RefRight,&rc);
 
   if( ci == NULL ) { 
     if( _debug ) {
