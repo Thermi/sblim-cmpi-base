@@ -9,14 +9,14 @@ BuildRoot: /var/tmp/buildroot
 Summary: SBLIM Base Instrumentation
 Name: sblim-cmpi-base
 Version: 1.2.3
-Release: 0
+Release: 1
 Group: Systems Management/Base
 Copyright: Common Public Licence http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
 Packager: Viktor Mihajlovski <mihajlov@de.ibm.com>
 
 BuildRequires: cmpi-devel
 
-Source0: http://www-126-ibm.com/pub/sblim/sblim-cmpi-base/%{name}-%{version}.tar.gz
+Source0: http://www-126-ibm.com/pub/sblim/sblim-cmpi-base/%{name}-%{version}-%{release}.tar.gz
 
 %Description
 Standards Based Linux Instrumentation Base Providers
