@@ -3,33 +3,52 @@
 
 # Change the following lines to match your system
 
+#OPENCIMOM=1
+#OPENWBEM=1
+PEGASUS=1
+#STANDALONE=1
 
 # *********** SNIA CIMOM flavor ************* #
 
-#OPENCIMOM=1
-#CIMOM=/usr/sniacimom
-#CIMOMINC=$(CIMOM)/include
-#CIMOMMOF=$(CIMOM)/lib/mof
-#CIMOMLIB=$(CIMOM)/lib
+ifdef OPENCIMOM
+CIMOM=/usr/sniacimom
+CIMOMINC=$(CIMOM)/include
+CIMOMMOF=$(CIMOM)/lib/mof
+CIMOMLIB=$(CIMOM)/lib
+endif
 
 # *********** SNIA CIMOM flavor ************* #
 
 
 # *********** OpenWBEM flavor ************* #
 
-#CIMOM=/usr/local/
-#CIMOMINC=$(CIMOM)/include/openwbem
-#CIMOMMOF=$(CIMOM)/share/openwbem
-#LOCALLIB=$(CIMOM)/lib
-#CIMOMLIB=$(CIMOM)/lib/openwbem/cmpiproviders
+ifdef OPENWBEM
+CIMOM=/usr/local/
+CIMOMINC=$(CIMOM)/include/openwbem
+CIMOMMOF=$(CIMOM)/share/openwbem
+COMMONLIB=$(CIMOM)/lib
+CIMOMLIB=$(CIMOM)/lib/openwbem/cmpiproviders
+endif
 
 # *********** OpenWBEM flavor ************* #
 
 
 # ************* Pegasus flavor ************** #
 
-PEGASUS=1
+ifdef PEGASUS
 CIMOMLIB=$(PEGASUS_HOME)/lib
 CIMOMINC=$(PEGASUS_HOME)/src/Pegasus/ProviderManager2/CMPI
+endif
 
 # ************* Pegasus flavor ************** #
+
+# ************* Standalone flavor ************** #
+
+ifdef STANDALONE
+CIMOMINC=$(INSTALL_ROOT)/usr/include/cmpi
+CIMOMMOF=$(INSTALL_ROOT)/usr/share/cmpi/mof
+COMMONLIB=$(INSTALL_ROOT)/usr/lib
+CIMOMLIB=$(INSTALL_ROOT)/usr/lib/cmpi
+endif
+
+# ************* Standalone flavor ************** #

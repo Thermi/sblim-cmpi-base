@@ -3,6 +3,10 @@
 
 include setting.cmpi
 
+ifndef COMMONLIB
+COMMONLIB=$(CIMOMLIB)
+endif
+
 #------------------------------------------------------------------------------#
 
 # insert only when using the sysman module
@@ -99,13 +103,20 @@ sysman_pid.o: sysman_pid.c
 
 
 install: all
-	install libcmpiOSBase_*.so $(CIMOMLIB)
+	install libcmpiOSBase_Common.so $(COMMONLIB)
+	install libcmpiOSBase_*Provider.so $(CIMOMLIB)
 	install -m 644 cmpiOSBase_*.h $(CIMOMINC)
 	install -m 644 OSBase_*.h $(CIMOMINC)
 ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
+ifdef STANDALONE
+	$(MAKE) -C mof -f makefile.standalone install
+endif
 ifdef OPENCIMOM
+	$(MAKE) -C mof -f makefile.cmpi install
+endif
+ifdef OPENWBEM
 	$(MAKE) -C mof -f makefile.cmpi install
 endif
 ifdef PEGASUS
