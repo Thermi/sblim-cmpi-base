@@ -70,8 +70,7 @@ int enum_all_process( struct processlist ** lptr ){
 	lptrhelp->next = (struct processlist *)calloc(1,sizeof(struct processlist));
 	lptrhelp = lptrhelp->next;
       }    
-      ptr = strchr(hdout[i], '\n');
-      *ptr = '\0';
+      if((ptr=strchr(hdout[i], '\n'))) { *ptr = '\0'; }
       rc = _process_data( hdout[i] , &(lptrhelp->p) );
       i++;
     }
@@ -104,8 +103,7 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
     strcat(cmd, pid);
     rc = runcommand( cmd , NULL, &hdout, NULL );
     while( hdout[i] ) {
-      ptr = strchr(hdout[i], '\n');
-      *ptr = '\0';
+      if((ptr=strchr(hdout[i], '\n'))) { *ptr = '\0'; }
       str = hdout[i];
       while( *str == ' ' ) { str = str+1; }
       if( strncmp( str,pid,strlen(pid)) == 0 ) {
@@ -213,8 +211,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
     strcat(cmd, (*sptr)->pid);
     strcat(cmd, " --no-headers -o args");
     rc = runcommand( cmd, NULL, &hdout, NULL );
-    ptr = strchr(hdout[0], '\n');
-    *ptr = '\0';
+    if((ptr=strchr(hdout[0], '\n'))) { *ptr = '\0'; }
     if( rc == 0 ) {
       (*sptr)->args = line_to_array( hdout[0], ' ' );
     }
