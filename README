@@ -1,41 +1,157 @@
+
+/* ---------------------------------------------------------------------------*/
+(C) Copyright IBM Corp. 2002
+
+THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+
+You can obtain a current copy of the Common Public License from
+http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+
+Author:       Heidi Neumann <heidineu@de.ibm.com>
+Date  :	      03/18/2003
+
+/* ---------------------------------------------------------------------------*/
+
+
 SBLIM Base Instrumentation for CMPI README
-
-The Base Instrumentation allows to get information about the system
-itself via CIMOM .
+..........................................
 
 
-Prerequisites are : 
+Introduction
+------------
 
-- CIM Schema Version 2.7
-- CMPI : Common Manageablity Programming Interface
+The Base Instrumentation allows you to get the very base system information 
+via CIMOM technology/infrastructure.
 
+The instrumented classes / associations are
 
-Base Instrumentation specific libraries :
-
-- CimBase ... implements the resource access and is responsible
-  for data gathering 
-- cimprovsup ... implements tool functionality to write generic 
-  CMPI Provider
-
-
-Linux Base Schema : 
-
-- mof/Linux_Base.mof
+- Linux_ComputerSystem
+- Linux_OperatingSystem
+- Linux_UnixProcess
+- Linux_Processor
+- Linux_RunningOS
+- Linux_OSProcess
+- Linux_CSProcessor
 
 
-Instrumentation Libraries :
+Package Contents
+----------------
 
-- cmpiLinux_ComputerSystem.c
-- cmpiLinux_OperatingSystem.c
-- cmpiLinux_Process.c
-- cmpiLinux_Processor.c
-
-- cmpiLinux_RunningOS.c
-- cmpiLinux_OSProcess.c
-- cmpiLinux_CSProcessor.c
+./README	This file
+./*.h		Header Files
+./*.c		Provider Code
+./mof/		Schema file(s)
+./test/		Configuration files for SBLIM TestSuite
 
 
-Test Script :
+
+CIMOM Build Instructions
+------------------------
+
+Prerequisites
+.............
+- CIMOM is installed
+- CMPI (package cmpi-adapter) latest version
+- CIM Schema Version 2.7 and higher loaded into the CIMOM's
+  repository
+
+Building CIMOM and CMPI for this CIMOM
+.........................................
+Please follow the instructions in the README.cmpi file of 
+the cmpi-adapter package.
+
+
+Building cmpi-base
+..................
+In order to compile and install cmpi-base instrumentation, 
+the path to the CMPI header files and the library path to 
+libCMPIAdapter.so needs to be added to the search path. 
+This is configured by editing the "setting.cmpi" file. Once
+all the pathes are configured, do :
+- make
+- make install	-> copy all shared libraries to the library
+		   path of the CIMOM; copy some header files
+		   to the inlcude path (necessary if other
+		   instrumentation packages use tool functions
+		   of cmpi-base)
+
+- make clean	-> to delete all shared libs in this source
+		   directory
+
+Load Schema into CIMOM's repository
+...................................
+
+with Pegasus :
+..............
+The loading and registering of the classes/associations and
+their provider is done during the "make install" process.
+
+with OpenCimom/SNIA CIMOM :
+...........................
+Start the cimbrowser (/usr/sniacimom/bin). Load the schema
+file Linux_Base.mof with "File" -> "Reload Mof" into the 
+namespace root/cimv2. Before at least CIM Core and System
+schemata have to be loaded into the repository.
+
+
+Common Libraries
+----------------
+
+- OSBase_Common :
+  implements the resource access and is responsible for common
+  data gathering 
+
+- cmpiOSBase_Common :
+  contains tool functionality to write generic CMPI Provider
+  and implements tool function, which handle CIM specific
+  formats or data
+
+
+Class/Association specific Libraries
+------------------------------------
+
+class Linux_ComputerSystem
+..........................
+- cmpiOSBase_ComputerSystemProvider.c
+- cmpiOSBase_ComputerSystem.c/.h
+- OSBase_ComputerSystem.c/.h
+
+class Linux_OperatingSystem
+...........................
+- cmpiOSBase_OperatingSystemProvider.c
+- cmpiOSBase_OperatingSystem.c/.h
+- OSBase_OperatingSystem.c/.h
+
+class Linux_UnixProcess
+.......................
+- cmpiOSBase_UnixProcessProvider.c
+- cmpiOSBase_UnixProcess.c/.h
+- OSBase_UnixProcess.c/.h
+
+class Linux_Processor
+.....................
+- cmpiOSBase_ProcessorProvider.c
+- cmpiOSBase_Processor.c/.h
+- OSBase_Processor.c/.h
+
+
+association Linux_RunningOS
+...........................
+- cmpiOSBase_RunningOSProvider.c
+
+association Linux_OSProcess
+...........................
+- cmpiOSBase_OSProcessProvider.c
+
+association Linux_CSProcessor
+...........................
+- cmpiOSBase_CSProcessorProvider.c
+
+
+Test Script
+-----------
 
 semantictest_OSBaseStage1.sh
 semantictest_OSBaseStage2_Processor.sh
