@@ -53,6 +53,7 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
 CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
                CMPIContext * ctx, 
                CMPIObjectPath * cop,
+	       const char ** properties,
 	       struct cim_processor * sptr,
                CMPIStatus * rc);
 

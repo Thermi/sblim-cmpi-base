@@ -50,6 +50,7 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
 CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
                CMPIContext * ctx, 
                CMPIObjectPath * cop,
+	       const char ** properties,
                CMPIStatus * rc);
 
 

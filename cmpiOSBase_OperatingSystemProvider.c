@@ -117,7 +117,7 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstances( CMPIInstanceMI * mi,
 
   _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() called",_ClassName));
 
-  ci = _makeInst_OperatingSystem( _broker, ctx, ref, &rc );
+  ci = _makeInst_OperatingSystem( _broker, ctx, ref, properties, &rc );
 
   if( ci == NULL ) {
     if( rc.msg != NULL )
@@ -154,7 +154,7 @@ CMPIStatus OSBase_OperatingSystemProviderGetInstance( CMPIInstanceMI * mi,
     return rc; 
   }
 
-  ci = _makeInst_OperatingSystem( _broker, ctx, cop, &rc );
+  ci = _makeInst_OperatingSystem( _broker, ctx, cop, properties, &rc );
 
   if( ci == NULL ) {
     if( rc.msg != NULL )

@@ -113,17 +113,20 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
 CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
                CMPIContext * ctx, 
                CMPIObjectPath * ref,
+	       const char ** properties,
 	       struct cim_process * sptr,
 	       CMPIStatus * rc) {
-  CMPIObjectPath *  op     = NULL;
-  CMPIInstance   *  ci     = NULL;
-  CMPIDateTime   *  cdt    = NULL;
-  CMPIArray      *  args   = NULL;
-  CMPIString     *  val    = NULL;
-  int               i      = 0;
-  int               max    = 0;
+  CMPIObjectPath *  op       = NULL;
+  CMPIInstance   *  ci       = NULL;
+  CMPIDateTime   *  cdt      = NULL;
+  CMPIArray      *  args     = NULL;
+  CMPIString     *  val      = NULL;
+  const char     ** keys     = NULL;
+  int               keyCount = 0;
+  int               i        = 0;
+  int               max      = 0;
 #ifndef CIM26COMPAT
-  unsigned short    status  = 2; /* Enabled */
+  unsigned short    status   = 2; /* Enabled */
 #endif
 
   _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() called"));
@@ -167,6 +170,18 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
     _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
+
+  /* set property filter */
+  keys = calloc(7,sizeof(char*));
+  keys[0] = strdup("CSCreationClassName");
+  keys[1] = strdup("CSName");
+  keys[2] = strdup("OSCreationClassName");
+  keys[3] = strdup("OSName");
+  keys[4] = strdup("CreationClassName");
+  keys[5] = strdup("Handle");
+  CMSetPropertyFilter(ci,properties,keys);
+  for( ;keys[keyCount]!=NULL;keyCount++) { free((char*)keys[keyCount]); }
+  free(keys);
 
   CMSetProperty( ci, "CSCreationClassName",CSCreationClassName , CMPI_chars );
   CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );

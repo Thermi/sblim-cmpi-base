@@ -88,15 +88,18 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
 CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
 	       CMPIContext * ctx, 
 	       CMPIObjectPath * ref,
+	       const char ** properties,
 	       CMPIStatus * rc) {
-  CMPIObjectPath * op        = NULL;
-  CMPIInstance   * ci        = NULL;
-  char * owner               = NULL;
-  char * contact             = NULL;
+  CMPIObjectPath *  op        = NULL;
+  CMPIInstance   *  ci        = NULL;
+  char           *  owner     = NULL;
+  char           *  contact   = NULL;
+  const char     ** keys      = NULL;
+  int               keyCount  = 0;
 #ifndef CIM26COMPAT
-  CMPIArray      * dedic     = NULL;
-  unsigned short   status    = 2; /* Enabled */
-  unsigned short   dedicated = 0; /* Not Dedicated */
+  CMPIArray      *  dedic     = NULL;
+  unsigned short    status    = 2; /* Enabled */
+  unsigned short    dedicated = 0; /* Not Dedicated */
 #endif
 
   _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() called"));
@@ -127,7 +130,15 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
     _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
-  
+
+  /* set property filter */
+  keys = calloc(3,sizeof(char*));
+  keys[0] = strdup("CreationClassName");
+  keys[1] = strdup("Name");
+  CMSetPropertyFilter(ci,properties,keys);
+  for( ;keys[keyCount]!=NULL;keyCount++) { free((char*)keys[keyCount]); }
+  free(keys);
+
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
   CMSetProperty( ci, "Name", get_system_name(), CMPI_chars );
   CMSetProperty( ci, "Status", "NULL", CMPI_chars);
@@ -136,8 +147,8 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   CMSetProperty( ci, "Description", "A class derived from ComputerSystem that represents the single node container of the Linux OS.", CMPI_chars);
 
   if( (owner=get_cs_primownername()) != NULL ) {
-      CMSetProperty( ci, "PrimaryOwnerName", owner, CMPI_chars);
-      free(owner);
+    CMSetProperty( ci, "PrimaryOwnerName", owner, CMPI_chars);
+    free(owner);
   }
   if( (contact=get_cs_primownercontact()) != NULL) {
     CMSetProperty( ci, "PrimaryOwnerContact", contact, CMPI_chars);

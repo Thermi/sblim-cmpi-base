@@ -82,13 +82,13 @@ CMPIStatus OSBase_ComputerSystemProviderEnumInstances( CMPIInstanceMI * mi,
            CMPIContext * ctx, 
            CMPIResult * rslt, 
            CMPIObjectPath * ref, 
-           char ** properties) { 
+           const char ** properties) { 
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() called",_ClassName));
 
-  ci = _makeInst_ComputerSystem( _broker, ctx, ref, &rc );
+  ci = _makeInst_ComputerSystem( _broker, ctx, ref, properties, &rc );
 
   if( ci == NULL ) {
     if( rc.msg != NULL )
@@ -108,7 +108,7 @@ CMPIStatus OSBase_ComputerSystemProviderGetInstance( CMPIInstanceMI * mi,
            CMPIContext * ctx, 
            CMPIResult * rslt, 
            CMPIObjectPath * cop, 
-           char ** properties) {
+           const char ** properties) {
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
 
@@ -120,7 +120,7 @@ CMPIStatus OSBase_ComputerSystemProviderGetInstance( CMPIInstanceMI * mi,
     return rc; 
   }
 
-  ci = _makeInst_ComputerSystem( _broker, ctx, cop, &rc );
+  ci = _makeInst_ComputerSystem( _broker, ctx, cop, properties, &rc );
 
   if( ci == NULL ) {
     if( rc.msg != NULL )

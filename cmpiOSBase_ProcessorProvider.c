@@ -121,7 +121,7 @@ CMPIStatus OSBase_ProcessorProviderEnumInstances( CMPIInstanceMI * mi,
   if( lptr->sptr != NULL ) {
     for ( ; lptr && rc.rc == CMPI_RC_OK ; lptr = lptr->next) {
       // method call to create the CIMInstance object
-      ci = _makeInst_Processor( _broker, ctx, ref, lptr->sptr, &rc );
+      ci = _makeInst_Processor( _broker, ctx, ref, properties, lptr->sptr, &rc );
       if( ci == NULL || rc.rc != CMPI_RC_OK ) { 
 	if( rc.msg != NULL ) {
 	  _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
@@ -178,7 +178,7 @@ CMPIStatus OSBase_ProcessorProviderGetInstance( CMPIInstanceMI * mi,
     return rc;
   }
 
-  ci = _makeInst_Processor( _broker, ctx, cop, sptr, &rc );
+  ci = _makeInst_Processor( _broker, ctx, cop, properties, sptr, &rc );
   if(sptr) free_processor(sptr);
 
   if( ci == NULL ) { 

@@ -92,12 +92,15 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
 CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
                CMPIContext * ctx, 
                CMPIObjectPath * ref,
+	       const char ** properties,
 	       struct cim_processor * sptr,
 	       CMPIStatus * rc) {
-  CMPIObjectPath * op     = NULL;
-  CMPIInstance   * ci     = NULL;
+  CMPIObjectPath *  op       = NULL;
+  CMPIInstance   *  ci       = NULL;
+  const char     ** keys     = NULL;
+  int               keyCount = 0;
 #ifndef CIM26COMPAT
-  unsigned short   status = 2; /* Enabled */
+  unsigned short    status   = 2; /* Enabled */
 #endif
 
   _OSBASE_TRACE(2,("--- _makeInst_Processor() called"));
@@ -128,6 +131,16 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
     _OSBASE_TRACE(2,("--- _makeInst_Processor() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
+
+  /* set property filter */
+  keys = calloc(5,sizeof(char*));
+  keys[0] = strdup("SystemCreationClassName");
+  keys[1] = strdup("SystemName");
+  keys[2] = strdup("CreationClassName");
+  keys[3] = strdup("DeviceID");
+  CMSetPropertyFilter(ci,properties,keys);
+  for( ;keys[keyCount]!=NULL;keyCount++) { free((char*)keys[keyCount]); }
+  free(keys);
       
   CMSetProperty( ci, "SystemCreationClassName",CSCreationClassName , CMPI_chars ); 
   CMSetProperty( ci, "SystemName", get_system_name(), CMPI_chars );

@@ -42,6 +42,7 @@
 
 static CMPIInstance * _makeOS( CMPIBroker * _broker,
                                CMPIObjectPath * ref,
+			       const char ** properties,
                                struct cim_operatingsystem * sptr,
                                CMPIStatus * rc);
 
@@ -122,6 +123,7 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
 CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
 	       CMPIContext * ctx, 
                CMPIObjectPath * ref,
+	       const char ** properties,
                CMPIStatus * rc) {
   CMPIInstance               * ci   = NULL;
   struct cim_operatingsystem * sptr = NULL;
@@ -131,7 +133,7 @@ CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
 
   frc = get_operatingsystem_data(&sptr);
   if (frc==0)
-    ci = _makeOS( _broker, ref, sptr, rc );
+    ci = _makeOS( _broker, ref, properties, sptr, rc );
   else {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Could not get OS Data." );
@@ -162,18 +164,21 @@ static int getcpu(CpuSample * cps)
 
 static CMPIInstance * _makeOS( CMPIBroker * _broker,
                                CMPIObjectPath * ref,
+			       const char ** properties,
                                struct cim_operatingsystem * sptr,
                                CMPIStatus * rc) {
-  CMPIObjectPath * op = NULL;
-  CMPIInstance   * ci = NULL;
-  CMPIDateTime   * dt = NULL;
-  CpuSample        cs;
+  CMPIObjectPath *   op        = NULL;
+  CMPIInstance   *   ci        = NULL;
+  CMPIDateTime   *   dt        = NULL;
+  CpuSample          cs;
+  const char     **  keys      = NULL;
+  int                keyCount  = 0;
   unsigned long long totalSwap = 0;
   unsigned short     pctcpu    = 0;
 #ifndef CIM26COMPAT
-  CMPIArray      * opstat    = NULL;
-  unsigned short   status    = 2; /* Enabled */
-  unsigned short   opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
+  CMPIArray      *   opstat    = NULL;
+  unsigned short     status    = 2; /* Enabled */
+  unsigned short     opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
 #endif
 #ifndef NOEVENTS
   int                i         = 0;
@@ -214,6 +219,16 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
+
+  /* set property filter */
+  keys = calloc(5,sizeof(char*));
+  keys[0] = strdup("CSCreationClassName");
+  keys[1] = strdup("CSName");
+  keys[2] = strdup("CreationClassName");
+  keys[3] = strdup("Name");
+  CMSetPropertyFilter(ci,properties,keys);
+  for( ;keys[keyCount]!=NULL;keyCount++) { free((char*)keys[keyCount]); }
+  free(keys);
 
   /* calculate cpu percentage */
 #ifdef NOEVENTS

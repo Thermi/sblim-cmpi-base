@@ -81,6 +81,7 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
 CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
                CMPIContext * ctx, 
                CMPIObjectPath * cop,
+	       const char ** properties,
 	       struct cim_process * sptr,
                CMPIStatus * rc);
 
