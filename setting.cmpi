@@ -19,7 +19,6 @@ ROOTDIR=$(HOME)/sblim
 
 # ************* Pegasus flavor ************** #
 
-PEGASUS_HOME=$(HOME)/pegasus
 CIMOMLIB=$(PEGASUS_HOME)/lib
 CIMOMINC=$(ROOTDIR)/include
 CIMOMMOF=$(ROOTDIR)/include
