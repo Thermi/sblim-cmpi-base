@@ -343,13 +343,15 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
   }
   else if( strcasecmp(CMGetCharPtr(class), _ClassName) == 0 &&
 	   strcasecmp(methodName, "Reboot") == 0 ) {
-    CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_SUPPORTED, methodName ); 
+    valrc.uint32 = runcommand("/sbin/reboot", NULL, NULL, NULL );
+    CMReturnData(rslt, &valrc, CMPI_uint32);
+    CMReturnDone(rslt);
   }
   else  if( strcasecmp(CMGetCharPtr(class), _ClassName) == 0 &&
 	    strcasecmp(methodName, "Shutdown") == 0 ) {
-    CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_SUPPORTED, methodName ); 
+    valrc.uint32 = runcommand("/sbin/halt", NULL, NULL, NULL );
+    CMReturnData(rslt, &valrc, CMPI_uint32);
+    CMReturnDone(rslt);
   }
   else {
     CMSetStatusWithChars( _broker, &rc, 

@@ -321,7 +321,6 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
 
   CMSetProperty( ci, "DefaultPageSize", (CMPIValue*)&(sptr->defPageSize), CMPI_uint32);
 
-
   /* 2.7 */
 #ifndef CIM26COMPAT
   opstat = CMNewArray(_broker,1,CMPI_uint16,rc);
@@ -332,7 +331,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
     goto exit;
   }
   else {
-    if( pctcpu > 90 ) { opstatval = 4;  /* 4 ... Stressed */ }
+    if( pctcpu > 90 ) { opstatval = 4; }
     CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16);
     CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
   }
@@ -342,6 +341,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "EnabledDefault", (CMPIValue*)&(status), CMPI_uint16);
+
 #endif
 
  exit:
