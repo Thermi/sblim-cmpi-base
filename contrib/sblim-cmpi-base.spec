@@ -56,14 +56,24 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/cmpi/mof
 
 make install INSTALL_ROOT=$RPM_BUILD_ROOT PEGASUS= STANDALONE=1
 
+# SUSE specific
+install -d $RPM_BUILD_ROOT/sbin/conf.d
+install -m755 contrib/SuSEconfig.sblim-cmpi-base $RPM_BUILD_ROOT/sbin/conf.d
+
 %files
 
 %defattr(-,root,root) 
 /usr/lib
 /usr/share/cmpi
 
+# SUSE specific
+/sbin/conf.d
+
 %files devel
 
 %defattr(-,root,root)
 /usr/include/cmpi
 
+# SUSE specific too
+%post
+echo "#run me once" > /var/adm/SuSEconfig/run-sblim-cmpi-base

@@ -1,0 +1,57 @@
+#! /bin/sh
+# Copyright (c) 2004 SuSE Linux AG Nuremberg, Germany.  All rights reserved.
+#
+# Author: Viktor Mihajlovski <mihajlov@de.ibm.com>
+# check if we are started as root
+# only one of UID and USER must be set correctly
+if test "$UID" != 0 -a "$USER" != root; then
+  echo "You must be root to start $0."
+  exit 1
+fi
+
+# Run only once
+RUNFILE=/var/adm/SuSEconfig/run-sblim-cmpi-base
+test -s $RUNFILE || exit 0
+
+if rpm -q pegasus-wbem; then
+    # Stop CIMOM if running
+    if /etc/init.d/pegasus-wbem status; then
+	/etc/init.d/pegasus-wbem stop
+	_RESTART=1
+    fi
+    # Register Providers
+    REPOSITORYLOC=/var/cache/pegasus
+    cimmofl -R $REPOSITORYLOC -n root/cimv2 /usr/share/cmpi/mof/Linux_Base.mof
+    cimmofl -R $REPOSITORYLOC -n root/PG_InterOp /usr/share/cmpi/mof/Linux_BaseRegistration.mof
+    # Restart CIMOM
+    if [ -n "$_RESTART" ] ; then
+	/etc/init.d/pegasus-wbem start
+    fi
+    rm -f $RUNFILE
+    exit 0
+fi
+
+if rpm -q openwbem; then
+    # Stop provider if running
+    if /etc/init.d/owcimomd status; then
+	/etc/init.d/owcimomd stop
+	_RESTART=1
+    fi
+    # Register Providers
+    sed "s/cmpi:/cmpi::/g" /usr/share/cmpi/mof/Linux_Base.mof > /tmp/Linux_Base.mof.$$
+    owmofc -d /var/lib/openwbem /tmp/Linux_Base.mof.$$
+    rm -f /tmp/Linu_Base.mof
+    # Reconfigure CMPI directory
+    if grep "^[[:space:]]*cmpiprovifc.prov_location" /etc/openwbem/openwbem.conf;	then
+	sed "s?^[[:space:]]*cmpiprovifc.prov_location.*?cmpiprovifc.prov_location = /usr/lib/cmpi?g" /etc/openwbem/openwbem.conf > /tmp/openwbem.conf.$$ && mv /tmp/openwbem.conf.$$ /etc/openwbem/openwbem.conf
+    else
+	echo "# Added CMPI Provider Directory - Done by sblim-cmpi-base"
+	echo "cmpiprovifc.prov_location = /usr/lib/cmpi" >> /etc/openwbem/openwbem.conf
+    fi    
+    # Restart Provider 
+    if [ -n "$_RESTART" ] ; then
+	/etc/init.d/owcimomd start
+    fi
+    rm -f $RUNFILE
+    exit 0
+fi
