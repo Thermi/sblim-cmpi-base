@@ -68,6 +68,8 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
 		 CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
+  _OSBASE_TRACE(2,("--- _makePath_UnixProcess() called"));
+
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
@@ -75,12 +77,14 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makePath_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
   if( !get_os_name() ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    _OSBASE_TRACE(2,("--- _makePath_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -89,6 +93,7 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makePath_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -100,6 +105,7 @@ CMPIObjectPath * _makePath_UnixProcess( CMPIBroker * _broker,
   CMAddKey(op, "Handle", sptr->pid, CMPI_chars);
     
  exit:
+  _OSBASE_TRACE(2,("--- _makePath_UnixProcess() exited"));
   return op;                
 }
 
@@ -120,6 +126,9 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
 #ifndef CIM26COMPAT
   unsigned short    status  = 2; /* Enabled */
 #endif
+
+  _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() called"));
+
 #ifdef MODULE_SYSMAN
   int               sysrc  = 0;
 
@@ -133,12 +142,14 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
   if( !get_os_name() ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -147,6 +158,7 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -154,6 +166,7 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
   if( CMIsNullObject(ci) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." ); 
+    _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -229,6 +242,7 @@ CMPIInstance * _makeInst_UnixProcess( CMPIBroker * _broker,
 #endif	
 
  exit:
+  _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() exited"));
   return ci;
 }
 

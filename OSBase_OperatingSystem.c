@@ -28,12 +28,11 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 
 /* ---------------------------------------------------------------------------*/
 // private declarations
 
-
-static char* _FILENAME = "OSBase_OperatingSystem.c";
 
 /* ---------------------------------------------------------------------------*/
 
@@ -47,11 +46,9 @@ char * CIM_OS_DISTRO = NULL;
  */
 int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
-  struct tm * cttm     = NULL;
-  time_t      ct       = 0;
-  FILE      * fmeminfo = NULL ;
+  FILE * fmeminfo = NULL ;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_operatingsystem_data()\n",_FILENAME); }
+  _OSBASE_TRACE(3,("--- get_operatingsystem_data() called"));
 
   (*sptr) = (struct cim_operatingsystem *)malloc(sizeof(struct cim_operatingsystem));
   memset(*sptr, 0, sizeof(struct cim_operatingsystem));
@@ -91,12 +88,7 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
   (*sptr)->curTimeZone = get_os_timezone();
 
   /* LocalDateTime */
-  if( time(&ct) != 0 ) {
-    cttm = gmtime( &ct );
-    (*sptr)->localDate = (char*)malloc(26+sizeof(char));
-    strftime((*sptr)->localDate,26,"%Y%m%d%H%M%S.000000",cttm);
-    _cat_timezone((*sptr)->localDate, (*sptr)->curTimeZone);
-  }
+  (*sptr)->localDate = get_os_localdatetime();
 
   /* InstallDate */
   (*sptr)->installDate = get_os_installdate();
@@ -106,6 +98,8 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
   (*sptr)->lastBootUp = get_os_lastbootup();
   _cat_timezone((*sptr)->lastBootUp, (*sptr)->curTimeZone);
 
+
+  _OSBASE_TRACE(3,("--- get_operatingsystem_data() exited"));
   return 0;
 }
 
@@ -115,9 +109,6 @@ char * get_os_distro() {
   int     strl    = 0;
   int     i       = 0;
   int     rc      = 0;
-
-  if( _debug && !CIM_OS_DISTRO )
-    { fprintf(stderr, "--- %s : get_os_distro()\n",_FILENAME); }
 
   /* check if Red Hat */
   /*
@@ -161,6 +152,9 @@ char * get_os_distro() {
   */
 
   if( !CIM_OS_DISTRO ) {
+    
+    _OSBASE_TRACE(4,("--- get_os_distro() called : init"));
+
     rc = runcommand( "cat /etc/`ls /etc/ | grep release`" , NULL , &hdout , NULL );
     if( rc == 0 ) {
       while ( hdout[i]) {
@@ -184,8 +178,12 @@ char * get_os_distro() {
       CIM_OS_DISTRO = (char *) malloc( 6*sizeof(char));
       strcpy( CIM_OS_DISTRO , "Linux" );
     }
+
+    _OSBASE_TRACE(4,("--- get_os_distro() : CIM_OS_DISTRO initialized with %s",CIM_OS_DISTRO));
+
   }
 
+  _OSBASE_TRACE(4,("--- get_os_distro() exited : %s",CIM_OS_DISTRO));
   return CIM_OS_DISTRO;
 }
 
@@ -194,7 +192,7 @@ char * get_kernel_version() {
   char *  str   = NULL;
   int     rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_kernel_version()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_kernel_version() called"));
 
   rc = runcommand( "uname -r" , NULL , &hdout , NULL );
   if( rc == 0 ) {
@@ -206,6 +204,8 @@ char * get_kernel_version() {
     str = (char *) malloc(10*sizeof(char));
     strcpy( str , "not found");
   }
+
+  _OSBASE_TRACE(4,("--- get_kernel_version() exited : %s",str));
   return str;
 }
 
@@ -217,7 +217,7 @@ char * get_os_installdate() {
   char      *  ptr   = NULL;
   int          rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_installdate()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_installdate() called"));
 
   get_os_distro();
 
@@ -238,37 +238,70 @@ char * get_os_installdate() {
       freeresultbuf(hdout);
     }
   }
+
+  _OSBASE_TRACE(4,("--- get_os_installdate() exited : %s",str));
   return str;
 }
 
 
 char * get_os_lastbootup() {
-  char          *  uptime = NULL;
-  struct tm     *  uptm   = NULL;
-  unsigned long    up     = 0;
+  char          * uptime = NULL;
+  struct tm       uptm;
+  unsigned long   up     = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_lastbootup()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_lastbootup() called"));
 
   up = _get_os_boottime();
-  if( up == 0 ) return NULL;
-  uptm = gmtime( &up );
-  uptime = (char*)malloc(26+sizeof(char));
-  strftime(uptime,26,"%Y%m%d%H%M%S.000000",uptm);
+  if( up == 0 ) { 
+    _OSBASE_TRACE(4,("--- get_os_lastbootup() failed : was not able to set last boot time"));
+    return NULL;
+  }
+  if( gmtime_r( &up, &uptm ) != NULL ) {
+    uptime = (char*)malloc(26+sizeof(char));
+    strftime(uptime,26,"%Y%m%d%H%M%S.000000",&uptm);
+  }
+  _OSBASE_TRACE(4,("--- get_os_lastbootup() exited : %s",uptime));
   return uptime;
 }
+
+
+char * get_os_localdatetime() {
+  char          * tm  = NULL;
+  long            sec = 0;
+  struct tm       cttm;
+  struct timeval  tv;
+  struct timezone tz;
+
+  _OSBASE_TRACE(4,("--- get_os_localdatetime() called"));
+
+  if( gettimeofday( &tv, &tz) == 0 ) {
+    sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
+    if( gmtime_r( &sec , &cttm) != NULL ) {
+      tm = (char*)malloc(26*sizeof(char));
+      strftime(tm,26,"%Y%m%d%H%M%S.000000",&cttm);
+      _cat_timezone(tm, get_os_timezone());
+    }
+  }
+
+  _OSBASE_TRACE(4,("--- get_os_localdatetime() exited : %s",tm));
+  return tm;
+}
+
 
 unsigned long get_os_numOfProcesses() {
   char          ** hdout = NULL ;
   unsigned long    np    = 0;
   int              rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_numOfProcesses()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_numOfProcesses() called"));
 
   rc = runcommand( "ps --no-headers -eo pid | wc -l" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     np = atol(hdout[0]);
     freeresultbuf(hdout);
   }
+
+  _OSBASE_TRACE(4,("--- get_os_numOfProcesses() exited : %l",np));
   return np;
 }
 
@@ -277,13 +310,15 @@ unsigned long get_os_numOfUsers() {
   unsigned long    np    = 0;
   int              rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_numOfUsers()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_numOfUsers() called"));
 
   rc = runcommand( "who -u | wc -l" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     np = atol(hdout[0]);
     freeresultbuf(hdout);
   }
+
+  _OSBASE_TRACE(4,("--- get_os_numOfUsers() exited : %l",np));
   return np;
 }
 
@@ -291,12 +326,14 @@ unsigned long get_os_maxNumOfProc() {
   FILE          * ffilemax = NULL;
   unsigned long   max      = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_maxNumOfProc()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_maxNumOfProc() called"));
 
   if ( (ffilemax=fopen("/proc/sys/fs/file-max","r")) != NULL ) {
     fscanf(ffilemax,"%ld",&max);
     fclose(ffilemax);
   }
+
+  _OSBASE_TRACE(4,("--- get_os_maxNumOfProc() exited : %l",max));
   return max;
 }
 
@@ -305,10 +342,12 @@ unsigned long long get_os_maxProcMemSize() {
   unsigned long long max = 0;
   int                rc  = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_maxProcMemSize()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_maxProcMemSize() called"));
 
   rc = getrlimit(RLIMIT_DATA,&rlim);
   if( rc == 0 ) { max = rlim.rlim_max; }
+
+  _OSBASE_TRACE(4,("--- get_os_maxProcMemSize() exited : %l",max));
   return max;
 }
 

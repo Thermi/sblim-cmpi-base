@@ -24,12 +24,6 @@
 
 #define _GNU_SOURCE
 
-#ifdef DEBUG
-    int _debug = 1;
-#else
-    int _debug = 0;
-#endif
-
 #include "OSBase_Common.h"
 
 #include <unistd.h>
@@ -46,16 +40,52 @@
 
 /* ---------------------------------------------------------------------------*/
 
-static char* _FILENAME = "OSBase_Common.c";
-
-/* ---------------------------------------------------------------------------*/
-
 char * CIM_HOST_NAME          = NULL;
 char * CIM_OS_NAME            = NULL;
 int    CIM_OS_TIMEZONE        = 999;
 unsigned long CIM_OS_BOOTTIME = 0;
 
 /* ---------------------------------------------------------------------------*/
+
+int    _debug             = 0;
+char * _SBLIM_TRACE_FILE = NULL;
+
+/* initialization routine */
+void _init() {
+
+  char * var  = NULL;
+  char * err  = NULL;
+  FILE * ferr = NULL;
+
+  var = getenv("SBLIM_TRACE");
+  if( var != NULL ) {
+    _debug = atoi(var);
+  } 
+  else { _debug = 0; }
+  
+  err = getenv("SBLIM_TRACE_FILE");
+  if( err != NULL ) {
+    if( ( ((ferr=fopen(err,"a")) == NULL) || fclose(ferr) ) ) {
+      fprintf(stderr,"Couldn't create trace file\n");
+      return;
+    }
+    _SBLIM_TRACE_FILE = strdup(err);
+  } 
+  else { 
+    if(_SBLIM_TRACE_FILE) free(_SBLIM_TRACE_FILE);
+    _SBLIM_TRACE_FILE = NULL ; 
+  }
+  
+}
+
+/* deinitialization routine */
+void _fini() { 
+
+}
+
+/* ---------------------------------------------------------------------------*/
+
+
 
 /* initializes the variable CIM_HOST_NAME
  * contains the full qualified IP hostname of the system, e.g. host.domain
@@ -70,7 +100,7 @@ char * get_system_name() {
 
   if( !CIM_HOST_NAME ) {
 
-    if( _debug ) { fprintf(stderr, "--- %s : get_system_name()\n",_FILENAME); }
+    _OSBASE_TRACE(4,("--- get_system_name() called : init"));
 
     host = (char *)malloc(255*sizeof(char));
     if ( gethostname(host, 255 ) == -1 ) { return NULL ; }
@@ -108,8 +138,9 @@ char * get_system_name() {
     if(host) free(host);
     if(domain) free(domain);
 
-    if( _debug ) { fprintf(stderr,"CIM_HOST_NAME initialized with %s\n",CIM_HOST_NAME); }
+    _OSBASE_TRACE(4,("--- get_system_name() : CIM_HOST_NAME initialized with %s",CIM_HOST_NAME));
   }
+
   return CIM_HOST_NAME;
 }
 
@@ -120,17 +151,17 @@ char * get_system_name() {
 
 char * get_os_name(){
 
-  if( _debug && !CIM_OS_NAME )
-    { fprintf(stderr, "--- %s : get_os_name()\n",_FILENAME); }
-
   if( !CIM_OS_NAME ) {
+
+    _OSBASE_TRACE(4,("--- get_os_name() called : init"));
+
     get_system_name();
     if( CIM_HOST_NAME ) {
       CIM_OS_NAME = (char*) malloc (strlen(CIM_HOST_NAME)+1);
       strcpy( CIM_OS_NAME, CIM_HOST_NAME );
     }
 
-    if( _debug ) { fprintf(stderr,"CIM_OS_NAME initialized with %s\n",CIM_OS_NAME); }
+    _OSBASE_TRACE(4,("--- get_os_name() : CIM_OS_NAME initialized with %s",CIM_OS_NAME));
   }
   return CIM_OS_NAME;
 }
@@ -140,26 +171,19 @@ char * get_os_name(){
 /* ---------------------------------------------------------------------------*/
 
 signed short get_os_timezone() {
-  char ** hdout  = NULL;
-  char *  ptr    = NULL;
-  char    hour[] = "00";
-  char    min[]  = "00"; 
-  int     rc     = 0;
-
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_timezone()\n",_FILENAME); }
+  struct timeval  tv;
+  struct timezone tz;
 
   if( CIM_OS_TIMEZONE == 999 ) {
-    rc = runcommand( "date +%z" , NULL , &hdout , NULL );
-    if( rc == 0 ) {
-      ptr = hdout[0]+1;
-      strncpy(hour,ptr,2);
-      ptr = hdout[0]+3;
-      strncpy(min,ptr,2);
-      CIM_OS_TIMEZONE = (atoi(hour)*60)+atoi(min);
-      //      freeresultbuf(hdout);
+
+    _OSBASE_TRACE(4,("--- get_os_timezone() called : init"));
+
+    if( gettimeofday( &tv, &tz) == 0 ) {
+      CIM_OS_TIMEZONE = tz.tz_minuteswest*-1;
+      _OSBASE_TRACE(4,("--- get_os_timezone() called : CIM_OS_TIMEZONE initialized with %i",CIM_OS_TIMEZONE));
     }
     else {
-      fprintf(stderr, "--- %s : command date +z not successful returned - Timezone set to 0\n",_FILENAME);
+      _OSBASE_TRACE(4,("--- get_os_timezone() failed : CIM_OS_TIMEZONE initialized with 0"));
       CIM_OS_TIMEZONE = 0;
     }
   }
@@ -170,7 +194,7 @@ unsigned long _get_os_boottime() {
   char ** hdout = NULL;
   int     rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_os_boottime()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- get_os_boottime() called"));
 
   if( CIM_OS_BOOTTIME == 0 ) {
     rc = runcommand( "cat /proc/stat | grep btime" , NULL , &hdout , NULL );
@@ -179,9 +203,11 @@ unsigned long _get_os_boottime() {
       freeresultbuf(hdout);
     }
     else {
-      fprintf(stderr, "--- %s : was not able to get boottime - set to 0\n",_FILENAME);
+      _OSBASE_TRACE(4,("--- get_os_boottime() failed : was not able to get boottime - set to 0"));
     }
   }
+
+  _OSBASE_TRACE(4,("--- get_os_boottime() exited : %i",CIM_OS_BOOTTIME));
   return CIM_OS_BOOTTIME;
 }
 
@@ -269,7 +295,7 @@ int runcommand(const char *cmd, char **in, char ***out, char ***err)
     strcat(cmdstring,fclterrname);
   }
   /* perform the system call */
-  if( _debug ) { fprintf(stderr,"runcommand: %s\n",cmdstring); }
+  _OSBASE_TRACE(4,("--- runcommand() : %s",cmdstring));
   rc=system(cmdstring);
   free(cmdstring);
 
@@ -400,7 +426,7 @@ int get_system_parameter(char *path, char *entry, char *buffer, int size) {
   FILE * file         = NULL;
   int    res          = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_system_parameter()\n",_FILENAME); }  
+  _OSBASE_TRACE(4,("--- get_system_parameter() called"));
 
   if (path == NULL || entry == NULL || buffer == NULL)
     return -1;
@@ -415,6 +441,8 @@ int get_system_parameter(char *path, char *entry, char *buffer, int size) {
   if (res > 0)
     buffer[res] = '\0';
   free(completePath);
+
+  _OSBASE_TRACE(4,("--- get_system_parameter() exited"));
   return res;
 }
 
@@ -431,7 +459,7 @@ int set_system_parameter(char *path, char *entry, char *value) {
   FILE * file         = NULL;
   int    res          = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : set_system_parameter()\n",_FILENAME); }  
+  _OSBASE_TRACE(4,("--- set_system_parameter() called"));
 
   if (path == NULL || entry == NULL || value == NULL)
     return -1;
@@ -444,8 +472,64 @@ int set_system_parameter(char *path, char *entry, char *value) {
   res = fwrite(value, 1, strlen(value), file);
   fclose(file);
   free(completePath);
+
+  _OSBASE_TRACE(4,("--- set_system_parameter() exited"));
   return res;
 }
+
+
+/* ---------------------------------------------------------------------------*/
+
+
+
+/* ---------------------------------------------------------------------------*/
+/*                            trace facility                                  */
+/* ---------------------------------------------------------------------------*/
+
+char * _format_trace(char *fmt,...) {
+   va_list ap;
+   char *msg=(char*)malloc(512);
+   va_start(ap,fmt);
+   vsnprintf(msg,512,fmt,ap);
+   return msg;
+}
+
+void _osbase_trace( int level, char * file, int line, char * msg) {
+
+  struct tm        cttm;
+  struct timeval   tv;
+  struct timezone  tz;
+  long             sec  = 0;
+  char           * tm   = NULL;
+  FILE           * ferr = NULL;
+  
+  if( (_SBLIM_TRACE_FILE != NULL) ) {
+    if( (ferr=fopen(_SBLIM_TRACE_FILE,"a")) == NULL ) {
+      fprintf(stderr,"Couldn't open trace file");
+      return;
+    }
+  }
+  else { ferr = stderr; } 
+   
+  if( gettimeofday( &tv, &tz) == 0 ) {
+    sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
+    tm = (char*)malloc(20*sizeof(char));
+    memset(tm, 0, 20*sizeof(char));
+    if( gmtime_r( &sec , &cttm) != NULL ) {
+      strftime(tm,20,"%m/%d/%Y %H:%M:%S",&cttm);
+    }
+  }
+  
+  fprintf(ferr,"[%i] [%s] --- %s:(%i) : %s\n", level, tm, file, line, msg);
+  
+  if( (_SBLIM_TRACE_FILE != NULL) ) {
+    fclose(ferr);
+  }
+
+  if(tm) free(tm);
+  if(msg)  free(msg);
+}
+
 
 
 /* ---------------------------------------------------------------------------*/

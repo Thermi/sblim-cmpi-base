@@ -29,8 +29,6 @@
 // private declarations
 
 
-static char* _FILENAME = "OSBase_Processor.c";
-
 /* ---------------------------------------------------------------------------*/
 
 static int _processor_data( int, struct cim_processor ** );
@@ -59,7 +57,7 @@ int enum_all_processor( struct processorlist ** lptr ) {
   int                     i        = 0;
   int                     rc       = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : enum_all_processor()\n",_FILENAME); }  
+  _OSBASE_TRACE(3,("--- enum_all_processor() called"));
 
   lptrhelp = (struct processorlist *) malloc (sizeof(struct processorlist));
   memset(lptrhelp, 0, sizeof(struct processorlist));
@@ -98,6 +96,7 @@ int enum_all_processor( struct processorlist ** lptr ) {
   }
 
   if(cmd) free(cmd);
+  _OSBASE_TRACE(3,("--- enum_all_processor() exited"));
   return rc;
 }
 
@@ -107,7 +106,7 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
   int     i     = 0;
   int     rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_processor_data()\n",_FILENAME); }  
+  _OSBASE_TRACE(3,("--- _get_processor_data() called"));
 
   cmd = (char *)malloc((strlen(CPUINFO)+23)*sizeof(char));
   strcpy(cmd, "cat ");
@@ -125,7 +124,12 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
     }
     freeresultbuf(hdout);
   }
+  if( sptr == NULL ) {
+    _OSBASE_TRACE(3,("--- get_processor_data() failed : ID %s not valid",id));
+  }
+
   if(cmd) free(cmd);
+  _OSBASE_TRACE(3,("--- _get_processor_data() exited"));
   return rc;
 }
 
@@ -135,7 +139,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   char *  ptr   = NULL;
   int     rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : _processor_data()\n",_FILENAME); }  
+  _OSBASE_TRACE(4,("--- _processor_data() called"));
 
   *sptr = (struct cim_processor *) malloc (sizeof(struct cim_processor));
   memset(*sptr, 0, sizeof(struct cim_processor));
@@ -235,6 +239,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   freeresultbuf(hdout);
   if(cmd) free(cmd);
 
+  _OSBASE_TRACE(4,("--- _processor_data() exited"));
   return 0;
 }
 
@@ -245,7 +250,7 @@ static unsigned short _processor_family( int id ) {
   unsigned short rv    = 0;
   int            rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : _processor_family()\n",_FILENAME); }  
+  _OSBASE_TRACE(4,("--- _processor_family() called"));
 
   cmd = (char *)malloc((strlen(CPUINFO)+64)*sizeof(char));
   strcpy(cmd, "cat ");
@@ -331,6 +336,8 @@ static unsigned short _processor_family( int id ) {
   }
   else rv = 2; /* Unknown */
   freeresultbuf(hdout);
+
+  _OSBASE_TRACE(4,("--- _processor_family() exited : %i",rv));
   return rv;
 }
 
@@ -345,7 +352,7 @@ static unsigned short _processor_load_perc( int id ) {
   unsigned short loadPct   = 0;
   int            rc        = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : _processor_load_perc()\n",_FILENAME); }  
+  _OSBASE_TRACE(4,("--- _processor_load_perc() called"));
 
   sid = (char *) malloc (5*sizeof(char));
   sprintf(sid, "%i", id);
@@ -365,6 +372,7 @@ static unsigned short _processor_load_perc( int id ) {
   freeresultbuf(hdout);
   if(sid) free(sid);
 
+  _OSBASE_TRACE(4,("--- _processor_load_perc() exited : %i",loadPct));
   return loadPct;
 }
 

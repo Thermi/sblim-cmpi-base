@@ -40,8 +40,6 @@ unsigned char CMPI_false=0;
 char * CSCreationClassName = "Linux_ComputerSystem";
 char * OSCreationClassName = "Linux_OperatingSystem";
 
-static char * _FILENAME    = "cmpiOSBase_Common.c";
-
 /* ---------------------------------------------------------------------------*/
 
 
@@ -60,10 +58,13 @@ void _check_system_key_value_pairs( CMPIBroker * _broker,
 				    CMPIStatus * rc ) {
   CMPIString * name = NULL;
 
+  _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() called"));
+
    name = CMGetKey( cop, className, rc).value.string;
    if ( rc->rc != CMPI_RC_OK || name == NULL ) {
       CMSetStatusWithChars( _broker, rc,
                             CMPI_RC_ERR_FAILED, "Could not get CS/OS Name of instance." );
+      _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() failed : %s",CMGetCharPtr(rc->msg)));
       return;
    }
 
@@ -71,6 +72,7 @@ void _check_system_key_value_pairs( CMPIBroker * _broker,
        ( strcasecmp(CMGetCharPtr(name),get_os_name()) != 0 )) {
       CMSetStatusWithChars( _broker, rc,
                             CMPI_RC_ERR_NOT_FOUND, "This instance does not exist (wrong CS/OS Name)." );
+      _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() failed : %s",CMGetCharPtr(rc->msg)));
       return;
    }
 
@@ -78,15 +80,19 @@ void _check_system_key_value_pairs( CMPIBroker * _broker,
    if ( rc->rc != CMPI_RC_OK || name == NULL ) {
       CMSetStatusWithChars( _broker, rc,
                             CMPI_RC_ERR_FAILED, "Could not get CS/OS CreationClassName of instance." );
+      _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() failed : %s",CMGetCharPtr(rc->msg)));
       return;
    }
    if ( (strcasecmp(CMGetCharPtr(name),CSCreationClassName) != 0) &&
         (strcasecmp(CMGetCharPtr(name),OSCreationClassName) != 0)   ) {
       CMSetStatusWithChars( _broker, rc,
                             CMPI_RC_ERR_NOT_FOUND, "This class name does not exist (wrong CS/OS CreationClassName)." );
+      _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() failed : %s",CMGetCharPtr(rc->msg)));
       return;
    }
 
+  _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() exited"));
+  return;
 }
 
 
@@ -131,8 +137,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
   CMPIData          data ;
   int               arc = 0;
 
-  if( _debug )
-    fprintf( stderr, "--- %s : _assoc_create_inst_1toN()\n",_FILENAME);
+  _OSBASE_TRACE(2,("--- _assoc_create_inst_1toN() called"));
 
   if( left == 0 ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(cop,rc)),
@@ -145,6 +150,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+    _OSBASE_TRACE(2,("--- _assoc_create_inst_1toN() failed : %s",CMGetCharPtr(rc->msg)));
     return -1;
   }
 
@@ -152,6 +158,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
   if( en == NULL ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CBEnumInstanceNames( _broker, ctx, op, rc)" );
+    _OSBASE_TRACE(2,("--- _assoc_create_inst_1toN() failed : %s",CMGetCharPtr(rc->msg)));
     return -1;
   }
 
@@ -166,6 +173,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
     if( data.value.ref == NULL ) {
       CMSetStatusWithChars( _broker, rc,
 			    CMPI_RC_ERR_FAILED, "CMGetNext( en, rc)" );
+      _OSBASE_TRACE(2,("--- _assoc_create_inst_1toN() failed : %s",CMGetCharPtr(rc->msg)));
       return -1;
     }
 
@@ -177,6 +185,7 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
 				   _RefLeft,_RefRight,inst,0,rc);
   }
 
+  _OSBASE_TRACE(2,("--- _assoc_create_inst_1toN() exited"));
   return arc;
 }
 
@@ -201,12 +210,13 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   CMPIData         dtl;
   CMPIData         dtr;
 
-  if( _debug ) { fprintf( stderr, "--- %s : _assoc_get_inst()\n",_FILENAME); }
+  _OSBASE_TRACE(2,("--- _assoc_get_inst() called"));
 
   dtl = CMGetKey( cop, _RefLeft, rc);
   if( dtl.value.ref == NULL ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CMGetKey( cop, _RefLeft, rc)" );
+    _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -215,6 +225,7 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   if( ci == NULL ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "GetInstance of left reference failed.");
+    _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -222,6 +233,7 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   if( dtr.value.ref == NULL ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CMGetKey( cop, _RefRight, rc)" );
+    _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -230,6 +242,7 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   if( ci == NULL ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "GetInstance of right reference failed.");
+    _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -238,6 +251,7 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+    _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -245,6 +259,7 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   if( CMIsNullObject(ci) ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." );
+    _OSBASE_TRACE(2,("--- _assoc_get_inst() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -252,6 +267,7 @@ CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
   CMSetProperty( ci, _RefRight, (CMPIValue*)&(dtr.value.ref), CMPI_ref );
 
  exit:
+  _OSBASE_TRACE(2,("--- _assoc_get_inst() exited"));
   return ci;
 }
 
@@ -295,17 +311,20 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
   CMPIData          data ;
   char            * targetName = NULL;
 
-  if( _debug )
-    { fprintf( stderr, "--- %s : _assoc_create_refs_1toN()\n",_FILENAME); }
+  _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() called"));
 
   op = _assoc_targetClass_OP(_broker,ref,_RefLeftClass,_RefRightClass,rc);
-  if( op == NULL ) { goto exit; }
+  if( op == NULL ) { 
+    _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() exited : referenced Class is not covered by this Association"));
+    goto exit; 
+  }
 
   rop = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)),
 			 _ClassName, rc );
   if( CMIsNullObject(rop) ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+    _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
     return -1;
   }
 
@@ -315,6 +334,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
     if( en == NULL ) {
       CMSetStatusWithChars( _broker, rc,
 			    CMPI_RC_ERR_FAILED, "CBEnumInstances( _broker, ctx, op, rc)" );
+      _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
       return -1;
     }
 
@@ -324,6 +344,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
       if( data.value.inst == NULL ) {
         CMSetStatusWithChars( _broker, rc,
 			      CMPI_RC_ERR_FAILED, "CMGetNext( en, rc)" );
+	_OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
         return -1;
       }
       
@@ -336,6 +357,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
     if( en == NULL ) {
       CMSetStatusWithChars( _broker, rc,
 			    CMPI_RC_ERR_FAILED, "CBEnumInstanceNames( _broker, ctx, op, rc)" );
+      _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
       return -1;
     }
 
@@ -345,6 +367,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
       if( data.value.ref == NULL ) {
 	CMSetStatusWithChars( _broker, rc,
 			      CMPI_RC_ERR_FAILED, "CMGetNext( en, rc)" );
+	_OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
 	return -1;
       }
       //    fprintf(stderr,"_assoc_create_refs_1toN(): %s\n",
@@ -359,6 +382,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
 	if( CMIsNullObject(ci) ) {
 	  CMSetStatusWithChars( _broker, rc,
 				CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." );
+	  _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() failed : %s",CMGetCharPtr(rc->msg)));
 	  return -1;
 	}
 	
@@ -402,6 +426,7 @@ int _assoc_create_refs_1toN( CMPIBroker * _broker,
   }
 
  exit:
+  _OSBASE_TRACE(2,("--- _assoc_create_refs_1toN() exited"));
   return 0;
 }
 
@@ -422,29 +447,34 @@ char * _assoc_targetClass_Name( CMPIBroker * _broker,
 
   CMPIString * sourceClass = NULL;
 
-  if( _debug )
-    { fprintf( stderr, "--- %s : _assoc_targetClass_Name()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() called"));
 
   sourceClass = CMGetClassName(ref, rc);
   if( sourceClass == NULL ) { return NULL; }
+    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() : source class %s",CMGetCharPtr(sourceClass)));
 
   if( strcmp(CMGetCharPtr(sourceClass), _RefLeftClass ) == 0 ) {
     /* pathName = left end -> get right end */
+    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() exited : %s",_RefRightClass));
     return _RefRightClass;
   }
   else if( strcmp(CMGetCharPtr(sourceClass), _RefRightClass ) == 0 ) {
     /* pathName = right end -> get left end */
+    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() exited : %s",_RefLeftClass));
     return _RefLeftClass;
   }
   else if( CMClassPathIsA(_broker,ref,_RefLeftClass,rc) == 1 ) {
     /* pathName = left end -> get right end */
+    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() exited : %s",_RefRightClass));
     return _RefRightClass;
   }
   else if( CMClassPathIsA(_broker,ref,_RefRightClass,rc) == 1 ) {
     /* pathName = right end -> get left end */
+    _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() exited : %s",_RefLeftClass));
     return _RefLeftClass;
   }
 
+  _OSBASE_TRACE(4,("--- _assoc_targetClass_Name() exited : no target class found"));
   return NULL;
 }
 
@@ -465,15 +495,21 @@ CMPIObjectPath * _assoc_targetClass_OP( CMPIBroker * _broker,
   CMPIObjectPath  * op         = NULL;
   char            * targetName = NULL;
 
-  if( _debug )
-    { fprintf( stderr, "--- %s : _assoc_targetClass_OP()\n",_FILENAME); }
+  _OSBASE_TRACE(4,("--- _assoc_targetClass_OP() called"));
 
   targetName = _assoc_targetClass_Name(_broker,ref,_RefLeftClass,_RefRightClass,rc);
 
   if( targetName != NULL ) {
     op = CMNewObjectPath( _broker, CMGetCharPtr(CMGetNameSpace(ref,rc)),
 			  targetName, rc );
+    if( CMIsNullObject(op) ) {
+      CMSetStatusWithChars( _broker, rc,
+			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+      _OSBASE_TRACE(4,("--- _assoc_targetClass_OP() failed : %s",CMGetCharPtr(rc->msg)));
+    }
   }
+
+  _OSBASE_TRACE(4,("--- _assoc_targetClass_OP() exited"));
   return op;
 }
 
@@ -481,12 +517,12 @@ CMPIObjectPath * _assoc_targetClass_OP( CMPIBroker * _broker,
 
 
 /* ---------------------------------------------------------------------------*/
-/*                       _assoc_targetClass_OP()                              */
+/*                    _assoc_check_parameter_const()                          */
 /* ---------------------------------------------------------------------------*/
 /*    method to check the input parameter resultClass, role and resultRole    */
 /*           submitted to the methods of the association interface            */
 /*                                                                            */
-/* return value NULL : association is not responsible for this request        */
+/* return value 0 : association is not responsible for this request           */
 /* ---------------------------------------------------------------------------*/
 
 int _assoc_check_parameter_const( CMPIBroker * _broker,
@@ -504,6 +540,8 @@ int _assoc_check_parameter_const( CMPIBroker * _broker,
   CMPIObjectPath * rcop        = NULL;
   CMPIString     * sourceClass = NULL;
   int              intrc       = 0;
+
+  _OSBASE_TRACE(2,("--- _assoc_check_parameter_const() called"));
 
   if( resultClass || role || resultRole) {
 
@@ -581,6 +619,12 @@ int _assoc_check_parameter_const( CMPIBroker * _broker,
   else { intrc = 1; }
 
  exit:
+  if( intrc == 1 ) {
+    _OSBASE_TRACE(2,("--- _assoc_check_parameter_const() exited : responsible"));
+  }
+  else {
+    _OSBASE_TRACE(2,("--- _assoc_check_parameter_const() exited : not responsible"));
+  }
   return intrc;
 }
 

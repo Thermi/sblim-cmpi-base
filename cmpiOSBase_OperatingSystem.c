@@ -78,6 +78,8 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
 	         CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
+  _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() called"));
+
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
@@ -85,12 +87,14 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
   if( !get_os_name() ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -99,6 +103,7 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -108,6 +113,7 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
   CMAddKey(op, "Name", get_os_name(), CMPI_chars);
 
  exit:
+  _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() exited"));
   return op;                
 }
 
@@ -122,15 +128,20 @@ CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
   struct cim_operatingsystem * sptr = NULL;
   int                          frc  = 0;
 
+  _OSBASE_TRACE(2,("--- _makeInst_OperatingSystem() called"));
+
   frc = get_operatingsystem_data(&sptr);
   if (frc==0)
     ci = _makeOS( _broker, ref, sptr, rc );
   else {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Could not get OS Data." );
+    _OSBASE_TRACE(2,("--- _makeInst_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
   }
 
   free_os_data(sptr);
+
+  _OSBASE_TRACE(2,("--- _makeInst_OperatingSystem() exited"));
   return ci;
 }
 
@@ -169,6 +180,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   int                i         = 0;
 #endif
 
+  _OSBASE_TRACE(2,("--- _makeOS() called"));
 
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
@@ -177,12 +189,14 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
   if( !get_os_name() ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
+    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -191,6 +205,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." );
+    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -198,6 +213,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   if( CMIsNullObject(ci) ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." );
+    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -270,6 +286,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   if( rc->rc != CMPI_RC_OK ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CMNewArray(_broker,1,CMPI_uint16,rc)" );
+    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     ci = NULL;
     goto exit;
   }
@@ -278,6 +295,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   if( rc->rc != CMPI_RC_OK ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16)" );
+    _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     ci = NULL;
     goto exit;
   }
@@ -294,6 +312,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
 #endif
 
  exit:
+  _OSBASE_TRACE(2,("--- _makeOS() exited"));
   return ci;
 }
 

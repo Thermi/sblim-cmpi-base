@@ -40,8 +40,6 @@
 // private declarations
 
 
-static char* _FILENAME = "OSBase_UnixProcess.c";
-
 /* ---------------------------------------------------------------------------*/
 
 
@@ -59,7 +57,7 @@ int enum_all_process( struct processlist ** lptr ){
   int                   rc       = 0;
   int                   i        = 0;
   
-  if( _debug ) { fprintf(stderr, "--- %s : enum_all_process()\n",_FILENAME); }  
+  _OSBASE_TRACE(3,("--- enum_all_process() called"));
   
   rc = runcommand( "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,comm,session,state,args" , NULL, &hdout, NULL );
 
@@ -81,6 +79,7 @@ int enum_all_process( struct processlist ** lptr ){
     }
   }
   freeresultbuf( hdout );
+  _OSBASE_TRACE(3,("--- enum_all_process() exited"));
   return rc;
 }
 
@@ -93,7 +92,7 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
   int     i     = 0;
   int     rc    = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : get_process_data()\n",_FILENAME); }   
+  _OSBASE_TRACE(3,("--- get_process_data() called"));
 
   cmd = (char*)malloc((strlen(pid)+7)*sizeof(char));
   strcpy(cmd, "/proc/");
@@ -121,9 +120,10 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
     closedir(dpid);
   }
   else { 
-    if( _debug ) { fprintf(stderr, "--- get_process_data() --- PID %s not valid\n", pid); }
+    _OSBASE_TRACE(3,("--- get_process_data() failed : PID %s not valid",pid));
     return -1 ;
   }
+  _OSBASE_TRACE(3,("--- get_process_data() exited"));
   return rc;
 }
 
@@ -135,7 +135,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
   char               *  cmd    = NULL;
   char               *  ptr    = NULL;
   FILE               *  fpstat = NULL;
-  struct tm          *  tmdate = NULL;
+  struct tm             tmdate;
   unsigned long long    kmtime = 0;        // Kernel Mode Time
   unsigned long long    umtime = 0;        // User Mode Time
   unsigned long         ctime  = 0;        // Start Time
@@ -144,7 +144,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
   int                   j      = 0;
   int                   rc     = 0;
 
-  if( _debug ) { fprintf(stderr, "--- %s : _process_data()\n",_FILENAME); }   
+  _OSBASE_TRACE(4,("--- _process_data() called"));
 
   (*sptr) = (struct cim_process *) malloc (sizeof(struct cim_process));
   memset((*sptr), 0, sizeof(struct cim_process));
@@ -260,10 +260,11 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
     if( uptime == 0 ) { (*sptr)->createdate = NULL; }
     else {
       ctime = (ctime/100)+uptime;
-      tmdate = gmtime( &ctime );
-      (*sptr)->createdate = (char*)malloc(26+sizeof(char));
-      rc = strftime((*sptr)->createdate,26,"%Y%m%d%H%M%S.000000",tmdate);
-      _cat_timezone((*sptr)->createdate, get_os_timezone());
+      if( gmtime_r( &ctime , &tmdate) != NULL ) {
+	(*sptr)->createdate = (char*)malloc(26+sizeof(char));
+	rc = strftime((*sptr)->createdate,26,"%Y%m%d%H%M%S.000000",&tmdate);
+	_cat_timezone((*sptr)->createdate, get_os_timezone());
+      }
     }
     //    fprintf(stderr,"(*sptr)->createdate: %s\n",(*sptr)->createdate);
     /*    fprintf(stderr,"PID: %s ... um:%lli; km:%lli;\num:%lli; km:%lli; cd_sec:%li\n",
@@ -273,6 +274,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
   else { (*sptr)->createdate = NULL; }
   if(cmd) free(cmd);
 
+  _OSBASE_TRACE(4,("--- _process_data() exited"));
   return 0;
 }
 
@@ -281,7 +283,7 @@ static char * _get_process_execpath( char * id , char * cmd ) {
   char *  path  = NULL;
   int     rc    = 0;  
 
-  if( _debug ) { fprintf(stderr, "--- %s : _get_process_execpath()\n",_FILENAME); }  
+  _OSBASE_TRACE(4,("--- _get_process_execpath() called"));
 
   path = (char*)malloc((strlen(id)+11)*sizeof(char));
   strcpy(path, "/proc/");
@@ -296,6 +298,7 @@ static char * _get_process_execpath( char * id , char * cmd ) {
     free(buf);
     buf = strdup(cmd);
   }
+  _OSBASE_TRACE(4,("--- _get_process_execpath() exited : %s",buf));
   return buf; 
 }
 

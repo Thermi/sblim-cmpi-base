@@ -54,6 +54,8 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
 	         CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
+  _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() called"));
+
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
@@ -61,6 +63,7 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -69,6 +72,7 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -76,6 +80,7 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
   CMAddKey(op, "Name", get_system_name(), CMPI_chars);
     
  exit:
+  _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() exited"));
   return op;                
 }
 
@@ -95,6 +100,8 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   unsigned short   dedicated = 0; /* Not Dedicated */
 #endif
 
+  _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() called"));
+
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
@@ -102,6 +109,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -110,6 +118,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -117,6 +126,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   if( CMIsNullObject(ci) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." ); 
+    _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
   
@@ -150,12 +160,13 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
 #endif
 
  exit:
+  _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() exited"));
   return ci;
 }
 
 
 
 /* ---------------------------------------------------------------------------*/
-/*          end of cmpiOSBase_ComputerSystem.c                      */
+/*                  end of cmpiOSBase_ComputerSystem.c                        */
 /* ---------------------------------------------------------------------------*/
 

@@ -38,6 +38,7 @@
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
 
+
 /* ---------------------------------------------------------------------------*/
 
 
@@ -55,6 +56,8 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
 		 CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
+  _OSBASE_TRACE(2,("--- _makePath_Processor() called"));
+
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
@@ -62,6 +65,7 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makePath_Processor() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -70,6 +74,7 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makePath_Processor() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -79,6 +84,7 @@ CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
   CMAddKey(op, "DeviceID", sptr->id, CMPI_chars);
     
  exit:
+  _OSBASE_TRACE(2,("--- _makePath_Processor() exited"));
   return op;                
 }
 
@@ -95,6 +101,8 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   unsigned short   status = 2; /* Enabled */
 #endif
 
+  _OSBASE_TRACE(2,("--- _makeInst_Processor() called"));
+
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system datas 
    * CIM_HOST_NAME contains the unique hostname of the local system 
@@ -102,6 +110,7 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
+    _OSBASE_TRACE(2,("--- _makeInst_Processor() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
@@ -110,6 +119,7 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   if( CMIsNullObject(op) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIObjectPath failed." ); 
+    _OSBASE_TRACE(2,("--- _makeInst_Processor() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
 
@@ -117,6 +127,7 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
   if( CMIsNullObject(ci) ) { 
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "Create CMPIInstance failed." ); 
+    _OSBASE_TRACE(2,("--- _makeInst_Processor() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit; 
   }
       
@@ -151,6 +162,7 @@ CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
 #endif
 
  exit:
+  _OSBASE_TRACE(2,("--- _makeInst_Processor() exited"));
   return ci;
 }
 

@@ -36,11 +36,11 @@ HW=$(shell ./platform.sh)
 # No changes necessary below this line
 
 # support CIM Schema Version 2.7
-CFLAGS=-Wall -I . -I $(CIMOMINC) -D_COMPILE_UNIX -D$(HW) -DDEBUG -DNOEVENTS $(CFLAG_SYSMAN)
+CFLAGS=-Wall -g -I. -I$(CIMOMINC) -D_COMPILE_UNIX -D$(HW) -DDEBUG -DNOEVENTS $(CFLAG_SYSMAN)
 # support CIM Schema Version 2.6
-#CFLAGS=-Wall -I . -I $(CIMOMINC) -D_COMPILE_UNIX -DDEBUG -DNOEVENTS -DCIM26COMPAT $(CFLAG_SYSMAN)
+#CFLAGS=-Wall -g -I. -I$(CIMOMINC) -D_COMPILE_UNIX -DDEBUG -DNOEVENTS -DCIM26COMPAT $(CFLAG_SYSMAN)
 
-LDFLAGS=-L . -L$(CIMOMLIB) -shared -lpthread -lcmpiOSBase_Common
+LDFLAGS=-L. -L$(CIMOMLIB) -shared -lpthread -lcmpiOSBase_Common
 
 
 lib%.so: %.c
@@ -61,7 +61,7 @@ all: 	test \
 
 libcmpiOSBase_Common.so: cmpiOSBase_Common.c \
 			 OSBase_Common.c
-	$(CC) $(CFLAGS) -shared -o $@ $^
+	$(CC) $(CFLAGS) -shared -nostartfiles -o $@ $^
 
 
 libcmpiOSBase_ComputerSystemProvider.so: cmpiOSBase_ComputerSystemProvider.c \

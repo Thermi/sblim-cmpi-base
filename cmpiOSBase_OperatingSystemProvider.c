@@ -37,8 +37,6 @@ static CMPIBroker * _broker;
 /* private declarations                                                       */
 
 
-static char * _FILENAME = "cmpiOSBase_OperatingSystemProvider.c";
-
 /* ---------------------------------------------------------------------------*/
 
 
@@ -73,11 +71,13 @@ static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 CMPIStatus OSBase_OperatingSystemProviderCleanup( CMPIInstanceMI * mi, 
            CMPIContext * ctx) { 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI Cleanup()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI Cleanup() called",_ClassName));
+
 #ifndef NOEVENTS
   pthread_mutex_destroy(&mutex);
 #endif
+
+  _OSBASE_TRACE(1,("--- %s CMPI Cleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -88,21 +88,22 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstanceNames( CMPIInstanceMI * mi,
   CMPIObjectPath * op = NULL;
   CMPIStatus       rc = {CMPI_RC_OK, NULL};
   
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI EnumInstanceNames()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI EnumInstanceNames() called",_ClassName));
 
   op = _makePath_OperatingSystem( _broker, ctx, ref, &rc );
 
   if( op == NULL ) {
-    if( _debug ) {
-      if( rc.msg != NULL )
-	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
-    }
+    if( rc.msg != NULL )
+      { _OSBASE_TRACE(1,("--- %s CMPI EnumInstanceNames() failed : %s",_ClassName,CMGetCharPtr(rc.msg))); }
+    else
+      { _OSBASE_TRACE(1,("--- %s CMPI EnumInstanceNames() failed",_ClassName)); }
     return rc;
   }
 
   CMReturnObjectPath( rslt, op );
   CMReturnDone( rslt );
+
+  _OSBASE_TRACE(1,("--- %s CMPI EnumInstanceNames() exited",_ClassName));
   return rc;
 }
 
@@ -114,21 +115,21 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstances( CMPIInstanceMI * mi,
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI EnumInstances()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() called",_ClassName));
 
   ci = _makeInst_OperatingSystem( _broker, ctx, ref, &rc );
 
   if( ci == NULL ) {
-    if( _debug ) {
-      if( rc.msg != NULL )
-	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
-    }
+    if( rc.msg != NULL )
+      { _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() failed : %s",_ClassName,CMGetCharPtr(rc.msg))); }
+    else
+      { _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() failed",_ClassName)); }
     return rc;
   }
 
   CMReturnInstance( rslt, ci );
   CMReturnDone( rslt );
+  _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() exited",_ClassName));
   return rc;
 }
 
@@ -140,26 +141,33 @@ CMPIStatus OSBase_OperatingSystemProviderGetInstance( CMPIInstanceMI * mi,
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI GetInstance()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI GetInstance() called",_ClassName));
 
   _check_system_key_value_pairs( _broker, cop, "CSCreationClassName", "CSName", &rc );
-  if( rc.rc != CMPI_RC_OK ) { return rc; }
+  if( rc.rc != CMPI_RC_OK ) { 
+    _OSBASE_TRACE(1,("--- %s CMPI GetInstance() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
+    return rc; 
+  }
   _check_system_key_value_pairs( _broker, cop, "CreationClassName", "Name", &rc );
-  if( rc.rc != CMPI_RC_OK ) { return rc; }
+  if( rc.rc != CMPI_RC_OK ) { 
+    _OSBASE_TRACE(1,("--- %s CMPI GetInstance() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
+    return rc; 
+  }
 
   ci = _makeInst_OperatingSystem( _broker, ctx, cop, &rc );
 
   if( ci == NULL ) {
-    if( _debug ) {
-      if( rc.msg != NULL )
-	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
-    }
+    if( rc.msg != NULL )
+      { _OSBASE_TRACE(1,("--- %s CMPI GetInstance() failed : %s",_ClassName,CMGetCharPtr(rc.msg))); }
+    else
+      { _OSBASE_TRACE(1,("--- %s CMPI GetInstance() failed",_ClassName)); }
     return rc;
   }
 
   CMReturnInstance( rslt, ci );
   CMReturnDone(rslt);
+
+  _OSBASE_TRACE(1,("--- %s CMPI GetInstance() exited",_ClassName));
   return rc;
 }
 
@@ -170,11 +178,12 @@ CMPIStatus OSBase_OperatingSystemProviderCreateInstance( CMPIInstanceMI * mi,
            CMPIInstance * ci) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI CreateInstance()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() called",_ClassName));
 
   CMSetStatusWithChars( _broker, &rc, 
 			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+
+  _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() exited",_ClassName));
   return rc;
 }
 
@@ -186,11 +195,12 @@ CMPIStatus OSBase_OperatingSystemProviderSetInstance( CMPIInstanceMI * mi,
            char **properties) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI SetInstance()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI SetInstance() called",_ClassName));
 
   CMSetStatusWithChars( _broker, &rc, 
 			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+
+  _OSBASE_TRACE(1,("--- %s CMPI SetInstance() exited",_ClassName));
   return rc;
 }
 
@@ -200,11 +210,12 @@ CMPIStatus OSBase_OperatingSystemProviderDeleteInstance( CMPIInstanceMI * mi,
            CMPIObjectPath * cop) {
   CMPIStatus rc = {CMPI_RC_OK, NULL}; 
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI DeleteInstance()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI DeleteInstance() called",_ClassName));
 
   CMSetStatusWithChars( _broker, &rc, 
 			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+
+  _OSBASE_TRACE(1,("--- %s CMPI DeleteInstance() exited",_ClassName));
   return rc;
 }
 
@@ -216,11 +227,12 @@ CMPIStatus OSBase_OperatingSystemProviderExecQuery( CMPIInstanceMI * mi,
            char * query) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI ExecQuery()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI ExecQuery() called",_ClassName));
 
   CMSetStatusWithChars( _broker, &rc, 
 			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+
+  _OSBASE_TRACE(1,("--- %s CMPI ExecQuery() exited",_ClassName));
   return rc;
 }
 
@@ -233,8 +245,8 @@ static char * _copy_buf( char ** hdbuf );
 
 CMPIStatus OSBase_OperatingSystemProviderMethodCleanup( CMPIMethodMI * mi, 
            CMPIContext * ctx) {
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI MethodCleanup()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() called",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -255,9 +267,7 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
   char        * buf   = NULL;
   int           cmdrc = 0;
 
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI InvokeMethod()\n", _FILENAME, _ClassName );
-
+  _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() called",_ClassName));
 
   class = CMGetClassName(ref, &rc);
 
@@ -277,6 +287,7 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
     /* command execution failed */
     if( cmdrc != 0 ) {
       valrc.uint8 = 1;
+      _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() returned with %i",_ClassName,cmdrc));
       goto exitExecCmd;
     }
 
@@ -287,9 +298,11 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
       if( buf != NULL ) {
 	rc = CMAddArg( out, "out", buf, CMPI_chars);
 	if( rc.rc != CMPI_RC_OK ) {
-	  if( _debug ) {
-	    if( rc.msg != NULL )
-	      { fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
+	  if( rc.msg != NULL ) {
+	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stderr CMAddArg() %s",_ClassName,CMGetCharPtr(rc.msg)));
+	  }
+	  else {
+	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stderr CMAddArg()",_ClassName));
 	  }
 	}
       }
@@ -301,9 +314,11 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
       if( buf != NULL ) {
 	rc = CMAddArg( out, "out", buf, CMPI_chars);
 	if( rc.rc != CMPI_RC_OK ) {
-	  if( _debug ) {
-	    if( rc.msg != NULL )
-	      { fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
+	  if( rc.msg != NULL ) {
+	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stdout CMAddArg() %s",_ClassName,CMGetCharPtr(rc.msg)));
+	  }
+	  else {
+	    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : stdout CMAddArg()",_ClassName));
 	  }
 	}
       }
@@ -315,7 +330,9 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
     freeresultbuf(hderr);
     if(cmd) free(cmd);
     if(buf) free(buf);
+    _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() %s exited",_ClassName,methodName));
     CMReturnData( rslt, &valrc, CMPI_uint8);
+    CMReturnDone( rslt );
   }
   else if( strcasecmp(CMGetCharPtr(class), _ClassName) == 0 &&
 	   strcasecmp(methodName, "Reboot") == 0 ) {
@@ -332,6 +349,7 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
 			  CMPI_RC_ERR_NOT_FOUND, methodName ); 
   }
  
+  _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() exited",_ClassName));
   return rc;
 }
 
@@ -374,8 +392,8 @@ static char * _copy_buf( char ** hdbuf ) {
 
 CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup( CMPIIndicationMI * mi, 
            CMPIContext * ctx) {
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI IndicationCleanup()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() called",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -386,9 +404,9 @@ CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter( CMPIIndicationMI * mi,
            char * indType, 
            CMPIObjectPath * classPath,
            char * owner) {
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI AuthorizeFilter()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() called",_ClassName));
   /* we don't object */
+  _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -398,11 +416,11 @@ CMPIStatus OSBase_OperatingSystemProviderMustPoll( CMPIIndicationMI * mi,
            CMPISelectExp * filter, 
            char * indType, 
            CMPIObjectPath * classPath) {
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI MustPoll()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called",_ClassName));
   /* no polling */
   CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
   CMReturnDone(rslt);
+  _OSBASE_TRACE(1,("--- %s CMPI MustPoll() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -413,12 +431,13 @@ CMPIStatus OSBase_OperatingSystemProviderActivateFilter( CMPIIndicationMI * mi,
            char * indType, 
            CMPIObjectPath * classPath,
            CMPIBoolean firstActivation) {
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI ActivateFilter()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() called",_ClassName));
   /* we are already running */
   if (checkProviderThread()) { CMReturn(CMPI_RC_OK); }
   if (strcasecmp(type,"cim_instmodification")==0)
     { startProviderThread(nh); }
+
+  _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -429,9 +448,9 @@ CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter( CMPIIndicationMI * mi
            char * indType, 
            CMPIObjectPath *classPath,
            CMPIBoolean lastActivation) {
-  if( _debug )
-    fprintf( stderr, "--- %s : %s CMPI DeActivateFilter()\n", _FILENAME, _ClassName );
+  _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() called",_ClassName));
   if (last && checkProviderThread()) { stopProviderThread(); }
+  _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
@@ -463,6 +482,6 @@ CMIndicationMIStub( OSBase_OperatingSystemProvider,
 
 
 /* ---------------------------------------------------------------------------*/
-/*          end of cmpiOSBase_OperatingSystemProvider                      */
+/*             end of cmpiOSBase_OperatingSystemProvider                      */
 /* ---------------------------------------------------------------------------*/
 

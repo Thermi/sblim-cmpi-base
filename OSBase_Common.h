@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,6 +37,12 @@ extern int _debug;
 
 extern char * CIM_HOST_NAME;
 extern char * CIM_OS_NAME;
+
+/* ---------------------------------------------------------------------------*/
+
+#define _OSBASE_TRACE(LEVEL,STR) \
+  if ( (LEVEL<=_debug) && (LEVEL>0) ) \
+  _osbase_trace(LEVEL,__FILE__,__LINE__,_format_trace STR)
 
 /* ---------------------------------------------------------------------------*/
 
@@ -57,6 +64,15 @@ char ** line_to_array( char * , int );
 
 int get_system_parameter(char *, char *, char *, int);
 int set_system_parameter(char *, char *, char *);
+
+/* ---------------------------------------------------------------------------*/
+
+/* ---------------------------------------------------------------------------*/
+// TRACE FACILITY
+/* ---------------------------------------------------------------------------*/
+
+char * _format_trace(char *fmt,...);
+void _osbase_trace(  int, char *, int, char *);
 
 /* ---------------------------------------------------------------------------*/
 

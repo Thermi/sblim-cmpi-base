@@ -66,6 +66,7 @@ void free_os_data( struct cim_operatingsystem * );
 char * get_os_distro();
 char * get_os_installdate();
 char * get_os_lastbootup();
+char * get_os_localdatetime();
 unsigned long get_os_numOfProcesses();
 unsigned long get_os_numOfUsers();
 unsigned long get_os_maxNumOfProc();

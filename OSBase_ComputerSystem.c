@@ -30,16 +30,18 @@
 // private declarations
 
 
-static char* _FILENAME = "OSBase_ComputerSystem.c";
-
 /* ---------------------------------------------------------------------------*/
 
 /* returns the primary owner of the system ... always root ;-) */
 char * get_cs_primownername() {
   char * ptr = NULL;
-  if( _debug ) { fprintf(stderr, "--- %s : get_cs_primownername()\n",_FILENAME); }
+
+  _OSBASE_TRACE(4,("--- get_cs_primownername() called"));
+
   ptr = (char*)malloc(5*sizeof(char));
   strcpy(ptr,"root");
+
+  _OSBASE_TRACE(4,("--- get_cs_primownername() exited"));
   return ptr;
 }
 
@@ -50,7 +52,9 @@ char * get_cs_primownercontact() {
   char * ptr  = NULL;
   char * own  = NULL;
   char * host = NULL;
-  if( _debug ) { fprintf(stderr, "--- %s : get_cs_primownercontact()\n",_FILENAME); }
+
+  _OSBASE_TRACE(4,("--- get_cs_primownercontact() called"));
+
   if( (own = get_cs_primownername()) != NULL ) {
     host = get_system_name();
     ptr = (char*)malloc( (strlen(own)+strlen(host)+2)*sizeof(char));
@@ -58,8 +62,11 @@ char * get_cs_primownercontact() {
     strcat( ptr,"@");
     strcat( ptr, host);
     if(own) free(own);
+    _OSBASE_TRACE(4,("--- get_cs_primownercontact() exited"));
     return ptr;
   }
+
+  _OSBASE_TRACE(4,("--- get_cs_primownercontact() failed"));
   return NULL;
 }
 
