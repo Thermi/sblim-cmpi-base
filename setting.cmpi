@@ -1,10 +1,15 @@
-# Settings for SBLIM FSVOL Instrumentation 
+# Settings for SBLIM Base Instrumentation 
 
-# SNIA CIMOM flavor
 
 # Change the following lines to match your system
+
 ROOTDIR=$(HOME)/sblim
-ROOTDIRLIB=$(PEGASUS_HOME)/lib
 ROOTDIRINC=$(ROOTDIR)/include
 ROOTDIRMOF=$(ROOTDIR)/lib/mof
+
+# SNIA CIMOM flavor
+ROOTDIRLIB=/usr/sniacimom/lib
+
+# Pegasus flavor
+#ROOTDIRLIB=$(PEGASUS_HOME)/lib
 
