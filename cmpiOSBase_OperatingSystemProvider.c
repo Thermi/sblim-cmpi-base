@@ -286,14 +286,14 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
 
     /* command execution failed */
     if( cmdrc != 0 ) {
-      valrc.uint8 = 1;
+      valrc.uint8 = 2;
       _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : runcommand() returned with %i",_ClassName,cmdrc));
       goto exitExecCmd;
     }
 
     /* command execution output on hderr */
     if( hderr[0] != NULL ) {
-      valrc.uint8 = 2;
+      valrc.uint8 = 1;
       buf = _copy_buf( hderr );
       if( buf != NULL ) {
 	rc = CMAddArg( out, "out", buf, CMPI_chars);
