@@ -68,31 +68,32 @@ void _check_system_key_value_pairs( CMPIBroker * _broker,
 				    CMPIStatus * rc ) {
   CMPIString * name = NULL;
 
-  name = CMGetKey( cop, className, rc).value.string;
-  if( rc->rc != CMPI_RC_OK || name == NULL ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_FAILED, "Could not get CS/OS Name of instance." );
-    return;
-  }
-  get_system_name();
-  if( strcasecmp(CMGetCharPtr(name),CIM_HOST_NAME) != 0 ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_NOT_FOUND, "This instance does not exist (wrong CS/OS Name)." );
-    return;
-  }
+   name = CMGetKey( cop, className, rc).value.string;
+   if ( rc->rc != CMPI_RC_OK || name == NULL ) {
+      CMSetStatusWithChars( _broker, rc,
+                            CMPI_RC_ERR_FAILED, "Could not get CS/OS Name of instance." );
+      return;
+   }
+   get_system_name();
+   if (( strcasecmp(CMGetCharPtr(name),CIM_HOST_NAME) != 0 ) &&
+       ( strcasecmp(CMGetCharPtr(name),CIM_OS_NAME) != 0 )) {
+      CMSetStatusWithChars( _broker, rc,
+                            CMPI_RC_ERR_NOT_FOUND, "This instance does not exist (wrong CS/OS Name)." );
+      return;
+   }
 
-  name = CMGetKey( cop, creationClassName, rc).value.string;
-  if( rc->rc != CMPI_RC_OK || name == NULL ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_FAILED, "Could not get CS/OS CreationClassName of instance." );
-    return;
-  }
-  if( (strcasecmp(CMGetCharPtr(name),CSCreationClassName) != 0) &&
-      (strcasecmp(CMGetCharPtr(name),OSCreationClassName) != 0)   ) {
-    CMSetStatusWithChars( _broker, rc,
-			  CMPI_RC_ERR_NOT_FOUND, "This class name does not exist (wrong CS/OS CreationClassName)." );
-    return;
-  }
+   name = CMGetKey( cop, creationClassName, rc).value.string;
+   if ( rc->rc != CMPI_RC_OK || name == NULL ) {
+      CMSetStatusWithChars( _broker, rc,
+                            CMPI_RC_ERR_FAILED, "Could not get CS/OS CreationClassName of instance." );
+      return;
+   }
+   if ( (strcasecmp(CMGetCharPtr(name),CSCreationClassName) != 0) &&
+        (strcasecmp(CMGetCharPtr(name),OSCreationClassName) != 0)   ) {
+      CMSetStatusWithChars( _broker, rc,
+                            CMPI_RC_ERR_NOT_FOUND, "This class name does not exist (wrong CS/OS CreationClassName)." );
+      return;
+   }
 
 }
 
