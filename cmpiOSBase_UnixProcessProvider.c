@@ -386,6 +386,7 @@ CMPIStatus OSBase_UnixProcessProviderInvokeMethod( CMPIMethodMI * mi,
     strcat(cmd, CMGetCharPtr(pid.value.string));
 
     cmdrc = runcommand( cmd, NULL, &hdout, &hderr );
+    free ( cmd );
 
     /* something went wrong */
     if( cmdrc != 0 ||  hderr[0] != NULL ) {

@@ -73,7 +73,7 @@ libcmpiOSBase_ComputerSystemProvider.so: cmpiOSBase_ComputerSystemProvider.c \
 libcmpiOSBase_OperatingSystemProvider.so: cmpiOSBase_OperatingSystemProvider.c \
 					  cmpiOSBase_OperatingSystem.c \
 					  OSBase_OperatingSystem.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) -nostartfiles -o $@ $^
 
 
 libcmpiOSBase_UnixProcessProvider.so: cmpiOSBase_UnixProcessProvider.c \

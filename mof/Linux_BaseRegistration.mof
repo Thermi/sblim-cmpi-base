@@ -1,5 +1,5 @@
 //
-// Linux_Base.mof
+// Linux_BaseRegistration.mof
 //
 // Copyright (c) 2002, International Business Machines
 //
@@ -19,6 +19,7 @@
 
 
 #pragma locale ("en_US")
+#pragma namespace ("root/PG_InterOp")
 
 // ===================================================================
 // 	Linux_ComputerSystem

@@ -21,6 +21,7 @@
 */
 
 /* ---------------------------------------------------------------------------*/
+
 #define _GNU_SOURCE
 
 #include "OSBase_Common.h"
@@ -33,13 +34,20 @@
 /* ---------------------------------------------------------------------------*/
 // private declarations
 
-
-/* ---------------------------------------------------------------------------*/
-
 char * CIM_OS_DISTRO = NULL;
 
 /* ---------------------------------------------------------------------------*/
 
+/* initialization routine */
+void _init() {
+}
+
+/* deinitialization routine */
+void _fini() { 
+  free ( CIM_OS_DISTRO );
+}
+
+/* ---------------------------------------------------------------------------*/
 
 /* returns a structure, which contains necessary information about the currently
  * running operating system
@@ -170,12 +178,12 @@ char * get_os_distro() {
 	strcat( CIM_OS_DISTRO , hdout[i] );
 	i++;
       }
-      freeresultbuf(hdout);
     }
     else {
       CIM_OS_DISTRO = (char *) malloc( 6*sizeof(char));
       strcpy( CIM_OS_DISTRO , "Linux" );
     }
+    freeresultbuf(hdout);
 
     _OSBASE_TRACE(4,("--- get_os_distro() : CIM_OS_DISTRO initialized with %s",CIM_OS_DISTRO));
 
@@ -196,12 +204,12 @@ char * get_kernel_version() {
   if( rc == 0 ) {
     str = (char *) malloc((strlen(hdout[0])+1)*sizeof(char));
     strcpy( str, hdout[0]);
-    freeresultbuf(hdout);
   }
   else {
     str = (char *) malloc(10*sizeof(char));
     strcpy( str , "not found");
   }
+  freeresultbuf(hdout);
 
   _OSBASE_TRACE(4,("--- get_kernel_version() exited : %s",str));
   return str;
@@ -234,8 +242,8 @@ char * get_os_installdate() {
       strftime(str,26,"%Y%m%d%H%M%S.000000",&date);
       _cat_timezone(str, get_os_timezone());
       if(dstr) free(dstr);
-      freeresultbuf(hdout);
     }
+    freeresultbuf(hdout);
   }
 
   _OSBASE_TRACE(4,("--- get_os_installdate() exited : %s",str));
@@ -299,8 +307,8 @@ unsigned long get_os_numOfProcesses() {
   rc = runcommand( "ps --no-headers -eo pid | wc -l" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     np = atol(hdout[0]);
-    freeresultbuf(hdout);
   }
+  freeresultbuf(hdout);
 
   _OSBASE_TRACE(4,("--- get_os_numOfProcesses() exited : %lu",np));
   return np;
@@ -316,8 +324,8 @@ unsigned long get_os_numOfUsers() {
   rc = runcommand( "who -u | wc -l" , NULL , &hdout , NULL );
   if( rc == 0 ) {
     np = atol(hdout[0]);
-    freeresultbuf(hdout);
   }
+  freeresultbuf(hdout);
 
   _OSBASE_TRACE(4,("--- get_os_numOfUsers() exited : %lu",np));
   return np;

@@ -112,6 +112,7 @@ CMPIStatus OSBase_ProcessorProviderEnumInstances( CMPIInstanceMI * mi,
     CMSetStatusWithChars( _broker, &rc, 
 			  CMPI_RC_ERR_FAILED, "Could not list processors." ); 
     _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
+    free_processorlist ( lptr );
     return rc;
   }
 
@@ -173,6 +174,7 @@ CMPIStatus OSBase_ProcessorProviderGetInstance( CMPIInstanceMI * mi,
     CMSetStatusWithChars( _broker, &rc, 
 			  CMPI_RC_ERR_NOT_FOUND, "Processor ID does not exist." ); 
     _OSBASE_TRACE(1,("--- %s CMPI GetInstance() exited : %s",_ClassName,CMGetCharPtr(rc.msg)));
+    if(sptr) free_processor(sptr);
     return rc;
   }
 

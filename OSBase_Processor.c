@@ -73,6 +73,9 @@ int enum_all_processor( struct processorlist ** lptr ) {
     if(hdout != NULL) {
       if( hdout[0] != NULL )
 	{ _OSBASE_TRACE(3,("--- enum_all_processor() failed : %s",hdout[0])); }
+      free ( cmd );
+      freeresultbuf(hdout);
+      freeresultbuf(hderr);
       return rc;
     }
   }
@@ -106,8 +109,8 @@ int enum_all_processor( struct processorlist ** lptr ) {
       if(id) free(id);
 #endif
     }
-    freeresultbuf(hdout);
   }
+  freeresultbuf(hdout);
 
   if(cmd) free(cmd);
   _OSBASE_TRACE(3,("--- enum_all_processor() exited"));
@@ -132,6 +135,9 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
     if(hdout != NULL) {
       if( hdout[0] != NULL )
 	{ _OSBASE_TRACE(3,("--- _get_processor_data() failed : %s",hdout[0])); }
+      freeresultbuf(hdout);
+      freeresultbuf(hderr);
+      free ( cmd );
       return rc;
     }
   }
@@ -150,8 +156,8 @@ int get_processor_data( char * id, struct cim_processor ** sptr ) {
       }
       i++;
     }
-    freeresultbuf(hdout);
   }
+  freeresultbuf(hdout);
   if( sptr == NULL ) {
     _OSBASE_TRACE(3,("--- get_processor_data() failed : ID %s not valid",id));
   }
@@ -393,6 +399,10 @@ static unsigned short _processor_load_perc( int id ) {
     if(hdout != NULL) {
       if( hdout[0] != NULL )
 	{ _OSBASE_TRACE(3,("--- _processor_load_perc() failed : %s",hdout[0])); }
+      freeresultbuf(hdout);
+      freeresultbuf(hderr);
+      free ( cmd );
+      free ( sid );
       return rc;
     }
   }

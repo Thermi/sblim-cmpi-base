@@ -75,12 +75,13 @@ void _init() {
     if(_SBLIM_TRACE_FILE) free(_SBLIM_TRACE_FILE);
     _SBLIM_TRACE_FILE = NULL ; 
   }
-  
 }
 
 /* deinitialization routine */
 void _fini() { 
-
+  free ( CIM_HOST_NAME );
+  free ( CIM_OS_NAME );
+  if(_SBLIM_TRACE_FILE) free(_SBLIM_TRACE_FILE);
 }
 
 /* ---------------------------------------------------------------------------*/

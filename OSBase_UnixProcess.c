@@ -101,7 +101,7 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
   if(cmd) free(cmd);
 
   if ( dpid != NULL ) {
-    cmd = (char*)malloc((strlen(pid)+94)*sizeof(char));
+    cmd = (char*)malloc((strlen(pid)+95)*sizeof(char));
     strcpy(cmd, "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,comm,session,state | grep ");
     strcat(cmd, pid);
     rc = runcommand( cmd , NULL, &hdout, NULL );
@@ -116,6 +116,7 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
       }
       i++;
     }
+    free ( cmd );
     freeresultbuf( hdout );
     closedir(dpid);
   }
@@ -298,6 +299,8 @@ static char * _get_process_execpath( char * id , char * cmd ) {
     free(buf);
     buf = strdup(cmd);
   }
+  free ( path );
+
   _OSBASE_TRACE(4,("--- _get_process_execpath() exited : %s",buf));
   return buf; 
 }
