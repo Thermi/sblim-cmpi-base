@@ -32,6 +32,7 @@
 #include "cmpimacs.h"
 
 #include "mlogsup.h"
+#include "cmpiprovsup.h"
 #include "cimibase.h"
 
 
@@ -181,6 +182,9 @@ CMPIStatus Linux_ProcessorGetInstance( CMPIInstanceMI * mi,
 
   if( _debug )
     fprintf( stderr, "--- %s.c : CMPI GetInstance()\n", _ClassName ); 
+
+  _check_system_key_value_pairs( _broker, cop, "SystemCreationClassName", "SystemName", &rc );
+  if( rc.rc != CMPI_RC_OK ) { return rc; }
 
   name = CMGetKey( cop, "DeviceID", &rc).value.string;
   if( CMGetCharPtr(name) == NULL ) {    

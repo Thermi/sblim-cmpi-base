@@ -32,6 +32,7 @@
 #include "cmpift.h"
 #include "cmpimacs.h"
 
+#include "cmpiprovsup.h"
 #include "cimibase.h"
 
 unsigned char CMPI_true=1;
@@ -132,6 +133,9 @@ CMPIStatus Linux_ComputerSystemGetInstance( CMPIInstanceMI * mi,
 
   if( _debug )
     fprintf( stderr, "--- %s.c : CMPI GetInstance()\n", _ClassName ); 
+
+  _check_system_key_value_pairs( _broker, cop, "CreationClassName", "Name", &rc );
+  if( rc.rc != CMPI_RC_OK ) { return rc; }
 
   ci = _makeInst( cop, &rc );
 

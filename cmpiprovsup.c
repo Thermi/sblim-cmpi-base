@@ -33,6 +33,7 @@
 #include "mlogsup.h"
 
 #include "cmpiprovsup.h"
+#include "cimibase.h"
 
 unsigned char CMPI_true=1;
 unsigned char CMPI_false=0;
@@ -49,6 +50,56 @@ unsigned char CMPI_false=0;
 /* ---------------------------------------------------------------------------*/
 
 static char * _FILENAME = "cmpiprovsup.c";
+
+/* ---------------------------------------------------------------------------*/
+
+/* ---------------------------------------------------------------------------*/
+/*                    _check_system_key_value_pairs()                         */
+/* ---------------------------------------------------------------------------*/
+/*     method to check the keys of ComputerSystem and OperatingSystem for     */
+/*     their correctness                                                      */
+/*                                                                            */
+/* ---------------------------------------------------------------------------*/
+
+void _check_system_key_value_pairs( CMPIBroker * _broker,
+				    CMPIObjectPath * cop,
+				    char * creationClassName,
+				    char * className,
+				    CMPIStatus * rc ) {
+  CMPIString * name = NULL;
+
+  name = CMGetKey( cop, className, rc).value.string;
+  if( rc->rc != CMPI_RC_OK || name == NULL ) {    
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "Could not get CS/OS Name of instance." ); 
+    return;
+  } 
+  get_system_name();
+  if( strcasecmp(CMGetCharPtr(name),CIM_HOST_NAME) != 0 ) {  
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_NOT_FOUND, "This instance does not exist (wrong CS/OS Name)." ); 
+    return;
+  }
+
+  name = CMGetKey( cop, creationClassName, rc).value.string;
+  if( rc->rc != CMPI_RC_OK || name == NULL ) {    
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_FAILED, "Could not get CS/OS CreationClassName of instance." ); 
+    return;
+  } 
+  if( (strcasecmp(CMGetCharPtr(name),CSCreationClassName) != 0) && 
+      (strcasecmp(CMGetCharPtr(name),OSCreationClassName) != 0)   ) {   
+    CMSetStatusWithChars( _broker, rc, 
+			  CMPI_RC_ERR_NOT_FOUND, "This class name does not exist (wrong CS/OS CreationClassName)." ); 
+    return;
+  }
+
+}
+
+
+/* ---------------------------------------------------------------------------*/
+
+
 
 /* ---------------------------------------------------------------------------*/
 /*                      _assoc_create_inst_1toN()                             */

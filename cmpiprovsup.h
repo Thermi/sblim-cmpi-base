@@ -27,6 +27,13 @@
 
 /* ---------------------------------------------------------------------------*/
 
+void _check_system_key_value_pairs( CMPIBroker * _broker,
+				    CMPIObjectPath * cop,
+				    char * creationClassName,
+				    char * className,
+				    CMPIStatus * rc );
+
+
 int _assoc_create_inst_1toN( CMPIBroker * _broker, 
 			     CMPIContext * ctx,
 			     CMPIResult * rslt,
