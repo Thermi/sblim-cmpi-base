@@ -100,8 +100,8 @@ sysman_pid.o: sysman_pid.c
 
 install: all
 	install libcmpiOSBase_*.so $(CIMOMLIB)
-	install -m 644 OSBase_Common.h $(CIMOMINC)
-	install -m 644 cmpiOSBase_Common.h $(CIMOMINC)
+	install -m 644 cmpiOSBase_*.h $(CIMOMINC)
+	install -m 644 OSBase_*.h $(CIMOMINC)
 ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
@@ -121,7 +121,16 @@ clean:
 uninstall:
 	$(MAKE) -C mof -f makefile.cmpi uninstall;
 	$(RM) $(CIMOMINC)/OSBase_Common.h \
+	$(RM) $(CIMOMINC)/OSBase_ComputerSystem.h \
+	$(RM) $(CIMOMINC)/OSBase_OperatingSystem.h \
+	$(RM) $(CIMOMINC)/OSBase_UnixProcess.h \
+	$(RM) $(CIMOMINC)/OSBase_Processor.h \
+	$(RM) $(CIMOMINC)/cmpiOSBase_Util.h \
 	$(RM) $(CIMOMINC)/cmpiOSBase_Common.h \
+	$(RM) $(CIMOMINC)/cmpiOSBase_ComputerSystem.h \
+	$(RM) $(CIMOMINC)/cmpiOSBase_OperatingSystem.h \
+	$(RM) $(CIMOMINC)/cmpiOSBase_UnixProcess.h \
+	$(RM) $(CIMOMINC)/cmpiOSBase_Processor.h \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_Common.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_ComputerSystemProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_OperatingSystemProvider.so \
