@@ -1,0 +1,22 @@
+********************************************************************************
+Linux_UnixProcess : -eq -cmd ps --no-headers -eo pid | wc -l
+
+--------------------------------------------------------------------------------
+CSCreationClassName : -eq -file ComputerSystem.keys[0]
+CSName : -eq -file ComputerSystem.keys[1]
+OSCreationClassName : -eq -file OperatingSystem.keys[0]
+OSName : -eq -file OperatingSystem.keys[1]
+CreationClassName : -eq Linux_UnixProcess
+
+Caption : -set
+Description : -set
+
+EnabledStatus : -eq 2
+OtherEnabledStatus : -empty
+RequestedStatus : -eq 2
+EnabledDefault : -eq 2
+Status : -empty
+
+--------------------------------------------------------------------------------
+Instance Level
+Property Order : Handle ParentProcessID ProcessTTY Priority

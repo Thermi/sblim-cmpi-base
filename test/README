@@ -1,0 +1,27 @@
+Test Environment for SBLIM Base Instrumentation
+
+The SBLIM project offers a Test Suite to perform tests against
+the provider implementation and consistence tests against system
+values.
+
+Prerequisites are : 
+
+- sblim-cmpi-base package propertly installed
+- testsuite package
+
+
+make test
+... to test the existence of a testsuite directory
+
+make install 
+... to install the input files into the corresponding testsuite
+directories
+
+make uninstall
+... to delete the cmpi-base specific files out of the testsuite
+directories
+
+
+
+Run the test in the testsuite dir by executing ./test-cmpi-base.sh
+

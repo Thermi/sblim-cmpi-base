@@ -1,0 +1,22 @@
+********************************************************************************
+Linux_ComputerSystem : -eq 1
+
+--------------------------------------------------------------------------------
+CreationClassName : -eq -file ComputerSystem.keys[0]
+Name : -eq -file ComputerSystem.keys[1]
+
+Caption : -set
+Description : -set
+ElementName : -eq -file ComputerSystem.keys[1]
+
+EnabledStatus : -eq 2
+OtherEnabledStatus : -empty
+RequestedStatus : -eq 2
+EnabledDefault : -eq 2
+Status : -empty
+
+NameFormat : -eq IP
+Dedicated : -eq 0
+
+PrimaryOwnerName : -set
+PrimaryOwnerContact : -set
