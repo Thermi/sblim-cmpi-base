@@ -112,6 +112,7 @@ install: all
 	install libcmpiOSBase_*Provider.so $(CIMOMLIB)
 	install -m 644 cmpiOSBase_*.h $(COMMONINC)
 	install -m 644 OSBase_*.h $(COMMONINC)
+	install -m 644 dmiinfo.h $(COMMONINC)
 ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
