@@ -40,5 +40,7 @@ uninstall:
 	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.system \
 	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.pl \
 	$(RM) $(TESTSUITESYSTEM)/createKeyFiles.sh \
-	$(RM) $(TESTSUITESYSTEM)/Linux_RunningOS.system
+	$(RM) $(TESTSUITESYSTEM)/Linux_RunningOS.system \
+	$(RM) $(TESTSUITESYSTEM)/Linux_OSProcess.system \
+	$(RM) $(TESTSUITESYSTEM)/Linux_CSProcessor.system
 
