@@ -3,9 +3,7 @@
 
 include setting.cmpi
 
-ifndef COMMONLIB
-COMMONLIB=$(CIMOMLIB)
-endif
+.PHONY: all testfiles install clean uninstall
 
 #------------------------------------------------------------------------------#
 
@@ -25,15 +23,6 @@ endif
 
 #------------------------------------------------------------------------------#
 
-ifdef PEGASUS
-  ifndef PEGASUS_HOME
-    ERROR = pegasus_home_undefined
-pegasus_home_undefined:
-	@ echo PEGASUS_HOME environment variable must be set to the Pegasus installation directory
-	@ exit 1
-  endif
-endif
-
 # define the Hardware Platform the compile will run on
 HW=$(shell ./platform.sh)
 
@@ -51,7 +40,7 @@ lib%.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $?
 
 
-all: 	test \
+all: 	testfiles \
 	libcmpiOSBase_Common.so \
 	libcmpiOSBase_ComputerSystemProvider.so \
 	libcmpiOSBase_OperatingSystemProvider.so \
@@ -105,50 +94,42 @@ sysman_pid.o: sysman_pid.c
 install: all
 	install libcmpiOSBase_Common.so $(COMMONLIB)
 	install libcmpiOSBase_*Provider.so $(CIMOMLIB)
-	install -m 644 cmpiOSBase_*.h $(CIMOMINC)
-	install -m 644 OSBase_*.h $(CIMOMINC)
+	install -m 644 cmpiOSBase_*.h $(COMMONINC)
+	install -m 644 OSBase_*.h $(COMMONINC)
 ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
-ifdef STANDALONE
-	$(MAKE) -C mof -f makefile.standalone install
-endif
-ifdef OPENCIMOM
-	$(MAKE) -C mof -f makefile.cmpi install
-endif
-ifdef OPENWBEM
-	$(MAKE) -C mof -f makefile.cmpi install
-endif
-ifdef PEGASUS
-	$(MAKE) -C mof -f makefile.pegasus install
-endif
+	$(MAKE) -C mof -f $(MOFMAKEFILE) install
 
-test:
-	@[ -d $(CIMOMLIB) ] || ( echo $(CIMOMLIB) does not exist && false)
-	@[ -d $(CIMOMINC) ] || ( echo $(CIMOMINC) does not exist && false)
-	@[ -d $(CIMOMMOF) ] || ( echo $(CIMOMMOF) does not exist && false)
+
+testfiles:	
+	@[ -d $(CIMOMLIB) ] || ( echo directory $(CIMOMLIB) does not exist && false)
+	@[ -d $(CIMOMINC) ] || ( echo directory $(CIMOMINC) does not exist - please create manually && false)
+	@[ -d $(CIMOMMOF) ] || ( echo directory $(CIMOMMOF) does not exist - please create manually && false)
+	@[ -d $(COMMONINC) ] || ( echo directory $(COMMONINC) does not exist - please create manually && false)
+	@[ -d $(COMMONLIB) ] || ( echo directory $(COMMONLIB) does not exist - please create manually && false)
 
 clean:
 	$(RM)	*.so *.o *~
 
 uninstall:
-	$(MAKE) -C mof -f makefile.cmpi uninstall;
-	$(RM) $(CIMOMINC)/OSBase_Common.h \
-	$(RM) $(CIMOMINC)/OSBase_ComputerSystem.h \
-	$(RM) $(CIMOMINC)/OSBase_OperatingSystem.h \
-	$(RM) $(CIMOMINC)/OSBase_UnixProcess.h \
-	$(RM) $(CIMOMINC)/OSBase_Processor.h \
-	$(RM) $(CIMOMINC)/cmpiOSBase_Util.h \
-	$(RM) $(CIMOMINC)/cmpiOSBase_Common.h \
-	$(RM) $(CIMOMINC)/cmpiOSBase_ComputerSystem.h \
-	$(RM) $(CIMOMINC)/cmpiOSBase_OperatingSystem.h \
-	$(RM) $(CIMOMINC)/cmpiOSBase_UnixProcess.h \
-	$(RM) $(CIMOMINC)/cmpiOSBase_Processor.h \
-	$(RM) $(CIMOMLIB)/libcmpiOSBase_Common.so \
+	$(MAKE) -C mof -f $(MOFMAKEFILE) uninstall;
+	$(RM) $(COMMONINC)/OSBase_Common.h \
+	$(RM) $(COMMONINC)/OSBase_ComputerSystem.h \
+	$(RM) $(COMMONINC)/OSBase_OperatingSystem.h \
+	$(RM) $(COMMONINC)/OSBase_UnixProcess.h \
+	$(RM) $(COMMONINC)/OSBase_Processor.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_Util.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_Common.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_ComputerSystem.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_OperatingSystem.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_UnixProcess.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_Processor.h \
+	$(RM) $(COMMONLIB)/libcmpiOSBase_Common.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_ComputerSystemProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_OperatingSystemProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_UnixProcessProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_ProcessorProvider.so \
-	$(RM) $(CIMOMLIB)/libcmpiLinux_RunningOSProvider.so \
-	$(RM) $(CIMOMLIB)/libcmpiLinux_OSProcessProvider.so \
-	$(RM) $(CIMOMLIB)/libcmpiLinux_CSProcessorProvider.so
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_RunningOSProvider.so \
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_OSProcessProvider.so \
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSProcessorProvider.so

@@ -1,7 +1,5 @@
 # Makefile for SBLIM Base Instrumentation 
 
-
-# SNIA CIMOM flavor
 include ../setting.cmpi
 
 install: 

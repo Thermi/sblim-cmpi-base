@@ -4,11 +4,21 @@ The SBLIM project offers a Test Suite to perform tests against
 the provider implementation and consistence tests against system
 values.
 
-Prerequisites are : 
+Prerequisites 
+.............
 
 - sblim-cmpi-base package propertly installed
 - testsuite package
 
+
+Pepare Test
+...........
+
+edit the makefile and set the path to your testsuite path
+
+
+Install Configuration Files
+...........................
 
 make test
 ... to test the existence of a testsuite directory
@@ -22,6 +32,8 @@ make uninstall
 directories
 
 
+Run Test
+........
 
-Run the test in the testsuite dir by executing . test-cmpi-base.sh
-
+Run the test in the testsuite directory by executing 
+. test-cmpi-base.sh

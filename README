@@ -150,16 +150,16 @@ association Linux_CSProcessor
 - cmpiOSBase_CSProcessorProvider.c
 
 
-Test Script
------------
+Automated Function Verifcation Test 
+-----------------------------------
 
-semantictest_OSBaseStage1.sh
-semantictest_OSBaseStage2_Processor.sh
+The sub directory test contains the configuration files,
+necessary to drive the SBLIM Test Suite. The SBLIM Test
+Suite is a tool to automate function verification tests
+of providers. 
 
-
-
-
-
+How to set up and drive the test is described in the 
+README file of the test sub directory.
 
 
 
