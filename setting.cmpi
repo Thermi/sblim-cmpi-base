@@ -7,11 +7,11 @@ ROOTDIR=$(HOME)/sblim
 
 # *********** SNIA CIMOM flavor ************* #
 
-CIMOM=/usr/sniacimom
-CIMOMINC=$(CIMOM)/include
-CIMOMMOF=$(CIMOM)/lib/mof
+#CIMOM=/usr/sniacimom
+#CIMOMINC=$(CIMOM)/include
+#CIMOMMOF=$(CIMOM)/lib/mof
 
-CIMOMLIB=$(CIMOM)/lib
+#CIMOMLIB=$(CIMOM)/lib
 
 # *********** SNIA CIMOM flavor ************* #
 
@@ -19,7 +19,8 @@ CIMOMLIB=$(CIMOM)/lib
 
 # ************* Pegasus flavor ************** #
 
-#CIMOMLIB=$(PEGASUS_HOME)/lib
-
+CIMOMLIB=$(PEGASUS_HOME)/lib
+CIMOMINC=$(ROOTDIR)/include
+CIMOMMOF=$(ROOTDIR)/include
 
 # ************* Pegasus flavor ************** #

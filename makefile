@@ -67,6 +67,7 @@ endif
 	install -m 644 cimibase.h $(CIMOMINC)
 	install -m 644 cmpiprovsup.h $(CIMOMINC)
 	$(MAKE) -C mof -f makefile.cmpi install
+	$(MAKE) -C mof -f makefile.pegasus install
 
 test:
 	@[ -d $(CIMOMLIB) ] || ( echo $(CIMOMLIB) does not exist && false)
