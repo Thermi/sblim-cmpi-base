@@ -105,7 +105,9 @@ install: all
 ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
+ifdef OPENCIMOM
 	$(MAKE) -C mof -f makefile.cmpi install
+endif
 ifdef PEGASUS
 	$(MAKE) -C mof -f makefile.pegasus install
 endif

@@ -56,6 +56,11 @@ struct cim_operatingsystem {
   unsigned long long totalSwapMem;     // SizeStoredInPagingFiles
   unsigned long long freeSwapMem;      // FreeSpaceInPagingFiles
 
+  char * codeSet;                      // CodeSet
+  char * langEd;                       // LanguageEdition
+
+  unsigned long defPageSize;           // DefaultPageSize
+
 };
 
 /* ---------------------------------------------------------------------------*/
@@ -67,9 +72,13 @@ char * get_os_distro();
 char * get_os_installdate();
 char * get_os_lastbootup();
 char * get_os_localdatetime();
+char * get_os_codeSet();
+char * get_os_langEd();
+
 unsigned long get_os_numOfProcesses();
 unsigned long get_os_numOfUsers();
 unsigned long get_os_maxNumOfProc();
+
 unsigned long long get_os_maxProcMemSize();
 
 char * get_kernel_version();

@@ -102,6 +102,14 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
   /* LastBootUp */
   (*sptr)->lastBootUp = get_os_lastbootup();
 
+  /* CodeSet */
+  (*sptr)->codeSet = get_os_codeSet();
+
+  /* LanguageEdition */
+  (*sptr)->langEd = get_os_langEd();
+
+  /* DefaultPageSize */
+  (*sptr)->defPageSize = getpagesize();
 
   _OSBASE_TRACE(3,("--- get_operatingsystem_data() exited"));
   return 0;
@@ -325,6 +333,41 @@ unsigned long long get_os_maxProcMemSize() {
   return max;
 }
 
+char * get_os_codeSet() {
+  char * codeSet = NULL;
+  char * var     = NULL;
+  char * str     = NULL;
+
+  _OSBASE_TRACE(4,("--- get_os_codeSet() called"));
+
+  var = getenv("LANG");
+  if( var != NULL ) {
+    str = strchr(var,'.');
+    codeSet = strdup(str+1);
+  }
+
+  _OSBASE_TRACE(4,("--- get_os_codeSet() exited : %s\n",codeSet));
+  return codeSet;
+}
+
+char * get_os_langEd() {
+  char * langEd = NULL;
+  char * var     = NULL;
+  char * str     = NULL;
+
+  _OSBASE_TRACE(4,("--- get_os_langEd() called"));
+
+  var = getenv("LANG");
+  if( var != NULL ) {
+    str = strchr(var,'.');
+    langEd = calloc(1,strlen(var)-strlen(str)+1);
+    strncpy(langEd,var,strlen(var)-strlen(str));
+  }
+
+  _OSBASE_TRACE(4,("--- get_os_langEd() exited : %s\n",langEd));
+  return langEd;
+}
+
 
 /* ---------------------------------------------------------------------------*/
 
@@ -333,6 +376,8 @@ void free_os_data( struct cim_operatingsystem * sptr ) {
     if(sptr->installDate) free(sptr->installDate);
     if(sptr->lastBootUp) free(sptr->lastBootUp);
     if(sptr->localDate) free(sptr->localDate);
+    if(sptr->codeSet) free(sptr->codeSet);
+    if(sptr->langEd) free(sptr->langEd);
     free(sptr);
 }
 

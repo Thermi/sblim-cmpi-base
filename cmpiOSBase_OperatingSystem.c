@@ -301,6 +301,12 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
     else { CMSetProperty( ci, "LastBootUpTime", (CMPIValue*)&(dt), CMPI_dateTime); }
   }
 
+  CMSetProperty( ci, "CodeSet", sptr->codeSet, CMPI_chars);
+  CMSetProperty( ci, "LanguageEdition", sptr->langEd, CMPI_chars);
+
+  CMSetProperty( ci, "DefaultPageSize", (CMPIValue*)&(sptr->defPageSize), CMPI_uint32);
+
+
   /* 2.7 */
 #ifndef CIM26COMPAT
   opstat = CMNewArray(_broker,1,CMPI_uint16,rc);

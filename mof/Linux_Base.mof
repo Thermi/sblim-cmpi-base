@@ -19,7 +19,7 @@
 
 
 #pragma locale ("en_US")
-#pragma namespace ("root/cimv2")
+//#pragma namespace ("root/cimv2")
 
 
 // -------------------------------------------------------------------
@@ -50,6 +50,34 @@ class Linux_ComputerSystem : CIM_ComputerSystem
 [ Provider("cmpi:cmpiOSBase_OperatingSystemProvider") ]
 class Linux_OperatingSystem : CIM_OperatingSystem
 {
+  [ Description("The LanguageEdition property indicates the language "
+    "identifier used by the operating system. A language identifier "
+    "is a standard international numeric abbrevation for a country or "
+    "region. Each language has a unique language identifier (LANGID), "
+    "a 16-bit value that consists of a primary language identifier "
+    "and a secondary language identifier.")
+  ]
+  string LanguageEdition;
+
+  [ Description("The CodeSet property indicates the code page value "
+    "used by the operating system. A code page contains a character "
+    "table used by the operating system to translate strings for "
+    "different languages. The American National Standards Institute "
+    "(ANSI) lists values that represent defined code pages. If the "
+    "operating system does not use an ANSI code page, this member "
+    "will be set to 0. The CodeSet string can use up to six "
+    "characters to define the code page value. Example : 1255")
+  ]
+  string CodeSet;
+
+  [ Description("The default size of pages used by the virtual "
+    "memory management system in units of bytes. For systems that "
+    "do not have the concept of virtual memory, 0 MUST be returned. "
+    "For example the default page size my be 4096 bytes."),
+    Units("Bytes")
+  ]
+  uint32 DefaultPageSize;
+
   [ Description("Average total cpu time in percents."),
     Units("Percent")
   ]
