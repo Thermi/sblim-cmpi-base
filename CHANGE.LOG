@@ -50,3 +50,12 @@
 * fixed retrieval of LPARID on Power
 
 // ===================================================================
+// new in version 1.4.3 :
+
+* bug# 1155823: fixed retrieval of OperatingSystem's 
+  TotalVirtualMemorySize, FreeVirtualMemory, TotalVisibleMemorySize,
+  FreePhysicalMemory, SizeStoredInPagingFiles and 
+  FreeSpaceInPagingFiles for kernel 2.6
+* bug# 1155834: fixed OperatingSystem's InstallDate for Fedora
+
+// ===================================================================
