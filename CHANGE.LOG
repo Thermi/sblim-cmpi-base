@@ -45,9 +45,3 @@
   -> see README.IDICATION for more information
 
 // ===================================================================
-// new in version 1.4.2 : FUTURE
-
-* added class Linux_Memory
-* added association Linux_CSMemory
-
-// ===================================================================
