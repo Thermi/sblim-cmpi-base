@@ -94,7 +94,8 @@ class Linux_Processor : CIM_Processor
 // 	Linux_RunningOS
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_RunningOS") ] 
+[ Association, 
+  Provider("cmpi:cmpiLinux_RunningOS") ] 
 class Linux_RunningOS : CIM_RunningOS
 {
   [ Override ("Antecedent"),
@@ -113,7 +114,10 @@ class Linux_RunningOS : CIM_RunningOS
 // 	Linux_OSProcess
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_OSProcess") ] 
+[ Association, 
+  Aggregation,
+  Composition, 
+  Provider("cmpi:cmpiLinux_OSProcess") ] 
 class Linux_OSProcess : CIM_OSProcess
 {
   [ Override ("GroupComponent"),
@@ -132,7 +136,10 @@ class Linux_OSProcess : CIM_OSProcess
 // 	Linux_CSProcessor
 // ===================================================================
 
-[ Provider("cmpi:cmpiLinux_CSProcessor") ] 
+[ Association, 
+  Aggregation,
+  Composition,
+  Provider("cmpi:cmpiLinux_CSProcessor") ] 
 class Linux_CSProcessor : CIM_SystemDevice
 { 
   [ Override ("GroupComponent"),
