@@ -253,7 +253,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   CMSetProperty( ci, "NumberOfProcesses", (CMPIValue*)&(sptr->numOfProcesses), CMPI_uint32);
   CMSetProperty( ci, "MaxNumberOfProcesses", (CMPIValue*)&(sptr->maxNumOfProc), CMPI_uint32);
   CMSetProperty( ci, "MaxProcessMemorySize", (CMPIValue*)&(sptr->maxProcMemSize), CMPI_uint64);
-  CMSetProperty( ci, "PctTotalCPUTime", (CMPIValue*)&pctcpu, CMPI_uint8);
+  CMSetProperty( ci, "PctTotalCPUTime", (CMPIValue*)&pctcpu, CMPI_uint16);
 
   CMSetProperty( ci, "Distributed",(CMPIValue*)&CMPI_false, CMPI_boolean);
   CMSetProperty( ci, "TotalSwapSpaceSize",(CMPIValue*)&totalSwap, CMPI_uint64);
