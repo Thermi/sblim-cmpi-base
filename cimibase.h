@@ -27,6 +27,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern char * CIM_HOST_NAME;
 extern char * CIM_OS_NAME;
 extern char * CIM_OS_DISTRO;
@@ -178,6 +182,10 @@ char ** line_to_array( char * , int );
 
 int get_system_parameter(char *, char *, char *, int);
 int set_system_parameter(char *, char *, char *);
+
+#ifdef __cplusplus
+   }
+#endif
 
 #endif
 
