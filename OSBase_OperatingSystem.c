@@ -30,6 +30,7 @@
 #include <time.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#include <langinfo.h>
 
 /* ---------------------------------------------------------------------------*/
 // private declarations
@@ -340,11 +341,14 @@ char * get_os_codeSet() {
 
   _OSBASE_TRACE(4,("--- get_os_codeSet() called"));
 
+  codeSet = nl_langinfo(CODESET);
+  /*
   var = getenv("LANG");
   if( var != NULL ) {
     str = strchr(var,'.');
     codeSet = strdup(str+1);
   }
+  */
 
   _OSBASE_TRACE(4,("--- get_os_codeSet() exited : %s\n",codeSet));
   return codeSet;
@@ -362,6 +366,8 @@ char * get_os_langEd() {
     str = strchr(var,'.');
     langEd = calloc(1,strlen(var)-strlen(str)+1);
     strncpy(langEd,var,strlen(var)-strlen(str));
+    str = strchr(langEd,'_');
+    *str = '-';
   }
 
   _OSBASE_TRACE(4,("--- get_os_langEd() exited : %s\n",langEd));
