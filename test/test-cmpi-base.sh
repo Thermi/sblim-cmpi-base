@@ -2,6 +2,12 @@
 
 # test sblim-cmpi-base package
 
+#******************************************************************************#
+
+export SBLIM_TESTSUITE_RUN=1;
+
+#******************************************************************************#
+
 declare -a CLASSNAMES[];
 CLASSNAMES=([0]=Linux_ComputerSystem [1]=Linux_OperatingSystem \
 [2]=Linux_UnixProcess [3]=Linux_Processor \
@@ -12,6 +18,6 @@ declare -i i=0;
 
 while(($i<=$max))
 do
-  ./run.sh ${CLASSNAMES[$i]} || exit 1;
+  . run.sh ${CLASSNAMES[$i]} || exit 1;
   i=$i+1;
 done

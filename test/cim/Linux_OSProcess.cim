@@ -5,6 +5,7 @@ sourceRole : GroupComponent
 targetRole : PartComponent
 sourceClass : Linux_OperatingSystem
 targetClass : Linux_UnixProcess
+volatile
 
 --------------------------------------------------------------------------------
 Instance                                                       enumInstanceNames
