@@ -55,7 +55,10 @@ void _fini() {
  */
 int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
-  FILE * fmeminfo = NULL ;
+  FILE   *fhd = NULL;
+  char   *ptr = NULL;
+  char    buf[30000];
+  size_t  bytes_read = 0;
 
   _OSBASE_TRACE(3,("--- get_operatingsystem_data() called"));
 
@@ -73,17 +76,19 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
    * TotalVisibleMemorySize, FreePhysicalMemory, SizeStoredInPagingFiles,
    * FreeSpaceInPagingFiles
    */
-  if ( (fmeminfo=fopen("/proc/meminfo","r")) != NULL ) {
-    fscanf(fmeminfo,
-	   "%*s %*s %*s %*s %*s %*s %*s %lld %*s %lld %*s %*s %*s %*s %lld %*s %lld",
-	   &((*sptr)->totalPhysMem),&((*sptr)->freePhysMem),
-	   &((*sptr)->totalSwapMem),&((*sptr)->freeSwapMem) );
-    fclose(fmeminfo);
+  if ( (fhd=fopen("/proc/meminfo","r")) != NULL ) {
+    bytes_read = fread(buf, 1, sizeof(buf)-1, fhd);
+    buf[bytes_read] = 0; /* safeguard end of buffer */
+    ptr = strstr(buf,"MemTotal");
+    sscanf(ptr, "%*s %lld", &((*sptr)->totalPhysMem));
+    ptr = strstr(buf,"MemFree");
+    sscanf(ptr, "%*s %lld", &((*sptr)->freePhysMem));
+    ptr = strstr(buf,"SwapTotal");
+    sscanf(ptr, "%*s %lld", &((*sptr)->totalSwapMem));
+    ptr = strstr(buf,"SwapFree");
+    sscanf(ptr, "%*s %lld", &((*sptr)->freeSwapMem));
+    fclose(fhd);
   }
-  (*sptr)->totalPhysMem = (*sptr)->totalPhysMem/1024;
-  (*sptr)->freePhysMem = (*sptr)->freePhysMem/1024;
-  (*sptr)->totalSwapMem = (*sptr)->totalSwapMem/1024;
-  (*sptr)->freeSwapMem = (*sptr)->freeSwapMem/1024;
   /* TotalVirtualMemorySize */
   (*sptr)->totalVirtMem = (*sptr)->totalPhysMem + (*sptr)->totalSwapMem;
   /* FreeVirtualMemory */
