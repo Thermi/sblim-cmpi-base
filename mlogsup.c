@@ -31,7 +31,7 @@ char debug=0;
 
 static MLogHeader *freeHdrs=NULL;
 static MLogIndex *mindex=NULL;
-static pthread_mutex_t mutex;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void newIndex()
 {

@@ -3,7 +3,7 @@
 
 # change the following variables to fit your system
 
-TESTSUITE=$(HOME)/sblim/testsuite
+TESTSUITE=$(HOME)/src/checkout/testsuite
 TESTSUITECIM=$(TESTSUITE)/cim
 TESTSUITESYSTEM=$(TESTSUITE)/system/linux
 
