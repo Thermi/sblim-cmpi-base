@@ -228,7 +228,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
     i=13;
     j=0;
     (*sptr)->args = calloc(100,sizeof(char*));  
-    while( parr[i] != NULL ) {
+    while( parr[i] != NULL ) && (i < 100) /* preventing buffer overflows */ {
       (*sptr)->args[j]=strdup(parr[i]);
       //     fprintf(stderr,"(*sptr)->args[%i] : %s\n",j,(*sptr)->args[j]);
       j++;
