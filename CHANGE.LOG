@@ -12,4 +12,6 @@
 
 * support for standalone build (RPM)
 
+* fixed algorithm to retrieve Version of Linux_OperatingSystem
+
 // ===================================================================

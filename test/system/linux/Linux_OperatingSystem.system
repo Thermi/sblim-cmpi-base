@@ -12,7 +12,7 @@ Name : -eq -file OperatingSystem.keys[1]
 
 Caption : -set
 Description : -set
-ElementName : -eq -cmd cat /etc/`ls /etc/ | grep release`
+ElementName : -eq -cmd cat `find /etc/ -name *release* 2>/dev/null`
 
 EnabledState : -eq 2
 OtherEnabledState : -empty
@@ -22,6 +22,6 @@ Status : -empty
 OperationalStatus : -eq 2
 
 OSType : -eq 36
-Version : -eq -cmd cat /etc/`ls /etc/ | grep release`
+Version : -eq -cmd cat `find /etc/ -name *release* 2>/dev/null`
 
 Distributed : -eq false

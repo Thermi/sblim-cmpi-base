@@ -128,7 +128,7 @@ char * get_os_distro() {
     
     _OSBASE_TRACE(4,("--- get_os_distro() called : init"));
 
-    rc = runcommand( "cat /etc/`ls /etc/ | grep release`" , NULL , &hdout , NULL );
+    rc = runcommand( "cat `find /etc/ -name *release* 2>/dev/null`" , NULL , &hdout , NULL );
     if( rc == 0 ) {
       while ( hdout[i]) {
 	strl = strl+strlen(hdout[i])+1;
