@@ -200,7 +200,12 @@ char * get_os_installdate() {
   get_os_distro();
 
   if( strstr( CIM_OS_DISTRO, "Red Hat" ) != NULL ) {
+    /* we guess it is Red Hat */
     rc = runcommand( "rpm -qi redhat-release | grep Install" , NULL , &hdout , NULL );
+    if(rc!=0) { 
+    /* we guess it is Fedora */
+      rc = runcommand( "rpm -qi fedora-release | grep Install" , NULL , &hdout , NULL );
+    }
     if( rc == 0 ) {
       str = strstr( hdout[0], ": ");
       str+=2;
