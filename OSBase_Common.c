@@ -192,12 +192,9 @@ void _cat_timezone( char * str , signed short zone ) {
   char * tz = NULL;
 
   tz = (char *)malloc(5*sizeof(char));
-  sprintf(tz, "%i", zone);
+  sprintf(tz, "%+04d", zone);
   if( str != NULL ) {
-    if(zone > 0) {
-      strcat(str,"+");
-    }
-    strcat(str,tz);
+    if( str != NULL ) { strcat(str,tz); }
   }
   if(tz) free(tz);
 }
