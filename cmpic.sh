@@ -154,29 +154,12 @@ CMPIStatus '$1'Cleanup( CMPIInstanceMI * mi,
 CMPIStatus '$1'EnumInstanceNames( CMPIInstanceMI * mi, 
   CMPIContext * ctx, 
   CMPIResult * rslt, 
-  CMPIObjectPath * ref) {
-  CMPIObjectPath * op = NULL;  
-  CMPIStatus       rc = {CMPI_RC_OK, NULL};
+  CMPIObjectPath * ref) { 
+  CMPIStatus rc = {CMPI_RC_OK, NULL};
   
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI EnumInstanceNames()\n", _ClassName );' >> $1.c
+    fprintf( stderr, "--- %s.c : CMPI EnumInstanceNames()\n", _ClassName );
 
-case $assoc in
-0) echo '  
-  op = _makePath( ref, &rc );
-
-  if( op == NULL ) { 
-    if( _debug ) {
-      if( rc.msg != NULL ) 
-	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
-    }
-    CMReturn(CMPI_RC_ERR_FAILED); 
-  }
-
-  CMReturnObjectPath( rslt, op );' >> $1.c
-esac
-
-echo '
   CMReturnDone( rslt );
   CMReturn( CMPI_RC_OK );
 }
@@ -185,29 +168,12 @@ CMPIStatus '$1'EnumInstances( CMPIInstanceMI * mi,
   CMPIContext * ctx, 
   CMPIResult * rslt, 
   CMPIObjectPath * ref, 
-  char ** properties) {
-  CMPIInstance * ci = NULL;  
-  CMPIStatus     rc = {CMPI_RC_OK, NULL};
+  char ** properties) { 
+  CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI EnumInstances()\n", _ClassName );' >> $1.c
+    fprintf( stderr, "--- %s.c : CMPI EnumInstances()\n", _ClassName );
 
-case $assoc in
-0) echo '
-  ci = _makeInst( ref, &rc );
-
-  if( ci == NULL ) { 
-    if( _debug ) {
-      if( rc.msg != NULL ) 
-	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
-    }
-    CMReturn(CMPI_RC_ERR_FAILED); 
-  }
-
-  CMReturnInstance( rslt, ci );' >> $1.c
-esac
-
-echo '
   CMReturnDone( rslt );
   CMReturn( CMPI_RC_OK );
 }
@@ -217,28 +183,11 @@ CMPIStatus '$1'GetInstance( CMPIInstanceMI * mi,
   CMPIResult * rslt, 
   CMPIObjectPath * cop, 
   char ** properties) {
-  CMPIInstance * ci = NULL;
-  CMPIStatus     rc = {CMPI_RC_OK, NULL};
+  CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   if( _debug )
-    fprintf( stderr, "--- %s.c : CMPI GetInstance()\n", _ClassName );' >> $1.c
+    fprintf( stderr, "--- %s.c : CMPI GetInstance()\n", _ClassName );
 
-case $assoc in
-0) echo '
-  ci = _makeInst( cop, &rc );
-
-  if( ci == NULL ) { 
-    if( _debug ) {
-      if( rc.msg != NULL ) 
-	{ fprintf(stderr,"rc.msg: %s\n",CMGetCharPtr(rc.msg)); }
-    }
-    CMReturn(CMPI_RC_ERR_FAILED); 
-  }
-
-  CMReturnInstance( rslt, ci );' >> $1.c
-esac
-
-echo '
   CMReturnDone(rslt);
   CMReturn(CMPI_RC_OK);
 }
@@ -723,22 +672,22 @@ echo '
 ' >> $1.c
 
 inst_factory() {
-echo 'CMInstanceMIStub( '$1', '$1', broker, CMNoHook);
+echo 'CMInstanceMIStub( '$1', '$1', _broker, CMNoHook);
 ' >> $1.c
 }
 
 assoc_factory() {
-echo 'CMAssociationMIStub( '$1', '$1', broker, CMNoHook);
+echo 'CMAssociationMIStub( '$1', '$1', _broker, CMNoHook);
 ' >> $1.c
 }
 
 method_factory() {
-echo 'CMMethodMIStub( '$1', '$1', broker, CMNoHook);
+echo 'CMMethodMIStub( '$1', '$1', _broker, CMNoHook);
 ' >> $1.c
 }
 
 event_factory() {
-echo 'CMIndicationMIStub( '$1', '$1', broker, CMNoHook);
+echo 'CMIndicationMIStub( '$1', '$1', _broker, CMNoHook);
 ' >> $1.c
 }
 
