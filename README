@@ -75,20 +75,30 @@ SNIA CIMOM) and OpenWBEM
 
 Building cmpi-base
 ..................
-In order to compile and install cmpi-base instrumentation, 
-the path to the CMPI header files and the library path to 
-libCMPIAdapter.so needs to be added to the search path. 
-This is configured by editing the "setting.cmpi" file. Once
-all the pathes are configured, do :
-- make
-- make install	-> copy all shared libraries to the library
-		   path of the CIMOM; copy some header files
-		   to the inlcude path (necessary if other
-		   instrumentation packages use tool functions
-		   of cmpi-base)
+This package is now GNU autotool enabled, refer to the file
+named INSTALL for generic instructions.
 
-- make clean	-> to delete all shared libs in this source
-		   directory
+The generated configure script tries to determine where the CMPI header files
+are located. For this purpose it searches a set of well-known locations.
+The "canonical" location is /usr/include/cmpi or /usr/local/include/cmpi,
+depending on how configure is invoked.
+
+Further, configure "determines" where providers are to be installed. Actually,
+there's no detection logic. The provider directory will always be
+/usr/lib/cmpi or /usr/local/lib/cmpi. If a CIM server requires a particular
+directory this can be selected by specifying the PROVIDERDIR variable.
+
+And finally, configure tries to find out which CIM server type is being used.
+This is necessary in order to select the appropriate schema and provider
+registration technique. If the CIM server is not or incorrectly identified,
+it is possible to specify it via the CIMSERVER variable.
+Supported values are pegasus, sfcb, openwbem and sniacimom.
+
+For instance, in order to configure for a locally installed Pegasus you can
+issue the following command:
+./configure CIMSERVER=pegasus PROVIDERDIR=$PEGASUS_HOME/provider \
+     --libdir=$PEGASUS_HOME/lib
+
 
 Load Schema into CIMOM's repository
 ...................................
@@ -96,7 +106,7 @@ Load Schema into CIMOM's repository
 with Pegasus :
 ..............
 The loading and registering of the classes/associations and
-their provider is done during the "make install" process.
+their provider is done during the "make postinstall".
 
 with OpenCimom/SNIA CIMOM :
 ...........................
@@ -184,11 +194,4 @@ of providers.
 
 How to set up and drive the test is described in the 
 README file of the test sub directory.
-
-
-
-
-
-
-
 
