@@ -36,8 +36,8 @@ endif
 # ************* Pegasus flavor ************** #
 
 ifdef PEGASUS
-CIMOMLIB=$(PEGASUS_HOME)/lib
-CIMOMINC=$(PEGASUS_HOME)/src/Pegasus/ProviderManager2/CMPI
+CIMOMLIB=$(PEGASUS_ROOT)/lib
+CIMOMINC=$(PEGASUS_ROOT)/src/Pegasus/ProviderManager2/CMPI
 endif
 
 # ************* Pegasus flavor ************** #
