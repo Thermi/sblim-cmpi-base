@@ -1,0 +1,19 @@
+# Makefile for SBLIM Base Instrumentation 
+
+
+# SNIA CIMOM flavor
+include ../setting.cmpi
+
+install: 
+	install -m 644 Linux_Base*.mof $(CIMOMMOF)
+
+uninstall:
+	$(RM) $(CIMOMMOF)/Linux_Base*.mof
+
+
+
+
+
+
+
+
