@@ -9,7 +9,7 @@ BuildRoot: /var/tmp/buildroot
 Summary: SBLIM Base Instrumentation
 Name: sblim-cmpi-base
 Version: 1.2.3
-Release: 1
+Release: 3
 Group: Systems Management/Base
 Copyright: Common Public Licence http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
 Packager: Viktor Mihajlovski <mihajlov@de.ibm.com>
@@ -55,8 +55,11 @@ fi
 mkdir -p $RPM_BUILD_ROOT/usr/lib/cmpi
 mkdir -p $RPM_BUILD_ROOT/usr/include/cmpi
 mkdir -p $RPM_BUILD_ROOT/usr/share/cmpi/mof
+mkdir -p $RPM_BUILD_ROOT/usr/share/cmpi/tests/cim
+mkdir -p $RPM_BUILD_ROOT/usr/share/cmpi/tests/system/linux
 
 make install INSTALL_ROOT=$RPM_BUILD_ROOT PEGASUS= STANDALONE=1
+make -C test install TESTSUITE=$RPM_BUILD_ROOT/usr/share/cmpi/tests
 
 # SUSE specific
 install -d $RPM_BUILD_ROOT/sbin/conf.d
