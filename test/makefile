@@ -17,6 +17,7 @@ install: all
 	install cim/*.cim $(TESTSUITECIM)
 	install system/linux/*.system $(TESTSUITESYSTEM)
 	install system/linux/*.sh $(TESTSUITESYSTEM)
+	install system/linux/*.pl $(TESTSUITESYSTEM)
 
 test:
 	@[ -d $(TESTSUITE) ] || ( echo $(TESTSUITE) does not exist && false)
@@ -38,5 +39,6 @@ uninstall:
 	$(RM) $(TESTSUITESYSTEM)/Linux_UnixProcess.sh \
 	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.system \
 	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.sh \
-	$(RM) $(TESTSUITESYSTEM)/createKeyFiles.sh
+	$(RM) $(TESTSUITESYSTEM)/createKeyFiles.sh \
+	$(RM) $(TESTSUITESYSTEM)/Linux_RunningOS.system
 

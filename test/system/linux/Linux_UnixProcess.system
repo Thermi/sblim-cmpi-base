@@ -1,4 +1,8 @@
 ********************************************************************************
+class : Linux_UnixProcess
+volatile
+
+--------------------------------------------------------------------------------
 Linux_UnixProcess : -eq -cmd ps --no-headers -eo pid | wc -l
 
 --------------------------------------------------------------------------------
@@ -18,5 +22,5 @@ EnabledDefault : -eq 2
 Status : -empty
 
 --------------------------------------------------------------------------------
-Instance Level
-Property Order : Handle ParentProcessID ProcessTTY Priority
+Instance Level : Linux_UnixProcess.pl
+Property Order : Handle ParentProcessID ProcessTTY Priority ProcessNiceValue RealUserID ProcessGroupID Name ProcessSessionID
