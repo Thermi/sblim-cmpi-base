@@ -114,7 +114,7 @@ ifdef SYSMAN
 	install sysman.o $(CIMOMLIB)
 endif
 	$(MAKE) -C mof -f makefile.cmpi install
-#	$(MAKE) -C mof -f makefile.pegasus install
+	$(MAKE) -C mof -f makefile.pegasus install
 
 test:
 	@[ -d $(CIMOMLIB) ] || ( echo $(CIMOMLIB) does not exist && false)

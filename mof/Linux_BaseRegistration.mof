@@ -41,7 +41,7 @@ instance of PG_Provider
    //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_ComputerSystemProviderModule";
    // The provider name as referenced in the code
-   Name = "OSBase_ComputerSystem";
+   Name = "OSBase_ComputerSystemProvider";
 };
 
 instance of PG_ProviderCapabilities
@@ -49,12 +49,12 @@ instance of PG_ProviderCapabilities
    //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_ComputerSystemProviderModule";
    //The provider name as defined in PG_Provider
-   ProviderName = "OSBase_ComputerSystem";
+   ProviderName = "OSBase_ComputerSystemProvider";
    CapabilityID = "1";
    //Name of the CIM class as defined in the mof
    ClassName = "Linux_ComputerSystem";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2 }; // Instance
+   ProviderType = { 2,4 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -79,7 +79,7 @@ instance of PG_Provider
    //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_OperatingSystemProviderModule";
    // The provider name as referenced in the code
-   Name = "OSBase_OperatingSystem";
+   Name = "OSBase_OperatingSystemProvider";
 };
 
 instance of PG_ProviderCapabilities
@@ -87,12 +87,12 @@ instance of PG_ProviderCapabilities
    //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_OperatingSystemProviderModule";
    //The provider name as defined in PG_Provider
-   ProviderName = "OSBase_OperatingSystem";
+   ProviderName = "OSBase_OperatingSystemProvider";
    CapabilityID = "1";
    //Name of the CIM class as defined in the mof
    ClassName = "Linux_OperatingSystem";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2 }; // Instance
+   ProviderType = { 2,4 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -105,7 +105,8 @@ instance of PG_ProviderCapabilities
 instance of PG_ProviderModule
 {
    Name = "OSBase_UnixProcessProviderModule";
-   Location = "cmpiOSBase_UnixProcess";
+   //The library name on disk
+   Location = "cmpiOSBase_UnixProcessProvider";
    Vendor = "SBLIM";
    Version = "2.0.0";
    InterfaceType = "CMPI";
@@ -114,18 +115,23 @@ instance of PG_ProviderModule
 
 instance of PG_Provider
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_UnixProcessProviderModule";
-   Name = "OSBase_UnixProcess";
+   // The provider name as referenced in the code
+   Name = "OSBase_UnixProcessProvider";
 };
 
 instance of PG_ProviderCapabilities
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_UnixProcessProviderModule";
-   ProviderName = "OSBase_UnixProcess";
+   //The provider name as defined in PG_Provider
+   ProviderName = "OSBase_UnixProcessProvider";
    CapabilityID = "1";
+   //Name of the CIM class as defined in the mof
    ClassName = "Linux_UnixProcess";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2 }; // Instance
+   ProviderType = { 2,4 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -138,7 +144,8 @@ instance of PG_ProviderCapabilities
 instance of PG_ProviderModule
 {
    Name = "OSBase_ProcessorProviderModule";
-   Location = "cmpiOSBase_Processor";
+   //The library name on disk
+   Location = "cmpiOSBase_ProcessorProvider";
    Vendor = "SBLIM";
    Version = "2.0.0";
    InterfaceType = "CMPI";
@@ -147,18 +154,23 @@ instance of PG_ProviderModule
 
 instance of PG_Provider
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_ProcessorProviderModule";
-   Name = "OSBase_Processor";
+   // The provider name as referenced in the code
+   Name = "OSBase_ProcessorProvider";
 };
 
 instance of PG_ProviderCapabilities
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_ProcessorProviderModule";
-   ProviderName = "OSBase_Processor";
+   //The provider name as defined in PG_Provider
+   ProviderName = "OSBase_ProcessorProvider";
    CapabilityID = "1";
+   //Name of the CIM class as defined in the mof
    ClassName = "Linux_Processor";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2 }; // Instance
+   ProviderType = { 2,4 }; // Instance, Method
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -176,10 +188,12 @@ instance of PG_ProviderCapabilities
 // 	Linux_RunningOS
 // ===================================================================
 
+
 instance of PG_ProviderModule
 {
    Name = "OSBase_RunningOSProviderModule";
-   Location = "cmpiOSBase_RunningOS";
+   //The library name on disk
+   Location = "cmpiOSBase_RunningOSProvider";
    Vendor = "SBLIM";
    Version = "2.0.0";
    InterfaceType = "CMPI";
@@ -188,18 +202,23 @@ instance of PG_ProviderModule
 
 instance of PG_Provider
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_RunningOSProviderModule";
-   Name = "OSBase_RunningOS";
+   // The provider name as referenced in the code
+   Name = "OSBase_RunningOSProvider";
 };
 
 instance of PG_ProviderCapabilities
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_RunningOSProviderModule";
-   ProviderName = "OSBase_RunningOS";
+   //The provider name as defined in PG_Provider
+   ProviderName = "OSBase_RunningOSProvider";
    CapabilityID = "1";
+   //Name of the CIM class as defined in the mof
    ClassName = "Linux_RunningOS";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,3 }; // Association
+   ProviderType = { 2,3 }; // Instance, Association
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -212,7 +231,8 @@ instance of PG_ProviderCapabilities
 instance of PG_ProviderModule
 {
    Name = "OSBase_OSProcessProviderModule";
-   Location = "cmpiOSBase_OSProcess";
+   //The library name on disk
+   Location = "cmpiOSBase_OSProcessProvider";
    Vendor = "SBLIM";
    Version = "2.0.0";
    InterfaceType = "CMPI";
@@ -221,18 +241,23 @@ instance of PG_ProviderModule
 
 instance of PG_Provider
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_OSProcessProviderModule";
-   Name = "OSBase_OSProcess";
+   // The provider name as referenced in the code
+   Name = "OSBase_OSProcessProvider";
 };
 
 instance of PG_ProviderCapabilities
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_OSProcessProviderModule";
-   ProviderName = "OSBase_OSProcess";
+   //The provider name as defined in PG_Provider
+   ProviderName = "OSBase_OSProcessProvider";
    CapabilityID = "1";
+   //Name of the CIM class as defined in the mof
    ClassName = "Linux_OSProcess";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,3 }; // Association
+   ProviderType = { 2,3 }; // Instance, Association
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
@@ -242,10 +267,12 @@ instance of PG_ProviderCapabilities
 // 	Linux_CSProcessor
 // ===================================================================
 
+
 instance of PG_ProviderModule
 {
    Name = "OSBase_CSProcessorProviderModule";
-   Location = "cmpiOSBase_CSProcessor";
+   //The library name on disk
+   Location = "cmpiOSBase_CSProcessorProvider";
    Vendor = "SBLIM";
    Version = "2.0.0";
    InterfaceType = "CMPI";
@@ -254,21 +281,23 @@ instance of PG_ProviderModule
 
 instance of PG_Provider
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_CSProcessorProviderModule";
-   Name = "OSBase_CSProcessor";
+   // The provider name as referenced in the code
+   Name = "OSBase_CSProcessorProvider";
 };
 
 instance of PG_ProviderCapabilities
 {
+   //The provider module as defined in PG_ProviderModule
    ProviderModuleName = "OSBase_CSProcessorProviderModule";
-   ProviderName = "OSBase_CSProcessor";
+   //The provider name as defined in PG_Provider
+   ProviderName = "OSBase_CSProcessorProvider";
    CapabilityID = "1";
+   //Name of the CIM class as defined in the mof
    ClassName = "Linux_CSProcessor";
    Namespaces = {"root/cimv2"};
-   ProviderType = { 2,3 }; // Association
+   ProviderType = { 2,3 }; // Instance, Association
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
 };
-
-
-
