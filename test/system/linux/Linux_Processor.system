@@ -1,0 +1,25 @@
+********************************************************************************
+Linux_Processor : -eq -cmd cat /proc/cpuinfo | grep ^processor | wc -l
+
+--------------------------------------------------------------------------------
+SystemCreationClassName : -eq -file ComputerSystem.keys[0]
+SystemName : -eq -file ComputerSystem.keys[1]
+CreationClassName : Linux_Processor
+
+Caption : -set
+Description : -set
+ElementName : -set
+Name : -set
+
+EnabledStatus : -eq 2
+OtherEnabledStatus : -empty
+RequestedStatus : -eq 2
+EnabledDefault : -eq 2
+Status : -empty
+
+Role : -eq Central Processor
+Family : -set
+
+--------------------------------------------------------------------------------
+Instance Level
+Property Order : DeviceID

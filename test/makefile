@@ -36,5 +36,7 @@ uninstall:
 	$(RM) $(TESTSUITESYSTEM)/Linux_OperatingSystem.system \
 	$(RM) $(TESTSUITESYSTEM)/Linux_UnixProcess.system \
 	$(RM) $(TESTSUITESYSTEM)/Linux_UnixProcess.sh \
+	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.system \
+	$(RM) $(TESTSUITESYSTEM)/Linux_Processor.sh \
 	$(RM) $(TESTSUITESYSTEM)/createKeyFiles.sh
 
