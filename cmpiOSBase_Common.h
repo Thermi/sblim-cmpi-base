@@ -27,6 +27,10 @@
 
 #include "cmpidt.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ---------------------------------------------------------------------------*/
 
 extern char * CSCreationClassName;
@@ -118,5 +122,10 @@ int _assoc_check_parameter_const( CMPIBroker * _broker,
 /*                       end of cmpiOSBase_Common.h                           */
 /* ---------------------------------------------------------------------------*/
 
+#ifdef __cplusplus
+   }
+#endif
+
+/* ---------------------------------------------------------------------------*/
 
 #endif
