@@ -1,0 +1,173 @@
+# $Id: Makefile.am,v 1.1 2005/04/06 16:29:47 mihajlov Exp $
+# ==================================================================
+# (C) Copyright IBM Corp. 2005
+#
+# THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+# ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+# CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+#
+# You can obtain a current copy of the Common Public License from
+# http://www.opensource.org/licenses/cpl1.0.php
+#
+# Author:       Viktor Mihajlovski <mihajlov@de.ibm.com>
+# Contributors: Dr. Gareth S. Bestor <bestorga@us.ibm.com>
+# Description:  Automake input file for OS Base Providers
+# ==================================================================
+
+
+# SBLIM Include Directory
+sblimincdir = $(includedir)/sblim
+
+# Start from an empty extra distribution file list
+EXTRA_DIST=
+
+# docdir defines where the documentation goes
+docdir=$(datadir)/doc/$(PACKAGE)-$(VERSION)
+
+#
+# Automake instructions for documentation
+#
+doc_DATA=README AUTHORS COPYING 
+
+# ADD EXTRA DOC FILES IF PRESENT
+doc_DATA+=README.INDICATION DEBUG
+EXTRA_DIST+=README.INDICATION DEBUG
+
+# providerdir defines where provider libraries will be installed (@PROVIDERDIR@ is set by the configure script). 
+providerdir = @PROVIDERDIR@
+
+#
+# Automake instructions for main dir
+#
+
+#  OSBase CMPI provider libraries
+provider_LTLIBRARIES = 	libcmpiOSBase_ComputerSystemProvider.la \
+		libcmpiOSBase_OperatingSystemProvider.la \
+		libcmpiOSBase_UnixProcessProvider.la \
+		libcmpiOSBase_ProcessorProvider.la \
+		libcmpiOSBase_BaseBoardProvider.la \
+		libcmpiOSBase_RunningOSProvider.la \
+		libcmpiOSBase_OSProcessProvider.la \
+		libcmpiOSBase_CSProcessorProvider.la \
+		libcmpiOSBase_CSBaseBoardProvider.la
+
+# Computer System
+libcmpiOSBase_ComputerSystemProvider_la_SOURCES = \
+		cmpiOSBase_ComputerSystemProvider.c \
+		cmpiOSBase_ComputerSystem.c \
+		OSBase_ComputerSystem.c
+libcmpiOSBase_ComputerSystemProvider_la_LIBADD = -lcmpiOSBase_Common
+
+# Operating System
+libcmpiOSBase_OperatingSystemProvider_la_SOURCES = \
+		cmpiOSBase_OperatingSystemProvider.c \
+		cmpiOSBase_OperatingSystem.c \
+		OSBase_OperatingSystem.c
+
+libcmpiOSBase_OperatingSystemProvider_la_LIBADD = -lcmpiOSBase_Common \
+						-ldmiinfo @LINDHELP@
+# This gcc/ld specific flag is ugly - need to check in configure
+libcmpiOSBase_OperatingSystemProvider_la_LDFLAGS = -Wc,-nostartfiles
+
+# Unix Process
+libcmpiOSBase_UnixProcessProvider_la_SOURCES = \
+		cmpiOSBase_UnixProcessProvider.c \
+		cmpiOSBase_UnixProcess.c \
+		OSBase_UnixProcess.c
+libcmpiOSBase_UnixProcessProvider_la_LIBADD =  -lcmpiOSBase_Common
+
+# Processor 
+libcmpiOSBase_ProcessorProvider_la_SOURCES = \
+		cmpiOSBase_ProcessorProvider.c \
+		cmpiOSBase_Processor.c \
+		OSBase_Processor.c
+libcmpiOSBase_ProcessorProvider_la_LIBADD =  -lcmpiOSBase_Common
+
+# Base Board
+libcmpiOSBase_BaseBoardProvider_la_SOURCES = \
+		cmpiOSBase_BaseBoardProvider.c \
+		cmpiOSBase_BaseBoard.c \
+		OSBase_BaseBoard.c
+libcmpiOSBase_BaseBoardProvider_la_LIBADD = -lcmpiOSBase_Common -ldmiinfo
+
+libcmpiOSBase_RunningOSProvider_la_SOURCES = cmpiOSBase_RunningOSProvider.c
+libcmpiOSBase_RunningOSProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_OSProcessProvider_la_SOURCES = cmpiOSBase_OSProcessProvider.c
+libcmpiOSBase_OSProcessProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_CSProcessorProvider_la_SOURCES = cmpiOSBase_CSProcessorProvider.c
+libcmpiOSBase_CSProcessorProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_CSBaseBoardProvider_la_SOURCES = cmpiOSBase_CSBaseBoardProvider.c
+libcmpiOSBase_CSBaseBoardProvider_la_LIBADD = -lcmpiOSBase_Common
+
+
+# OSBase support utility libraries
+lib_LTLIBRARIES = libcmpiOSBase_Common.la libdmiinfo.la
+
+libcmpiOSBase_Common_la_SOURCES=OSBase_Common.c cmpiOSBase_Common.c
+# This gcc/ld specific flag is ugly - need to check in configure
+libcmpiOSBase_Common_la_LDFLAGS = -Wc,-nostartfiles
+
+libdmiinfo_la_SOURCES=dmiinfo.c dmiinfo.h dmifind.h
+
+# DMI layer test program (not installed)
+noinst_PROGRAMS = dmitest
+dmitest_SOURCES = dmitest.c
+dmitest_LDADD = -ldmiinfo
+
+# Installable Header Files
+sbliminc_HEADERS = OSBase_Common.h
+
+# Non-Installable Header Files
+noinst_HEADERS = OSBase_ComputerSystem.h \
+	OSBase_OperatingSystem.h \
+	OSBase_UnixProcess.h \
+	OSBase_Processor.h \
+	OSBase_BaseBoard.h \
+	cmpiOSBase_Util.h \
+	cmpiOSBase_Common.h \
+	cmpiOSBase_ComputerSystem.h \
+	cmpiOSBase_OperatingSystem.h \
+	cmpiOSBase_UnixProcess.h \
+	cmpiOSBase_Processor.h \
+	cmpiOSBase_BaseBoard.h
+
+# We must explicity add the RPM spec file to the distribution package
+EXTRA_DIST+=$(PACKAGE).spec
+
+
+#
+# Automake instructions for ./mof subdir
+#
+if NOEVENTS
+SCHEMAS=mof/Linux_Base.mof 
+REGISTRATIONS.pegasus=mof/Linux_BaseRegistration.mof
+REGISTRATIONS.sfcb=mof/Linux_Base.sfcb.reg
+REGISTRATIONS.openwbem=
+REGISTRATIONS.sniacimom=
+else
+SCHEMAS=mof/Linux_Base.mof mof/Linux_BaseIndication.mof
+REGISTRATIONS.pegasus=mof/Linux_BaseRegistration.mof \
+	mof/Linux_BaseIndicationReg.mof
+REGISTRATIONS.sfcb=mof/Linux_Base.sfcb.reg mof/Linux_BaseIndication.sfcb.reg
+REGISTRATIONS.openwbem=
+REGISTRATIONS.sniacimom=
+endif
+REGISTRATIONS=$(REGISTRATIONS.pegasus) \
+		$(REGISTRATIONS.sfcb) \
+		$(REGISTRATIONS.openwbem) \
+		$(REGISTRATIONS.sniacimom)
+
+# We must explicity add all the schema files to the distribution package
+pkgdata_DATA=$(SCHEMAS) $(REGISTRATIONS)
+pkgdata_SCRIPTS=provider-register.sh
+EXTRA_DIST+=mof $(pkgdata_SCRIPTS)
+
+# Register the provider(s) and class definition(s) to the current CIM server/CIMOM
+postinstall:
+	test x"$(SCHEMAS)" != x && \
+		sh provider-register.sh -t @CIMSERVER@ -s $(SCHEMAS)
+	test x"$(REGISTRATIONS.@CIMSERVER@)" != x && \
+		sh provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS.@CIMSERVER@)
+
+dist-hook:
+	test -d "$(distdir)" &&	rm -rf `find $(distdir) -type d -name CVS`

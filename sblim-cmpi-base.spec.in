@@ -1,0 +1,105 @@
+#
+# $Id: sblim-cmpi-base.spec.in,v 1.1 2005/04/06 16:29:47 mihajlov Exp $
+#
+# Package spec for @PACKAGE@
+#
+
+BuildRoot: /var/tmp/buildroot
+
+Summary: Sample CMPI Provider
+Name: @PACKAGE_TARNAME@
+Version: @PACKAGE_VERSION@
+Release: @CIMSERVER@
+Group: Systems Management/Base
+License: Common Public License 1.0
+
+Source0: http://prdownloads.sourceforge.net/sblim/%{name}-%{version}.tar.bz2
+
+BuildRequires: cmpi-devel
+Requires: cimserver
+
+%Description
+Standards Based Linux Instrumentation Base Providers
+
+%Package devel
+Summary: SBLIM Base Instrumentation Header Development Files
+Group: Systems Management/Base
+Requires: %{name} = %{version}
+
+%Description devel
+SBLIM Base Provider Development Package
+
+%prep
+
+%setup -n %{name}-%{version}
+
+export PATCH_GET=0
+
+#%patch0 -p0
+
+%build
+
+%configure
+make
+
+%clean
+
+if [ `id -ur` != 0 ]
+then
+# paranoia check 
+	rm -rf $RPM_BUILD_ROOT 
+fi
+
+%install
+
+if [ `id -ur` != 0 ]
+then
+# paranoia check 
+	rm -rf $RPM_BUILD_ROOT 
+fi
+
+make DESTDIR=$RPM_BUILD_ROOT install
+
+# remove unused libtool files
+rm -f $RPM_BUILD_ROOT/%{_libdir}/*a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
+
+%post
+# Register Schema and Provider - this is higly provider specific
+
+%if "@LINDHELP@" != ""
+%define SCHEMA %{_datadir}/%{name}/Linux_Base.mof %{_datadir}/%{name}/Linux_BaseIndication.mof
+%define REGISTRATION_pegasus %{_datadir}/%{name}/Linux_BaseRegistration.mof %{_datadir}/%{name}/Linux_BaseIndicationReg.mof
+%define REGISTRATION_sfcb %{_datadir}/%{name}/Linux_Base.sfcb.reg %{_datadir}/%{name}/Linux_BaseIndication.sfcb.reg
+%else
+%define SCHEMA %{_datadir}/%{name}/Linux_Base.mof
+%define REGISTRATION_pegasus %{_datadir}/%{name}/Linux_BaseRegistration.mof
+%define REGISTRATION_sfcb %{_datadir}/%{name}/Linux_Base.sfcb.reg 
+%endif
+
+%{_datadir}/%{name}/provider-register.sh -t @CIMSERVER@ \
+	-s %{SCHEMA} > /dev/null
+
+%{_datadir}/%{name}/provider-register.sh -t @CIMSERVER@ \
+	-r %{REGISTRATION_@CIMSERVER@} > /dev/null
+
+/sbin/ldconfig
+
+%postun
+/sbin/ldconfig
+
+%files
+
+%defattr(-,root,root) 
+%{_datadir}/%{name}
+%{_datadir}/doc/%{name}-%{version}
+%{_libdir}/*.so*
+%{_libdir}/cmpi/*.so*
+
+
+%files devel
+
+%defattr(-,root,root)
+%{_includedir}
+
+

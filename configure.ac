@@ -1,0 +1,93 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(SBLIM BaseOS Providers Base, 1.4.2am, heidineu@de.ibm.com,sblim-cmpi-base)
+AC_CONFIG_SRCDIR([OSBase_Common.c])
+AC_CONFIG_HEADER([config.h])
+AM_INIT_AUTOMAKE
+
+AC_CANONICAL_HOST
+case $host_cpu in
+     i*86) HW=INTEL;; 
+     s390) HW=S390;; 
+     ppc*) HW=PPC;; 
+     x86_64) HW=X86_64;; 
+     ia64) HW=IA64;; 
+     **) HW=GENERIC;;
+esac
+
+# Configuration Arguments
+AC_ARG_VAR([PROVIDERDIR],[the directory where the CMPI providers will be installed.])
+AC_ARG_VAR([CIMSERVER],[the target CIM server (pegasus|sfcb|openwbem|sniacimom).])
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+
+# Checks for libraries.
+AC_CHECK_LIB([ind_helper], [ind_start], [LINDHELP=-lind_helper], [LINDHELP=])
+AC_SUBST(LINDHELP)
+
+# Check for required CMPI header files (defined in acinclude.m4)
+CHECK_CMPI
+
+# Check for required libraries (defined in acinclude.m4)
+CHECK_PROVIDERDIR
+
+# Check for CIM Server (defined in acinclude.m4)
+CHECK_CIMSERVER
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([fcntl.h langinfo.h limits.h malloc.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADER([ind_helper.h],[EVENTFLAGS=],[EVENTFLAGS=-DNOEVENTS],[])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_MODE_T
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_CLOSEDIR_VOID
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_MKTIME
+AC_FUNC_MMAP
+AC_FUNC_REALLOC
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS([gethostname getpagesize gettimeofday memset munmap nl_langinfo strcasecmp strchr strdup strerror strrchr strstr uname])
+
+AC_CONFIG_FILES([Makefile sblim-cmpi-base.spec])
+
+AM_CONDITIONAL(NOEVENTS,[test x"$EVENTFLAGS" != x])
+
+# Extend CPPFLAGS
+CPPFLAGS="$CPPFLAGS -D$HW $EVENTFLAGS"
+if test x"$EVENTFLAGS" == x; then
+   INDICATION_SUPPORT=Enabled
+else	
+   INDICATION_SUPPORT=Disabled
+fi
+# Display configuration options
+echo "-------------------------------------------------------"
+echo "Configuration for $PACKAGE complete."
+echo ""
+echo "The following configuration options have been selected:"
+echo "CIMSERVER: " $CIMSERVER
+echo "PROVIDERDIR: " $PROVIDERDIR
+echo "CPPFLAGS:" $CPPFLAGS
+echo "Indication Support" $INDICATION_SUPPORT
+echo "-------------------------------------------------------"
+
+AC_OUTPUT
+
+echo "You may now run make"
