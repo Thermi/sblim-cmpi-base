@@ -10,7 +10,7 @@
  * You can obtain a current copy of the Common Public License from
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
- * Author:       
+ * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors:
  *
  * Interface Type : Common Manageability Programming Interface ( CMPI )

@@ -13,8 +13,9 @@
  * You can obtain a current copy of the Common Public License from
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
- * Author:       
- * Contributors: 
+ * Author:       Heidi Neumann <heidineu@de.ibm.com>
+ * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
+ *               C. Eric Wu <cwu@us.ibm.com>  
  *
  * Description: 
  * This file defines the interfaces for the resource access implementation 
