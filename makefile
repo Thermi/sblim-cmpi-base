@@ -29,7 +29,7 @@ HW=$(shell ./platform.sh)
 # No changes necessary below this line
 
 # support CIM Schema Version 2.7
-CFLAGS=-Wall -g -I. -I$(CIMOMINC) -D_COMPILE_UNIX -D$(HW) -DDEBUG -DNOEVENTS $(CFLAG_SYSMAN)
+CFLAGS=-Wall -g -I. -I$(CIMOMINC) -D_COMPILE_UNIX -D$(HW) -DDEBUG -DNOEVENTS $(CFLAG_SYSMAN) -fPIC
 # support CIM Schema Version 2.6
 #CFLAGS=-Wall -g -I. -I$(CIMOMINC) -D_COMPILE_UNIX -DDEBUG -DNOEVENTS -DCIM26COMPAT $(CFLAG_SYSMAN)
 
