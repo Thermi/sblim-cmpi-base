@@ -15,8 +15,18 @@ if(defined $IN) {
   }
 }
 
-
-my @out=`cat /proc/cpuinfo | grep ^processor | sed -e s/processor// | sed -e s/://`;
+my @out;
+if ( `uname -i | grep s390` ) {
+  @out=`cat /proc/cpuinfo | grep ^processor | sed -e s/processor//`;
+  foreach my $out (@out) {
+    if ( $out =~ /^(.+?):(.*)/ ) {
+      $out = $1;
+    }
+  }
+}
+else {
+  @out=`cat /proc/cpuinfo | grep ^processor | sed -e s/processor// | sed -e s/://`;
+}
 
 if( !open($INST_FILE,'>', "$className")) {
   print "can not open $className\n"; 
