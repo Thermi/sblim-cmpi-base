@@ -1,4 +1,3 @@
-
 /* ---------------------------------------------------------------------------*/
 (C) Copyright IBM Corp. 2003
 
@@ -15,8 +14,8 @@ Date  :	      03/18/2003
 /* ---------------------------------------------------------------------------*/
 
 
-SBLIM Base Instrumentation for CMPI README
-..........................................
+SBLIM CMPI Base Instrumentation README
+--------------------------------------
 
 
 Introduction
@@ -50,17 +49,24 @@ Package Contents
 CIMOM Build Instructions
 ------------------------
 
+
 Prerequisites
 .............
-- CIMOM is installed
-- CMPI (package cmpi-adapter) latest version
+- CIMOM installed
+- CMPI enabled CIMOM
 - CIM Schema Version 2.7 and higher loaded into the CIMOM's
   repository
+
 
 Building CIMOM and CMPI for this CIMOM
 .........................................
 Please follow the instructions in the README.cmpi file of 
 the cmpi-adapter package.
+CMPI support is available for OpenPegasus, OpenCimom (former
+SNIA CIMOM) and OpenWBEM
+- Pegasus   ... CMPI is part of Pegasus
+- OpenCimom ... install SBLIM cmpi-adapter for snia
+- OpenWBEM  ... CMPI is part of OpenWBEM
 
 
 Building cmpi-base
