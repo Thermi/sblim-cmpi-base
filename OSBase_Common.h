@@ -38,6 +38,8 @@ extern int _debug;
 extern char * CIM_HOST_NAME;
 extern char * CIM_OS_NAME;
 
+int kernel_release();
+
 /* ---------------------------------------------------------------------------*/
 
 #define _OSBASE_TRACE(LEVEL,STR) \

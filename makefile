@@ -41,15 +41,24 @@ lib%.so: %.c
 
 
 all: 	testfiles \
+	libdmiinfo.so \
+	dmitest \
 	libcmpiOSBase_Common.so \
 	libcmpiOSBase_ComputerSystemProvider.so \
 	libcmpiOSBase_OperatingSystemProvider.so \
 	libcmpiOSBase_UnixProcessProvider.so \
 	libcmpiOSBase_ProcessorProvider.so \
+	libcmpiOSBase_BaseBoardProvider.so \
 	libcmpiOSBase_RunningOSProvider.so \
 	libcmpiOSBase_OSProcessProvider.so \
-	libcmpiOSBase_CSProcessorProvider.so
+	libcmpiOSBase_CSProcessorProvider.so \
+	libcmpiOSBase_CSBaseBoardProvider.so \
+	libcmpiOSBase_CSMemoryProvider.so
 
+
+
+libdmiinfo.so: LDFLAGS=-shared
+dmitest: LDFLAGS=-L. -ldmiinfo
 
 
 libcmpiOSBase_Common.so: cmpiOSBase_Common.c \
@@ -66,7 +75,7 @@ libcmpiOSBase_ComputerSystemProvider.so: cmpiOSBase_ComputerSystemProvider.c \
 libcmpiOSBase_OperatingSystemProvider.so: cmpiOSBase_OperatingSystemProvider.c \
 					  cmpiOSBase_OperatingSystem.c \
 					  OSBase_OperatingSystem.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -nostartfiles -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) -lpthread -lind_helper -nostartfiles -o $@ $^
 
 
 libcmpiOSBase_UnixProcessProvider.so: cmpiOSBase_UnixProcessProvider.c \
@@ -81,6 +90,12 @@ libcmpiOSBase_ProcessorProvider.so: cmpiOSBase_ProcessorProvider.c \
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 
+libcmpiOSBase_BaseBoardProvider.so: cmpiOSBase_BaseBoardProvider.c \
+				    cmpiOSBase_BaseBoard.c \
+				    OSBase_BaseBoard.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -ldmiinfo -o $@ $^
+
+
 #------------------------------------------------------------------------------#
 
 sysman.o: sysman_pid.o
@@ -92,6 +107,7 @@ sysman_pid.o: sysman_pid.c
 
 
 install: all
+	install libdmiinfo.so $(COMMONLIB)
 	install libcmpiOSBase_Common.so $(COMMONLIB)
 	install libcmpiOSBase_*Provider.so $(CIMOMLIB)
 	install -m 644 cmpiOSBase_*.h $(COMMONINC)
@@ -110,7 +126,7 @@ testfiles:
 	@[ -d $(COMMONLIB) ] || ( echo directory $(COMMONLIB) does not exist - please create manually && false)
 
 clean:
-	$(RM)	*.so *.o *~
+	$(RM) dmitest *.so *.o *~
 
 uninstall:
 	$(MAKE) -C mof -f $(MOFMAKEFILE) uninstall;
@@ -119,17 +135,22 @@ uninstall:
 	$(RM) $(COMMONINC)/OSBase_OperatingSystem.h \
 	$(RM) $(COMMONINC)/OSBase_UnixProcess.h \
 	$(RM) $(COMMONINC)/OSBase_Processor.h \
+	$(RM) $(COMMONINC)/OSBase_BaseBoard.h \
 	$(RM) $(COMMONINC)/cmpiOSBase_Util.h \
 	$(RM) $(COMMONINC)/cmpiOSBase_Common.h \
 	$(RM) $(COMMONINC)/cmpiOSBase_ComputerSystem.h \
 	$(RM) $(COMMONINC)/cmpiOSBase_OperatingSystem.h \
 	$(RM) $(COMMONINC)/cmpiOSBase_UnixProcess.h \
 	$(RM) $(COMMONINC)/cmpiOSBase_Processor.h \
+	$(RM) $(COMMONINC)/cmpiOSBase_BaseBoard.h \
 	$(RM) $(COMMONLIB)/libcmpiOSBase_Common.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_ComputerSystemProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_OperatingSystemProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_UnixProcessProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_ProcessorProvider.so \
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_BaseBoardProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_RunningOSProvider.so \
 	$(RM) $(CIMOMLIB)/libcmpiOSBase_OSProcessProvider.so \
-	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSProcessorProvider.so
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSProcessorProvider.so \
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSBaseBoardProvider.so \
+	$(RM) $(CIMOMLIB)/libcmpiOSBase_CSMemoryProvider.so

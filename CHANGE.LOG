@@ -28,3 +28,13 @@
 * support for property list filter on EnumInstances and GetInstance
 
 // ===================================================================
+// new in version 1.4 :
+
+* moved library dmiinfo from cmpi-smbios package to cmpi-base (needed
+  for data gathering for Linux_BaseBoard)
+* added class Linux_BaseBoard
+* added association Linux_CSBaseBoard
+* enabled Indication Interface for Linux_OperatingSystem (with no 
+  functionality !)
+
+// ===================================================================

@@ -1,10 +1,10 @@
-#ifndef _OSBASE_COMPUTERSYSTEM_H_
-#define _OSBASE_COMPUTERSYSTEM_H_
+#ifndef _OSBASE_BASEBOARD_H_
+#define _OSBASE_BASEBOARD_H_
 
 /*
- * OSBase_ComputerSystem.h
+ * OSBase_BaseBoard.h
  *
- * (C) Copyright IBM Corp. 2002
+ * (C) Copyright IBM Corp. 2005
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -14,12 +14,11 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
- * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
- *               C. Eric Wu <cwu@us.ibm.com>
+ * Contributors: 
  *
  * Description: 
  * This file defines the interfaces for the resource access implementation 
- * of the CIM class Linux_ComputerSystem.
+ * of the CIM class Linux_BaseBoard.
  * 
 */
 
@@ -31,11 +30,20 @@ extern "C" {
 
 /* ---------------------------------------------------------------------------*/
 
+struct cim_baseboard {
+  char * tag;
+  char * vendor;
+  char * type;
+  char * model;
+  char * partNumber;
+  char * serialNumber;
+  char * UUID;
+};
 
-char * get_cs_primownername();
-char * get_cs_primownercontact();
-int get_cs_lparid(char *lparid, int size);
+int get_baseboard_data(struct cim_baseboard *data);
+int get_baseboard_tag(char *tag, int size);
 
+void free_baseboard_data(struct cim_baseboard *data);
 
 /* ---------------------------------------------------------------------------*/
 

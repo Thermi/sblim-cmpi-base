@@ -37,6 +37,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 
 /* ---------------------------------------------------------------------------*/
 
@@ -87,6 +88,24 @@ void _fini() {
 /* ---------------------------------------------------------------------------*/
 
 
+/* ---------------------------------------------------------------------------*/
+/* get Kernel Version                                                         */
+/* ---------------------------------------------------------------------------*/
+
+#define KERNELRELEASE(maj,min,patch) ((maj) * 10000 + (min)*1000 + (patch))
+
+int kernel_release() {
+  struct utsname uts;
+  int major, minor, patch;
+
+  if (uname(&uts) < 0)
+    return -1;
+  if (sscanf(uts.release, "%d.%d.%d", &major, &minor, &patch) != 3)
+    return -1;
+  return KERNELRELEASE(major, minor, patch);
+}
+
+/* ---------------------------------------------------------------------------*/
 
 /* initializes the variable CIM_HOST_NAME
  * contains the full qualified IP hostname of the system, e.g. host.domain

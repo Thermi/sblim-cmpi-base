@@ -40,7 +40,20 @@
   " Server or other type of a single node Computer System ." )
 ]
 class Linux_ComputerSystem : CIM_ComputerSystem
-{ };
+{ 
+  string LPARID;
+};
+
+
+// ===================================================================
+// 	Linux_BaseBoard
+// ===================================================================
+
+[ Provider("cmpi:cmpiOSBase_BaseBoardProvider") ] 
+class Linux_BaseBoard : CIM_Card
+{
+  string UUID;
+};
 
 
 // ===================================================================
@@ -145,6 +158,27 @@ class Linux_RunningOS : CIM_RunningOS
 
 
 // ===================================================================
+// 	Linux_CSBaseBoard
+// ===================================================================
+
+[ Association,
+  Provider("cmpi:cmpiOSBase_CSBaseBoardProvider") ] 
+class Linux_CSBaseBoard : CIM_ComputerSystemPackage
+{ 
+  [ Override ("Antecedent"),
+    Description ("The BaseBoard, representing the physical CS "
+    "information.")
+  ]
+  Linux_BaseBoard REF Antecedent;
+
+  [ Override ("Dependent"),
+    Description ("The Computer System Container.")
+  ]
+  Linux_ComputerSystem REF Dependent;
+};
+
+
+// ===================================================================
 // 	Linux_OSProcess
 // ===================================================================
 
@@ -186,4 +220,3 @@ class Linux_CSProcessor : CIM_SystemDevice
   ]
   Linux_Processor REF PartComponent;
 };
-

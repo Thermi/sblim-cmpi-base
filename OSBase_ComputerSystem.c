@@ -29,6 +29,7 @@
 /* ---------------------------------------------------------------------------*/
 // private declarations
 
+#define LPARNAME   "grep 'LPAR Name' /proc/sysinfo"
 
 /* ---------------------------------------------------------------------------*/
 
@@ -68,6 +69,26 @@ char * get_cs_primownercontact() {
 
   _OSBASE_TRACE(4,("--- get_cs_primownercontact() failed"));
   return NULL;
+}
+
+int get_cs_lparid(char *lparid, int size) {
+
+  memset(lparid,0,size);
+
+#if defined (S390)
+
+  char **hdout = NULL;
+  char id[255];
+
+  if( runcommand(LPARNAME,NULL,&hdout,NULL)) { return -1; }
+  if(hdout[0]) {
+    sscanf(hdout[0],"%*s %*s %s",id);
+    if(strlen(id)>size) { return -1; }
+    strcpy(lparid,id)
+  }
+  return 0;
+#endif
+  return -1;
 }
 
 /* ---------------------------------------------------------------------------*/

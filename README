@@ -27,12 +27,14 @@ via CIMOM technology/infrastructure.
 The instrumented classes / associations are
 
 - Linux_ComputerSystem
+- Linux_BaseBoard
 - Linux_OperatingSystem
 - Linux_UnixProcess
 - Linux_Processor
 - Linux_RunningOS
 - Linux_OSProcess
 - Linux_CSProcessor
+- Linux_CSBaseBoard
 
 
 Package Contents
@@ -114,6 +116,10 @@ Common Libraries
   and implements tool function, which handle CIM specific
   formats or data
 
+- dmiinfo :
+  data access to x86 SMBIOS informations (/dev/mem)
+  ROOT ACCESS RIGHTS NEEDED TO EXECUTE
+
 
 Class/Association specific Libraries
 ------------------------------------
@@ -123,6 +129,12 @@ class Linux_ComputerSystem
 - cmpiOSBase_ComputerSystemProvider.c
 - cmpiOSBase_ComputerSystem.c/.h
 - OSBase_ComputerSystem.c/.h
+
+class Linux_BaseBoard
+..........................
+- cmpiOSBase_BaseBoardProvider.c
+- cmpiOSBase_BaseBoard.c/.h
+- OSBase_BaseBoard.c/.h
 
 class Linux_OperatingSystem
 ...........................
@@ -154,6 +166,10 @@ association Linux_OSProcess
 association Linux_CSProcessor
 ...........................
 - cmpiOSBase_CSProcessorProvider.c
+
+association Linux_CSBaseBoard
+...........................
+- cmpiOSBase_CSBaseBoardProvider.c
 
 
 Automated Function Verifcation Test 

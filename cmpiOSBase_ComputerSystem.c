@@ -94,6 +94,7 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   CMPIInstance   *  ci        = NULL;
   char           *  owner     = NULL;
   char           *  contact   = NULL;
+  char              lparid[255];
   const char     ** keys      = NULL;
   int               keyCount  = 0;
 #ifndef CIM26COMPAT
@@ -153,6 +154,10 @@ CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
   if( (contact=get_cs_primownercontact()) != NULL) {
     CMSetProperty( ci, "PrimaryOwnerContact", contact, CMPI_chars);
     free(contact);
+  }
+
+  if(get_cs_lparid(lparid, sizeof(lparid)) == 0) {
+    CMSetProperty( ci, "LPARID", lparid, CMPI_chars);
   }
 
   /* 2.7 */

@@ -41,30 +41,6 @@ static CMPIBroker * _broker;
 
 
 /* ---------------------------------------------------------------------------*/
-/* --- CPU utilization with event support                                     */
-/* ---------------------------------------------------------------------------*/
-
-#ifndef NOEVENTS
-
-#include <pthread.h>
-#include <unistd.h>
-
-#define histlen 5
-static int histindex=0;
-static int histcpu[histlen];
-
-static pthread_t tid;
-static int threadActive=0;
-static int threadCancelPending=0;
-static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
-
-#endif
-
-/* ---------------------------------------------------------------------------*/
-
-
-/* ---------------------------------------------------------------------------*/
 /*                      Instance Provider Interface                           */
 /* ---------------------------------------------------------------------------*/
 
@@ -72,11 +48,6 @@ static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 CMPIStatus OSBase_OperatingSystemProviderCleanup( CMPIInstanceMI * mi, 
            CMPIContext * ctx) { 
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() called",_ClassName));
-
-#ifndef NOEVENTS
-  pthread_mutex_destroy(&mutex);
-#endif
-
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
@@ -394,75 +365,74 @@ static char * _copy_buf( char ** hdbuf ) {
 /* ---------------------------------------------------------------------------*/
 
 
-/* compile option -DNOEVENTS allows to make the Indication support optional   */
-
-#ifndef NOEVENTS
-
-CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup( CMPIIndicationMI * mi, 
+CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup( 
+           CMPIIndicationMI * mi, 
            CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
-CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter( CMPIIndicationMI * mi, 
+CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter( 
+           CMPIIndicationMI * mi, 
            CMPIContext * ctx, 
            CMPIResult * rslt,
            CMPISelectExp * filter, 
-           char * indType, 
+           const char * indType, 
            CMPIObjectPath * classPath,
-           char * owner) {
+           const char * owner) {
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() called",_ClassName));
-  /* we don't object */
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
-CMPIStatus OSBase_OperatingSystemProviderMustPoll( CMPIIndicationMI * mi, 
+CMPIStatus OSBase_OperatingSystemProviderMustPoll(
+           CMPIIndicationMI * mi, 
            CMPIContext * ctx, 
            CMPIResult * rslt,
            CMPISelectExp * filter, 
-           char * indType, 
+           const char * indType, 
            CMPIObjectPath * classPath) {
-  _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called",_ClassName));
-  /* no polling */
-  CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
-  CMReturnDone(rslt);
+  _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called: NO POLLING",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI MustPoll() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
-CMPIStatus OSBase_OperatingSystemProviderActivateFilter( CMPIIndicationMI * mi, 
+CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
+           CMPIIndicationMI * mi, 
            CMPIContext * ctx, 
            CMPIResult * rslt,
            CMPISelectExp * filter, 
-           char * indType, 
+           const char * indType, 
            CMPIObjectPath * classPath,
            CMPIBoolean firstActivation) {
   _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() called",_ClassName));
-  /* we are already running */
-  if (checkProviderThread()) { CMReturn(CMPI_RC_OK); }
-  if (strcasecmp(type,"cim_instmodification")==0)
-    { startProviderThread(nh); }
-
-  _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited",_ClassName));
-  CMReturn(CMPI_RC_OK);
+  _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: not activated",_ClassName));
+  CMReturn(CMPI_RC_ERR_FAILED);
 }
 
-CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter( CMPIIndicationMI * mi, 
+CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter( 
+           CMPIIndicationMI * mi, 
            CMPIContext * ctx, 
            CMPIResult * rslt,
            CMPISelectExp * filter, 
-           char * indType, 
+           const char * indType, 
            CMPIObjectPath *classPath,
            CMPIBoolean lastActivation) {
   _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() called",_ClassName));
-  if (last && checkProviderThread()) { stopProviderThread(); }
   _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited",_ClassName));
-  CMReturn(CMPI_RC_OK);
+  CMReturn(CMPI_RC_ERR_FAILED);
 }
 
-#endif
+void OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi) {
+  _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() called",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() exited",_ClassName));
+}
+
+void OSBase_OperatingSystemProviderDisableIndications(CMPIIndicationMI * mi) {
+  _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() called",_ClassName));
+  _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() exited",_ClassName));
+}
 
 
 /* ---------------------------------------------------------------------------*/
@@ -479,15 +449,10 @@ CMMethodMIStub( OSBase_OperatingSystemProvider,
                 _broker, 
                 CMNoHook);
 
-#ifndef NOEVENTS
-
 CMIndicationMIStub( OSBase_OperatingSystemProvider,
                     OSBase_OperatingSystemProvider, 
                     _broker, 
                     CMNoHook);
-
-#endif
-
 
 /* ---------------------------------------------------------------------------*/
 /*             end of cmpiOSBase_OperatingSystemProvider                      */
