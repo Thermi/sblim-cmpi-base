@@ -12,9 +12,9 @@ Caption : -set
 Description : -set
 ElementName : -eq -file ComputerSystem.keys[1]
 
-EnabledStatus : -eq 2
-OtherEnabledStatus : -empty
-RequestedStatus : -eq 2
+EnabledState : -eq 2
+OtherEnabledState : -empty
+RequestedState : -eq 2
 EnabledDefault : -eq 2
 Status : -empty
 
