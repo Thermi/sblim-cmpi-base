@@ -336,8 +336,8 @@ unsigned long long get_os_maxProcMemSize() {
 
 char * get_os_codeSet() {
   char * codeSet = NULL;
-  char * var     = NULL;
-  char * str     = NULL;
+  //  char * var     = NULL;
+  //  char * str     = NULL;
 
   _OSBASE_TRACE(4,("--- get_os_codeSet() called"));
 
