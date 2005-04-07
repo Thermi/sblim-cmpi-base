@@ -574,8 +574,8 @@ CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup(
            CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() called",_ClassName));
 
-  CMRelease(sourceInstance);
-  CMRelease(previousInstance);
+  if(sourceInstance)   { CMRelease(sourceInstance); }
+  if(previousInstance) { CMRelease(previousInstance); }
   ind_shutdown();
   ind_inited = 0; 
   ind_enabled = 0;
