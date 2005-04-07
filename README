@@ -40,11 +40,14 @@ The instrumented classes / associations are
 Package Contents
 ----------------
 
-./README	This file
-./*.h		Header Files
-./*.c		Provider Code
-./mof/		Schema file(s)
-./test/		Configuration files for SBLIM TestSuite
+./README		This file
+./README.INDICATION	README for Indication Support
+./*.h			Header Files
+./*.c			Provider Code
+./mof/			Schema file(s)
+./test/			Configuration files for SBLIM TestSuite
+./test/indication	Sample Filter, Handler and Subscription to
+			test the Indication Support
 
 
 
@@ -75,6 +78,7 @@ SNIA CIMOM) and OpenWBEM
 
 Building cmpi-base
 ..................
+
 This package is now GNU autotool enabled, refer to the file
 named INSTALL for generic instructions.
 
@@ -96,8 +100,9 @@ Supported values are pegasus, sfcb, openwbem and sniacimom.
 
 For instance, in order to configure for a locally installed Pegasus you can
 issue the following command:
-./configure CIMSERVER=pegasus PROVIDERDIR=$PEGASUS_HOME/provider \
-     --libdir=$PEGASUS_HOME/lib
+./configure CIMSERVER=pegasus PROVIDERDIR=$PEGASUS_HOME/lib
+
+
 
 
 Load Schema into CIMOM's repository
