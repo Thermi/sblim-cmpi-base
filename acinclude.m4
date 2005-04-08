@@ -1,5 +1,5 @@
 dnl
-dnl $Id: acinclude.m4,v 1.1 2005/04/06 16:29:47 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.2 2005/04/08 11:37:12 mihajlov Exp $
 dnl
  dnl 
  dnl (C) Copyright IBM Corp. 2004, 2005
@@ -85,6 +85,29 @@ AC_DEFUN([_CHECK_CMPI],
 
 ])
 
+AC_DEFUN([_CHECK_INDHELP_HEADER],
+	[
+	AC_MSG_CHECKING($1)
+	AC_TRY_COMPILE(
+	[
+                #include <stdio.h>
+		#include <ind_helper.h>
+	],
+	[
+		CMPISelectExp *filter = NULL;
+	        ind_set_select("/root/cimv2",NULL,filter);
+	],
+	[
+		have_INDHELP=yes
+		dnl AC_MSG_RESULT(yes)
+	],
+	[
+		have_INDHELP=no
+		dnl AC_MSG_RESULT(no)
+	])
+
+])
+
 dnl
 dnl The main function to check for CMPI headers
 dnl Modifies the CPPFLAGS with the right include directory and sets
@@ -128,6 +151,47 @@ AC_DEFUN([CHECK_CMPI],
 	if test "$have_CMPI" == "no"; then
 		AC_MSG_ERROR(no. Sorry cannot find CMPI headers files.)
 	fi
+	]
+)
+
+dnl
+dnl The main function to check for the indication_helper header.
+dnl Modifies the CPPFLAGS with the right include directory and sets
+dnl the 'have_INDHELP' to either 'no' or 'yes'
+dnl
+
+AC_DEFUN([CHECK_INDHELP_HEADER],
+	[
+	AC_MSG_CHECKING(for indication helper header)
+	dnl Check just with the standard include paths
+	_CHECK_INDHELP_HEADER(standard)
+	if test "$have_INDHELP" == "yes"; then
+		dnl The standard include paths worked.
+		AC_MSG_RESULT(yes)
+	else
+          INDHELP_CPP_FLAGS="$CPPFLAGS"
+	  _DIRS_="/usr/include/sblim \
+                  /usr/local/include/sblim"
+	  for _DIR_ in $_DIRS_
+	  do
+		 _cppflags=$CPPFLAGS
+		 _include_INDHELP="$_DIR_"
+		 CPPFLAGS="$CPPFLAGS -I$_include_INDHELP"
+		 _CHECK_INDHELP_HEADER($_DIR_)
+		 if test "$have_INDHELP" == "yes"; then
+		  	dnl Found it
+		  	AC_MSG_RESULT(yes)
+			dnl Save the new -I parameter  
+			INDHELP_CPP_FLAGS="$CPPFLAGS"
+			break
+		 fi
+	         CPPFLAGS=$_cppflags
+	  done
+	fi	
+	CPPFLAGS="$INDHELP_CPP_FLAGS"	
+	if test "$have_INDHELP" == "no"; then
+		AC_MSG_RESULT(no)
+        fi
 	]
 )
 

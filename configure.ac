@@ -28,7 +28,6 @@ AC_PROG_LIBTOOL
 
 # Checks for libraries.
 AC_CHECK_LIB([ind_helper], [ind_start], [LINDHELP=-lind_helper], [LINDHELP=])
-AC_SUBST(LINDHELP)
 
 # Check for required CMPI header files (defined in acinclude.m4)
 CHECK_CMPI
@@ -44,7 +43,19 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h langinfo.h limits.h malloc.h stdlib.h string.h sys/time.h unistd.h])
-AC_CHECK_HEADER([ind_helper.h],[EVENTFLAGS=],[EVENTFLAGS=-DNOEVENTS],[])
+
+# Test for indication support
+EVENTFLAGS=-DNOEVENTS
+if test x$LINDHELP != x; then
+# Indication lib is there, what about headers
+  CHECK_INDHELP_HEADER
+  if test "$have_INDHELP" == "yes"; then
+     EVENTFLAGS=
+  else
+     LINDHELP=		
+  fi
+fi
+AC_SUBST(LINDHELP)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
