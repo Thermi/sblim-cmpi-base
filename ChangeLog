@@ -63,5 +63,9 @@
 * restructured init process for SBLIM tracing into a file
 * ported OperatingSystem's process indication of OperationalStatus
   to become a life-cycle indication
+* bug# 1178575: fixed seg fault of OperatingSystem's
+  IndicationCleanup() 
+* bug# 1179049: switched BaseBoard's values of Vendor and Model on
+  PPC
 
 // ===================================================================

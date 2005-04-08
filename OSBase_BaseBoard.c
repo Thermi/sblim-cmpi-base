@@ -141,17 +141,17 @@ int get_baseboard_data(struct cim_baseboard *data) {
       strncpy(data->vendor,buffer,strlen(buffer)-strlen(ptr));
       ptr+=1;
       if( !(str=strchr(ptr,'-')) ) {
-	data->model = calloc(1,5);
-	strncpy(data->model,ptr,4);
+	data->type = calloc(1,5);
+	strncpy(data->type,ptr,4);
 	ptr+=4;
-	data->type = calloc(1,strlen(ptr)+1);
-	strcpy(data->type,ptr);
+	data->model = calloc(1,strlen(ptr)+1);
+	strcpy(data->model,ptr);
       } else {
-	data->model = calloc(1,strlen(ptr)-strlen(str)+1);
-	strncpy(data->model,ptr,strlen(ptr)-strlen(str));
+	data->type = calloc(1,strlen(ptr)-strlen(str)+1);
+	strncpy(data->type,ptr,strlen(ptr)-strlen(str));
 	str+=1;
-	data->type = calloc(1,strlen(str)+1);
-	strcpy(data->type,str);
+	data->model = calloc(1,strlen(str)+1);
+	strcpy(data->model,str);
       }
     }
     fclose(fhd);
@@ -165,7 +165,7 @@ int get_baseboard_data(struct cim_baseboard *data) {
       } else {
 	ptr+=1;
 	data->serialNumber = calloc(1,strlen(ptr)+1);
-	strcpy(data->serialNumber,ptr);
+	strcpy(data->serialNumber,ptr+2); /* +2 since 1st two chars are for something else(?) */
       }
       fclose(fhd);
     }
