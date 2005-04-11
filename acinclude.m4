@@ -1,5 +1,5 @@
 dnl
-dnl $Id: acinclude.m4,v 1.2 2005/04/08 11:37:12 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.3 2005/04/11 14:24:02 mihajlov Exp $
 dnl
  dnl 
  dnl (C) Copyright IBM Corp. 2004, 2005
@@ -241,7 +241,7 @@ AC_DEFUN([CHECK_CIMSERVER],
 		  AC_MSG_RESULT(yes)
 		  if test x"$CIMSERVER" == x ; then
 			case $_name in
-			   sfcBroker) CIMSERVER=sfcb;;
+			   sfcbd) CIMSERVER=sfcb;;
 			   cimserver) CIMSERVER=pegasus;;
 			   owcimomd) CIMSERVER=openwbem;;
 			esac

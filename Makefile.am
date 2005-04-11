@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2005/04/06 16:29:47 mihajlov Exp $
+# $Id: Makefile.am,v 1.2 2005/04/11 14:24:00 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -115,7 +115,7 @@ dmitest_SOURCES = dmitest.c
 dmitest_LDADD = -ldmiinfo
 
 # Installable Header Files
-sbliminc_HEADERS = OSBase_Common.h
+sbliminc_HEADERS = OSBase_Common.h cmpiOSBase_Common.h
 
 # Non-Installable Header Files
 noinst_HEADERS = OSBase_ComputerSystem.h \
@@ -124,7 +124,6 @@ noinst_HEADERS = OSBase_ComputerSystem.h \
 	OSBase_Processor.h \
 	OSBase_BaseBoard.h \
 	cmpiOSBase_Util.h \
-	cmpiOSBase_Common.h \
 	cmpiOSBase_ComputerSystem.h \
 	cmpiOSBase_OperatingSystem.h \
 	cmpiOSBase_UnixProcess.h \
