@@ -1,5 +1,5 @@
 dnl
-dnl $Id: acinclude.m4,v 1.3 2005/04/11 14:24:02 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.4 2005/04/11 15:45:29 mihajlov Exp $
 dnl
  dnl 
  dnl (C) Copyright IBM Corp. 2004, 2005
@@ -118,12 +118,12 @@ AC_DEFUN([CHECK_CMPI],
 	[
 	AC_MSG_CHECKING(for CMPI headers)
 	dnl Check just with the standard include paths
+	CMPI_CPP_FLAGS="$CPPFLAGS"
 	_CHECK_CMPI(standard)
 	if test "$have_CMPI" == "yes"; then
 		dnl The standard include paths worked.
 		AC_MSG_RESULT(yes)
 	else
-          CMPI_CPP_FLAGS="$CPPFLAGS"
 	  _DIRS_="/usr/include/cmpi \
                   /usr/local/include/cmpi \
 		  $PEGASUS_ROOT/src/Pegasus/Provider/CMPI \
@@ -162,6 +162,7 @@ dnl
 
 AC_DEFUN([CHECK_INDHELP_HEADER],
 	[
+        INDHELP_CPP_FLAGS="$CPPFLAGS"
 	AC_MSG_CHECKING(for indication helper header)
 	dnl Check just with the standard include paths
 	_CHECK_INDHELP_HEADER(standard)
@@ -169,7 +170,6 @@ AC_DEFUN([CHECK_INDHELP_HEADER],
 		dnl The standard include paths worked.
 		AC_MSG_RESULT(yes)
 	else
-          INDHELP_CPP_FLAGS="$CPPFLAGS"
 	  _DIRS_="/usr/include/sblim \
                   /usr/local/include/sblim"
 	  for _DIR_ in $_DIRS_
