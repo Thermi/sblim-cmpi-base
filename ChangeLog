@@ -69,3 +69,10 @@
   PPC
 
 // ===================================================================
+// new in version 1.4.4 :
+
+* bug# 1181317: fixed sample indication filter in test/indication
+  directory. Filter was still for old Linux_OperatingSystemIndication
+  class, but should be for CIM_InstModification
+
+// ===================================================================

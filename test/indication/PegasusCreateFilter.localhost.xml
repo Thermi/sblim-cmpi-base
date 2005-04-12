@@ -22,7 +22,7 @@
               <VALUE>OperatingSystemFilter0</VALUE>
             </PROPERTY>
             <PROPERTY NAME="Query" TYPE="string"> 
-              <VALUE> SELECT * FROM Linux_OperatingSystemIndication
+              <VALUE> SELECT * FROM CIM_InstModification
               </VALUE>
             </PROPERTY>
             <PROPERTY NAME="QueryLanguage" TYPE="string"> 
