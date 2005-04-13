@@ -14,26 +14,19 @@ Prerequisites
 Pepare Test
 ...........
 
-edit the makefile and set the path to your testsuite path
+done automatically during configure
 
 
 Install Configuration Files
 ...........................
 
-make test
-... to test the existence of a testsuite directory
-
-make install 
-... to install the input files into the corresponding testsuite
-directories
-
-make uninstall
-... to delete the cmpi-base specific files out of the testsuite
-directories
+done during make install
 
 
 Run Test
 ........
 
-Run the test in the testsuite directory by executing 
+Run the test in the testsuite directory (typically /usr/share/sblim-testsuite)
+by executing 
 . test-cmpi-base.sh
+echo Status: $SBLIM_TESTSUITE_RUN

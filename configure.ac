@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(SBLIM BaseOS Providers Base, 1.4.3, sblim-devel@lists.sourceforge.net,sblim-cmpi-base)
+AC_INIT(SBLIM BaseOS Providers Base, 1.4.3t, sblim-devel@lists.sourceforge.net,sblim-cmpi-base)
 AC_CONFIG_SRCDIR([OSBase_Common.c])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE
 AC_CANONICAL_HOST
 case $host_cpu in
      i*86) HW=INTEL;; 
-     s390) HW=S390;; 
+     s390*) HW=S390;; 
      ppc*) HW=PPC;; 
      x86_64) HW=X86_64;; 
      ia64) HW=IA64;; 
@@ -18,6 +18,7 @@ case $host_cpu in
 esac
 
 # Configuration Arguments
+AC_ARG_VAR([TESTSUITEDIR],[the directory where the SBLIM testsuite resides.])
 AC_ARG_VAR([PROVIDERDIR],[the directory where the CMPI providers will be installed.])
 AC_ARG_VAR([CIMSERVER],[the target CIM server (pegasus|sfcb|openwbem|sniacimom).])
 
@@ -37,6 +38,9 @@ CHECK_PROVIDERDIR
 
 # Check for CIM Server (defined in acinclude.m4)
 CHECK_CIMSERVER
+
+# Check for the Testsuite (defined in acinclude.m4)
+CHECK_TESTSUITE
 
 # Checks for header files.
 AC_HEADER_DIRENT
@@ -88,6 +92,11 @@ if test x"$EVENTFLAGS" == x; then
 else	
    INDICATION_SUPPORT=Disabled
 fi
+if test x"$TESTSUITEDIR" == x; then
+   TESTSUITE_SUPPORT=Disabled
+else	
+   TESTSUITE_SUPPORT=Enabled
+fi
 # Display configuration options
 echo "-------------------------------------------------------"
 echo "Configuration for $PACKAGE complete."
@@ -97,6 +106,10 @@ echo "CIMSERVER: " $CIMSERVER
 echo "PROVIDERDIR: " $PROVIDERDIR
 echo "CPPFLAGS:" $CPPFLAGS
 echo "Indication Support" $INDICATION_SUPPORT
+echo "Test Suite Support" $TESTSUITE_SUPPORT
+if test x"$TESTSUITEDIR" != x; then
+echo "TESTSUITEDIR " $TESTSUITEDIR
+fi
 echo "-------------------------------------------------------"
 
 AC_OUTPUT

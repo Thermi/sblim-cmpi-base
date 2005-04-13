@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.2 2005/04/11 14:24:00 mihajlov Exp $
+# $Id: Makefile.am,v 1.3 2005/04/13 13:01:11 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -170,3 +170,39 @@ postinstall:
 
 dist-hook:
 	test -d "$(distdir)" &&	rm -rf `find $(distdir) -type d -name CVS`
+
+#
+# Automake instructions for ./test subdir
+#
+EXTRA_DIST+=test
+if TESTSUITE
+testsuitedir=@TESTSUITEDIR@
+testsuitesystemdir=@TESTSUITEDIR@/system/linux
+testsuitecimdir=@TESTSUITEDIR@/cim
+
+testsuite_SCRIPTS=test/test-cmpi-base.sh
+testsuitesystem_DATA=test/system/linux/Linux_CSProcessor.system \
+	test/system/linux/Linux_ComputerSystem.system \
+	test/system/linux/Linux_OSProcess.system \
+	test/system/linux/Linux_OperatingSystem.system \
+	test/system/linux/Linux_Processor.system \
+	test/system/linux/Linux_RunningOS.system \
+	test/system/linux/Linux_UnixProcess.system 
+testsuitesystem_SCRIPTS=test/system/linux/Linux_OperatingSystem.version.sh \
+	test/system/linux/Linux_Processor.pl \
+	test/system/linux/Linux_UnixProcess.pl \
+	test/system/linux/createKeyFiles.sh 
+testsuitecim_DATA=test/cim/Linux_CSProcessor.cim \
+	test/cim/Linux_ComputerSystem.cim \
+	test/cim/Linux_OSProcess.cim \
+	test/cim/Linux_OperatingSystem.cim \
+	test/cim/Linux_Processor.cim \
+	test/cim/Linux_RunningOS.cim \
+	test/cim/Linux_UnixProcess.cim
+
+runtest: install
+	cd $(DESTDIR)$(TESTSUITEDIR) &&	./test-cmpi-base.sh
+
+doc_DATA+=README.TEST
+EXTRA_DIST+=README.TEST
+endif

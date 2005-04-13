@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.1 2005/04/06 16:29:47 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.2 2005/04/13 13:01:11 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -29,6 +29,15 @@ Requires: %{name} = %{version}
 %Description devel
 SBLIM Base Provider Development Package
 
+%Package test
+Summary: SBLIM Base Instrumentation Testcase Files
+Group: Systems Management/Base
+Requires: %{name} = %{version}
+Requires: sblim-wbemcli
+
+%Description test
+SBLIM Base Provider Testcase Files for the SBLIM Testsuite
+
 %prep
 
 %setup -n %{name}-%{version}
@@ -39,7 +48,7 @@ export PATCH_GET=0
 
 %build
 
-%configure
+%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite
 make
 
 %clean
@@ -101,5 +110,10 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 
 %defattr(-,root,root)
 %{_includedir}
+
+%files test
+
+%defattr(-,root,root)
+%{_datadir}/sblim-testsuite
 
 
