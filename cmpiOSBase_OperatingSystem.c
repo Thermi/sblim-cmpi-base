@@ -139,7 +139,6 @@ CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
   return ci;
 }
 
-
 static int getcpu(CpuSample * cps)
 {
   unsigned long user, system, nice, idle;
@@ -172,9 +171,6 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   CMPIArray      *   opstat    = NULL;
   unsigned short     status    = 2; /* Enabled */
   unsigned short     opstatval = 2; /* 2 ... OK ; 4 ... Stressed */
-#ifndef NOEVENTS
-  int                opval     = 2;
-#endif
 #endif
 
   _OSBASE_TRACE(2,("--- _makeOS() called"));
@@ -309,12 +305,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
     goto exit;
   }
   else {
-#ifndef NOEVENTS
-    check_OperationalStatus(&opval);
-    opstatval = opval;
-#else
-    if( pctcpu > 90 ) { opstatval = 4; }
-#endif
+    if( pctcpu >= 90 ) { opstatval = 4; }
     CMSetArrayElementAt(opstat,0,(CMPIValue*)&(opstatval),CMPI_uint16);
     CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
   }
@@ -342,11 +333,10 @@ int check_OperationalStatus(int *OperationalStatus) {
   CpuSample      cs;
   unsigned short pctcpu = 0;
 
-  if(getcpu(&cs) == 0) { 
+  if(getcpu(&cs) == 0) {
     pctcpu = 100*cs.cpu/cs.total;
-    _OSBASE_TRACE(2,("--- _check_OperationalStatus value : %d",pctcpu));
+    _OSBASE_TRACE(2,("--- _check_OperationalStatus(): TotalCPUTimePct %d, OperationalStatus %i",pctcpu,*OperationalStatus));
     if(pctcpu>=90 && *OperationalStatus!=4) {
-    //    if(pctcpu>=10 && *OperationalStatus!=4) {
       *OperationalStatus = 4;
       return 1;
     }
