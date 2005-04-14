@@ -1,5 +1,5 @@
 dnl
-dnl $Id: acinclude.m4,v 1.5 2005/04/13 13:01:11 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.6 2005/04/14 15:25:58 mihajlov Exp $
 dnl
  dnl 
  dnl (C) Copyright IBM Corp. 2004, 2005
@@ -80,6 +80,7 @@ AC_DEFUN([_CHECK_CMPI],
 		dnl AC_MSG_RESULT(yes)
 	],
 	[
+		have_CMPI=no
 		dnl AC_MSG_RESULT(no)
 	])
 
