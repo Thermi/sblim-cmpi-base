@@ -74,5 +74,7 @@
 * bug# 1181317: fixed sample indication filter in test/indication
   directory. Filter was still for old Linux_OperatingSystemIndication
   class, but should be for CIM_InstModification
+* bug# 1183083: fixed the problem, that only the first indication of
+  the monitored OS OperationalStatus property was delivered
 
 // ===================================================================

@@ -335,7 +335,7 @@ int check_OperationalStatus(int *OperationalStatus) {
 
   if(getcpu(&cs) == 0) {
     pctcpu = 100*cs.cpu/cs.total;
-    _OSBASE_TRACE(2,("--- _check_OperationalStatus(): TotalCPUTimePct %d, OperationalStatus %i",pctcpu,*OperationalStatus));
+    _OSBASE_TRACE(2,("--- _check_OperationalStatus(): TotalCPUTimePct %d",pctcpu));
     if(pctcpu>=90 && *OperationalStatus!=4) {
       *OperationalStatus = 4;
       return 1;

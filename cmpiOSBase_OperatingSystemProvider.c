@@ -487,7 +487,7 @@ IndErrorT check(CMPIData *v)
 
   v->state = CMPI_goodValue;
   v->type = CMPI_uint16;
-  v->value.uint16 = ind_new;
+  v->value.uint16 = ind_OperationalStatus;
 
   ind_new = 0;
   _OSBASE_TRACE(1,("--- %s check() exited",_ClassName));
