@@ -198,5 +198,5 @@ Suite is a tool to automate function verification tests
 of providers. 
 
 How to set up and drive the test is described in the 
-README file of the test sub directory.
+README.TEST file.
 
