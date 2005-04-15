@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.3 2005/04/13 13:01:11 mihajlov Exp $
+# $Id: Makefile.am,v 1.4 2005/04/15 09:00:52 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -174,7 +174,7 @@ dist-hook:
 #
 # Automake instructions for ./test subdir
 #
-EXTRA_DIST+=test
+EXTRA_DIST+=test README.TEST
 if TESTSUITE
 testsuitedir=@TESTSUITEDIR@
 testsuitesystemdir=@TESTSUITEDIR@/system/linux
@@ -204,5 +204,4 @@ runtest: install
 	cd $(DESTDIR)$(TESTSUITEDIR) &&	./test-cmpi-base.sh
 
 doc_DATA+=README.TEST
-EXTRA_DIST+=README.TEST
 endif
