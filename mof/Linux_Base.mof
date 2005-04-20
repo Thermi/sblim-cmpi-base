@@ -106,6 +106,62 @@ class Linux_OperatingSystem : CIM_OperatingSystem
 
 
 // ===================================================================
+// 	Linux_OperatingSystemStatisticalData
+// ===================================================================
+
+[ Provider("cmpi:cmpiOSBase_OperatingSystemStatisticalDataProvider") ] 
+class Linux_OperatingSystemStatisticalData : CIM_StatisticalData
+{
+  [ Counter,
+    Description("The cumulative time the system ran in user mode "
+    "since system startup.")
+  ]
+  uint64 CPUUserTime;
+
+  [ Counter,
+    Description("The cumulative time the system ran in system mode "
+    "since system startup.")
+  ]
+  uint64 CPUSystemTime;
+
+  [ Counter,
+    Description("The cumulative time the system waited for I/O "
+    "requests to be completed since system startup.")
+  ]
+  uint64 CPUWaitTime;
+
+  [ Counter,
+    Description("The cumulative time the system was idle since "
+    "system startup.")
+  ]
+  uint64 CPUIdleTime;
+
+  [ Counter,
+    Description("The amount of processes currently running or "
+    "ready to be run.")
+  ]
+  uint64 RunQueueLength;
+
+  [ Counter,
+    Description("The amount of processes currently waiting for "
+    "I/O requests to be completed.")
+  ]
+  uint64 BlockQueueLength;
+
+  [ Counter,
+    Description("The amount of pages paged in since system "
+    "startup.")
+  ]
+  uint64 PagesPagedIn;
+
+  [ Counter,
+    Description("The amount of pages paged out since system "
+    "startup.")]
+  uint64 PagesPagedOut;
+};
+
+
+// ===================================================================
 // 	Linux_UnixProcess
 // ===================================================================
 
@@ -197,6 +253,28 @@ class Linux_OSProcess : CIM_OSProcess
     Description ("The current running Processes.")
   ]
   Linux_UnixProcess REF PartComponent;
+};
+
+
+// ===================================================================
+// 	Linux_OperatingSystemStatistics
+// ===================================================================
+
+[ Association, 
+  Provider("cmpi:cmpiOSBase_OperatingSystemStatisticsProvider") ] 
+class Linux_OperatingSystemStatistics : CIM_ElementStatisticalData
+{
+  [ Override("ManagedElement"),
+    Min(1),
+    Max(1),
+    Description("The System to which the statistics apply.")
+  ]
+  Linux_OperatingSystem REF ManagedElement;
+
+  [ Override("Stats"),
+    Description("The statistical object.")
+  ]
+  Linux_OperatingSystemStatisticalData REF Stats;
 };
 
 

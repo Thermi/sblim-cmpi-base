@@ -22,6 +22,13 @@
    type: instance
    namespace: root/cimv2
 #
+#
+[Linux_OperatingSystemStatisticalData]
+   provider: OSBase_OperatingSystemStatisticalDataProvider
+   location: cmpiOSBase_OperatingSystemStatisticalDataProvider
+   type: instance
+   namespace: root/cimv2
+#
 [Linux_BaseBoard]
    provider: OSBase_BaseBoardProvider
    location: cmpiOSBase_BaseBoardProvider
@@ -37,6 +44,12 @@
 [Linux_OSProcess]
    provider: OSBase_OSProcessProvider
    location: cmpiOSBase_OSProcessProvider
+   type: instance association
+   namespace: root/cimv2
+#
+[Linux_OperatingSystemStatistics]
+   provider: OSBase_OperatingSystemStatisticsProvider
+   location: cmpiOSBase_OperatingSystemStatisticsProvider
    type: instance association
    namespace: root/cimv2
 #

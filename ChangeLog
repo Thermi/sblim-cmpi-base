@@ -78,3 +78,11 @@
   the monitored OS OperationalStatus property was delivered
 
 // ===================================================================
+// new in version 1.5.0 :
+
+* feature request# 1186592 : added support for class
+  Linux_OperatingSystemStatisticalData and association
+  Linux_OperatingSystemStatistics
+  ... contribution by Michael Schuele ... thx :)
+
+// ===================================================================

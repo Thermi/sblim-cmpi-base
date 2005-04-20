@@ -18,6 +18,7 @@ SBLIM CMPI Base Instrumentation README
 --------------------------------------
 
 
+
 Introduction
 ------------
 
@@ -29,12 +30,15 @@ The instrumented classes / associations are
 - Linux_ComputerSystem
 - Linux_BaseBoard
 - Linux_OperatingSystem
+- Linux_OperatingSystemStatisticalData
 - Linux_UnixProcess
 - Linux_Processor
 - Linux_RunningOS
 - Linux_OSProcess
+- Linux_OperatingSystemStatistics
 - Linux_CSProcessor
 - Linux_CSBaseBoard
+
 
 
 Package Contents
@@ -66,7 +70,7 @@ Prerequisites
 
 
 Building CIMOM and CMPI for this CIMOM
-.........................................
+......................................
 Please follow the instructions in the README.cmpi file of 
 the cmpi-adapter package.
 CMPI support is available for OpenPegasus, OpenCimom (former
@@ -103,8 +107,6 @@ issue the following command:
 ./configure CIMSERVER=pegasus PROVIDERDIR=$PEGASUS_HOME/lib
 
 
-
-
 Load Schema into CIMOM's repository
 ...................................
 
@@ -119,6 +121,7 @@ Start the cimbrowser (/usr/sniacimom/bin). Load the schema
 file Linux_Base.mof with "File" -> "Reload Mof" into the 
 namespace root/cimv2. Before at least CIM Core and System
 schemata have to be loaded into the repository.
+
 
 
 Common Libraries
@@ -138,6 +141,7 @@ Common Libraries
   ROOT ACCESS RIGHTS NEEDED TO EXECUTE
 
 
+
 Class/Association specific Libraries
 ------------------------------------
 
@@ -148,7 +152,7 @@ class Linux_ComputerSystem
 - OSBase_ComputerSystem.c/.h
 
 class Linux_BaseBoard
-..........................
+.....................
 - cmpiOSBase_BaseBoardProvider.c
 - cmpiOSBase_BaseBoard.c/.h
 - OSBase_BaseBoard.c/.h
@@ -158,6 +162,12 @@ class Linux_OperatingSystem
 - cmpiOSBase_OperatingSystemProvider.c
 - cmpiOSBase_OperatingSystem.c/.h
 - OSBase_OperatingSystem.c/.h
+
+class Linux_OperatingSystemStatisticalData
+..........................................
+- cmpiOSBase_OperatingSystemStatisticalDataProvider.c
+- cmpiOSBase_OperatingSystemStatisticalData.c/.h
+- OSBase_OperatingSystemStatisticalData.c/.h
 
 class Linux_UnixProcess
 .......................
@@ -180,13 +190,18 @@ association Linux_OSProcess
 ...........................
 - cmpiOSBase_OSProcessProvider.c
 
+association Linux_OperatingSystemStatistics
+...........................................
+- cmpiOSBase_OperatingSystemStatisticsProvider.c
+
 association Linux_CSProcessor
-...........................
+.............................
 - cmpiOSBase_CSProcessorProvider.c
 
 association Linux_CSBaseBoard
-...........................
+.............................
 - cmpiOSBase_CSBaseBoardProvider.c
+
 
 
 Automated Function Verifcation Test 

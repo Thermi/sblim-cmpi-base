@@ -140,6 +140,45 @@ instance of PG_ProviderCapabilities
 
 
 // ===================================================================
+// 	Linux_OperatingSystemStatisticalData
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name="OSBase_OperatingSystemStatisticalDataProviderModule";
+   // the library name
+   Location="cmpiOSBase_OperatingSystemStatisticalDataProvider";
+   Vendor="IBM";
+   Version="2.0.0";
+   InterfaceType="CMPI";
+   InterfaceVersion="2.1.0";
+};
+
+instance of PG_Provider
+{
+   // the provider module as defined in PG_ProviderModule
+   ProviderModuleName="OSBase_OperatingSystemStatisticalDataProviderModule";
+   // the provider name as referenced in the code
+   Name="OSBase_OperatingSystemStatisticalDataProvider";
+};
+
+instance of PG_ProviderCapabilities
+{
+   // provider module as defined in PG_ProviderModule
+   ProviderModuleName="OSBase_OperatingSystemStatisticalDataProviderModule";
+   // provider name as defined in PG_Provider
+   ProviderName="OSBase_OperatingSystemStatisticalDataProvider";
+   CapabilityID="1";
+   // name of CIM class as defined in the mof
+   ClassName="Linux_OperatingSystemStatisticalData";
+   Namespaces={"root/cimv2"};
+   ProviderType={2,5}; // Instance, Method
+   SupportedProperties=NULL; // All properties
+   SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
 // 	Linux_UnixProcess
 // ===================================================================
 
@@ -341,6 +380,45 @@ instance of PG_ProviderCapabilities
    ProviderType = { 2,3 }; // Instance, Association
    SupportedProperties = NULL; // All properties
    SupportedMethods = NULL; // All methods
+};
+
+
+// ===================================================================
+// 	Linux_OperatingSystemStatistics
+// ===================================================================
+
+instance of PG_ProviderModule
+{
+   Name="OSBase_OperatingSystemStatisticsProviderModule";
+   // the library name
+   Location="cmpiOSBase_OperatingSystemStatisticsProvider";
+   Vendor="IBM";
+   Version="2.0.0";
+   InterfaceType="CMPI";
+   InterfaceVersion="2.1.0";
+};
+
+instance of PG_Provider
+{
+   // the provider module as defined in PG_ProviderModule
+   ProviderModuleName="OSBase_OperatingSystemStatisticsProviderModule";
+   // the provider name as referenced in the code
+   Name="OSBase_OperatingSystemStatisticsProvider";
+};
+
+instance of PG_ProviderCapabilities
+{
+   // provider module as defined in PG_ProviderModule
+   ProviderModuleName="OSBase_OperatingSystemStatisticsProviderModule";
+   // provider name as defined in PG_Provider
+   ProviderName="OSBase_OperatingSystemStatisticsProvider";
+   CapabilityID="1";
+   // name of CIM class as defined in the mof
+   ClassName="Linux_OperatingSystemStatistics";
+   Namespaces={"root/cimv2"};
+   ProviderType={2,3}; // Instance, Association
+   SupportedProperties=NULL; // All properties
+   SupportedMethods=NULL; // All methods
 };
 
 

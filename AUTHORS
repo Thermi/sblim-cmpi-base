@@ -1,2 +1,8 @@
 The cmpi-base provider package was originally written by Heidi Neumann 
 <heidineu@de.ibm.com>.
+
+Contributions:
+
+support for class Linux_OperatingSytemStatisticalData and the association
+Linux_OperatingSystemStatistics was done by Michael Schuele 
+<schuelem@de.ibm.com> ... thx :)

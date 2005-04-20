@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.4 2005/04/15 09:00:52 mihajlov Exp $
+# $Id: Makefile.am,v 1.5 2005/04/20 11:34:56 heidineu Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -43,11 +43,13 @@ providerdir = @PROVIDERDIR@
 #  OSBase CMPI provider libraries
 provider_LTLIBRARIES = 	libcmpiOSBase_ComputerSystemProvider.la \
 		libcmpiOSBase_OperatingSystemProvider.la \
+		libcmpiOSBase_OperatingSystemStatisticalDataProvider.la \
 		libcmpiOSBase_UnixProcessProvider.la \
 		libcmpiOSBase_ProcessorProvider.la \
 		libcmpiOSBase_BaseBoardProvider.la \
 		libcmpiOSBase_RunningOSProvider.la \
 		libcmpiOSBase_OSProcessProvider.la \
+		libcmpiOSBase_OperatingSystemStatisticsProvider.la \
 		libcmpiOSBase_CSProcessorProvider.la \
 		libcmpiOSBase_CSBaseBoardProvider.la
 
@@ -68,6 +70,13 @@ libcmpiOSBase_OperatingSystemProvider_la_LIBADD = -lcmpiOSBase_Common \
 						-ldmiinfo @LINDHELP@
 # This gcc/ld specific flag is ugly - need to check in configure
 libcmpiOSBase_OperatingSystemProvider_la_LDFLAGS = -Wc,-nostartfiles
+
+# Operating System Statistical Data
+libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_SOURCES = \
+		cmpiOSBase_OperatingSystemStatisticalDataProvider.c \
+		cmpiOSBase_OperatingSystemStatisticalData.c \
+		OSBase_OperatingSystemStatisticalData.c
+libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_LIBADD =  -lcmpiOSBase_Common
 
 # Unix Process
 libcmpiOSBase_UnixProcessProvider_la_SOURCES = \
@@ -94,6 +103,8 @@ libcmpiOSBase_RunningOSProvider_la_SOURCES = cmpiOSBase_RunningOSProvider.c
 libcmpiOSBase_RunningOSProvider_la_LIBADD = -lcmpiOSBase_Common
 libcmpiOSBase_OSProcessProvider_la_SOURCES = cmpiOSBase_OSProcessProvider.c
 libcmpiOSBase_OSProcessProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_OperatingSystemStatisticsProvider_la_SOURCES = cmpiOSBase_OperatingSystemStatisticsProvider.c
+libcmpiOSBase_OperatingSystemStatisticsProvider_la_LIBADD = -lcmpiOSBase_Common
 libcmpiOSBase_CSProcessorProvider_la_SOURCES = cmpiOSBase_CSProcessorProvider.c
 libcmpiOSBase_CSProcessorProvider_la_LIBADD = -lcmpiOSBase_Common
 libcmpiOSBase_CSBaseBoardProvider_la_SOURCES = cmpiOSBase_CSBaseBoardProvider.c
@@ -120,12 +131,14 @@ sbliminc_HEADERS = OSBase_Common.h cmpiOSBase_Common.h
 # Non-Installable Header Files
 noinst_HEADERS = OSBase_ComputerSystem.h \
 	OSBase_OperatingSystem.h \
+	OSBase_OperatingSystemStatisticalData.h \
 	OSBase_UnixProcess.h \
 	OSBase_Processor.h \
 	OSBase_BaseBoard.h \
 	cmpiOSBase_Util.h \
 	cmpiOSBase_ComputerSystem.h \
 	cmpiOSBase_OperatingSystem.h \
+	cmpiOSBase_OperatingSystemStatisticalData.h \
 	cmpiOSBase_UnixProcess.h \
 	cmpiOSBase_Processor.h \
 	cmpiOSBase_BaseBoard.h
@@ -196,6 +209,8 @@ testsuitecim_DATA=test/cim/Linux_CSProcessor.cim \
 	test/cim/Linux_ComputerSystem.cim \
 	test/cim/Linux_OSProcess.cim \
 	test/cim/Linux_OperatingSystem.cim \
+	test/cim/Linux_OperatingSystemStatisticalData.cim \
+	test/cim/Linux_OperatingSystemStatistics.cim \
 	test/cim/Linux_Processor.cim \
 	test/cim/Linux_RunningOS.cim \
 	test/cim/Linux_UnixProcess.cim

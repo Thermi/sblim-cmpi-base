@@ -147,7 +147,7 @@ CMPIStatus OSBase_ComputerSystemProviderCreateInstance( CMPIInstanceMI * mi,
   _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() called",_ClassName));
 
   CMSetStatusWithChars( _broker, &rc, 
-			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" ); 
+			CMPI_RC_ERR_NOT_SUPPORTED, "CIM_ERR_NOT_SUPPORTED" );
 
   _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() exited",_ClassName));
   return rc;
