@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.1 2005/04/06 16:29:47 mihajlov Exp $
+# $Id: provider-register.sh,v 1.2 2005/04/25 17:07:22 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -12,68 +12,419 @@
 #
 # Author:       Viktor Mihajlovski <mihajlov@de.ibm.com>
 # Contributors:
-# Description:  Script to install class definitions (MOFs) and registration data
-#		for a variety of supported CIMOMs
+# Description:  Script to install class definitions (MOFs) and 
+#               registration data for a variety of supported CIMOMs
 # ==================================================================
+
+function pegasus_path()
+{
+    for p in /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin \
+	/opt/tog-pegasus/bin /opt/tog-pegasus/sbin
+    do
+      if test -x $p/$1
+      then
+	  echo $p/$1
+	  return 0
+      fi
+    done
+    return 1
+}
+
+function pegasus_transform()
+{
+    OUTFILE=$1
+    shift
+    regfiles=$*
+    PROVIDERMODULES=`cat $regfiles 2> /dev/null | cut -d ' ' -f 4 | sort | uniq`
+    if test x"$PROVIDERMODULES" == x
+    then
+	echo Failed to read registration files
+	return 1
+    fi
+    PROVIDERS=`cat $regfiles 2> /dev/null | cut -d ' ' -f 3-4 | sort | uniq`
+    
+# produce ProviderModules
+    echo > $OUTFILE
+    for pm in $PROVIDERMODULES
+    do
+      cat >> $OUTFILE <<EOFPM
+instance of PG_ProviderModule
+{
+   Name = "$pm";
+   Location = "$pm";
+   Vendor = "SBLIM";
+   Version = "2.0.0";
+   InterfaceType = "CMPI";
+   InterfaceVersion = "2.0.0";
+};
+
+EOFPM
+    done
+    
+# produce Providers
+    set -- $PROVIDERS
+    while test x$1 != x
+    do
+      cat >> $OUTFILE <<EOFP
+instance of PG_Provider
+{
+   Name = "$1";
+   ProviderModuleName = "$2";
+};
+
+EOFP
+      shift 2
+    done
+
+#produce Capabilities
+    for rf in $regfiles
+    do
+      echo $rf
+      while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
+      do
+	numcap=
+	for cap in $CAPS
+	do
+	  case $cap in
+	      instance) 
+		  if test x$numcap == x 
+		  then numcap=2
+		  else numcap="$numcap, 2"
+		  fi;;
+	      association) 
+		  if test x$numcap == x 
+		  then numcap=3
+		  else numcap="$numcap, 3"
+		  fi;;
+	      indication) 
+		  if test x$numcap == x 
+		  then numcap=4
+		  else numcap="$numcap, 4"
+		  fi;;
+	      method) 
+		  if test x$numcap == x 
+		  then numcap=5
+		  else numcap="$numcap, 5"
+		  fi;;
+	      **) echo unknown provider type $cap
+		  return 1;;
+	  esac	  
+	done
+	cat >> $OUTFILE <<EOFC
+instance of PG_ProviderCapabilities
+{
+   ProviderModuleName = "$PROVIDERMODULE";
+   ProviderName = "$PROVIDERNAME";
+   ClassName = "$CLASSNAME";
+   ProviderType = { $numcap };
+   Namespaces = {"$NAMESPACE"};
+   SupportedProperties = NULL;
+   SupportedMethods = NULL;
+   CapabilityID = "1";
+};
+
+EOFC
+      done < $rf
+    done
+}
 
 function pegasus_install()
 {
     if ps -C cimserver > /dev/null 2>&1 
     then
-	CIMMOF=cimmof
+	CIMMOF=`pegasus_path cimmof`
+	if test $? != 0
+	then
+	    echo "Error: cimmof not found" >&2
+	    return 1
+	fi
 	state=active
     else
-	CIMMOF=cimmofl
+	CIMMOF=`pegasus_path cimmofl`
+	if test $? != 0
+	then
+	    echo "Error: cimmof not found" >&2
+	    return 1
+	fi
 	state=inactive
     fi
+
+    mymofs=
+    mregs=
+    mofmode=1
+    while test x$1 != x
+    do 
+      if test $1 == ":"
+      then 
+	  mofmode=0
+	  shift
+	  continue
+      fi
+      if test $mofmode == 1
+      then
+	  mymofs="$mymofs $1"
+      else
+	  myregs="$myregs $1"
+      fi
+      shift
+    done
+  
+    for _TEMPDIR in /var/tmp /tmp
+    do
+      if test -w $_TEMPDIR
+      then
+	  _REGFILENAME=$_TEMPDIR/$$.mof
+	  break
+      fi
+    done
+
     
-    if test $1 == mofs 
+    trap "rm -f $_REGFILENAME" EXIT
+
+    if pegasus_transform $_REGFILENAME $myregs
     then
-	NAMESPACE=root/cimv2
-	action="Installing Schemas"
-    else if test $1 == regs
-    then
-	NAMESPACE=root/PG_Interop
-	action="Registering Providers"
+	echo Registering providers with $state cimserver
+	$CIMMOF -n root/cimv2 $mymofs &&
+	$CIMMOF -n root/PG_Interop $_REGFILENAME
     else
-	echo "Invalid install mode " $1
+	echo "Failed to build pegasus registration MOF."
 	return 1
     fi
-    fi
+}
 
+function pegasus_uninstall()
+{
+    mymofs=
+    mregs=
+    mofmode=1
+    while test x$1 != x
+    do 
+      if test $1 == ":"
+      then 
+	  mofmode=0
+	  shift
+	  continue
+      fi
+      if test $mofmode == 1
+      then
+	  mymofs="$mymofs $1"
+      else
+	  myregs="$myregs $1"
+      fi
+      shift
+    done
+  
+    if ps -C cimserver > /dev/null 2>&1 
+    then
+	PROVIDERMODULES=`cat $myregs 2> /dev/null | cut -d ' ' -f 4 | sort | uniq`
+	echo $PROVIDERMODULES
+	if test x"$PROVIDERMODULES" == x
+	    then
+	    echo Failed to read registration files
+	    return 1
+	fi
+	CIMPROVIDER=`pegasus_path cimprovider`	
+	if test $? != 0
+        then
+	    echo "Error: cimprovider not found" >&2
+	    return 1
+	fi
+	for pm in $PROVIDERMODULES
+	do
+	  $CIMPROVIDER -d -m $pm &&
+	  $CIMPROVIDER -r -m $pm
+	done
+	WBEMEXEC=`pegasus_path wbemexec`	
+	if test $? != 0
+        then
+	    echo "Error: wbemexec not found" >&2
+	    return 1
+	fi
+	CLASSES=`cat $myregs 2> /dev/null | cut -d ' ' -f 1`
+	for cls in $CLASSES
+	do
+	  echo Delete CIM Class $cls
+	  $WBEMEXEC > /dev/null <<EOFWX
+<?xml version="1.0" encoding="utf-8" ?>
+<CIM CIMVERSION="2.0" DTDVERSION="2.0">
+ <MESSAGE ID="4711" PROTOCOLVERSION="1.0">
+  <SIMPLEREQ>
+   <IMETHODCALL NAME="DeleteClass">
+    <LOCALNAMESPACEPATH>
+     <NAMESPACE NAME="root"></NAMESPACE>
+     <NAMESPACE NAME="cimv2"></NAMESPACE>
+    </LOCALNAMESPACEPATH>
+    <IPARAMVALUE NAME="ClassName">
+     <CLASSNAME NAME="$cls"/>
+    </IPARAMVALUE>
+   </IMETHODCALL>
+  </SIMPLEREQ>
+ </MESSAGE>
+</CIM>
+EOFWX
+	done
+    else
+	echo "Sorry, cimserver must be running to deregister the providers."
+	return 1
+    fi
+}
+
+function sfcb_transform()
+{
+    OUTFILE=$1
     shift
-    echo $action with $state cimserver
-    $CIMMOF -n $NAMESPACE $*
+    regfiles=$*
+
+#produce sfcb registraion
+    for rf in $regfiles
+    do
+      echo $rf
+      while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
+      do
+	cat >> $OUTFILE <<EOFC
+[$CLASSNAME]   
+   provider: $PROVIDERNAME
+   location: $PROVIDERMODULE
+   type: $CAPS
+   namespace: $NAMESPACE
+#
+EOFC
+      done < $rf
+    done
+}
+
+function sfcb_rebuild()
+{
+    if ps -C sfcbd > /dev/null 2>&1
+    then
+        # sfcb is running -- need to restart
+	for INITSCRIPT in /etc/init.d/sfcb /usr/local/etc/init.d/sfcb none
+	do
+	  if test -x $INITSCRIPT
+	  then
+	      break;
+	  fi
+	done
+	echo "Shutting down sfcb."
+	if test $INITSCRIPT == none
+	then
+	    killall sfcbd
+	else
+	    $INITSCRIPT stop
+	fi
+	t=0
+	while ps -C sfcbd > /dev/null 2>&1
+	do
+	  sleep 1
+	  t=`expr $t + 1`
+	  if test $t > 10
+	  then
+	      echo "Timed out waiting for sfcb shutdown..."
+	      echo "Please stop sfcb manually and rebuild the repository using sfcbrepos."
+	      return 1
+	  fi
+	done
+	echo "Rebuilding repository."
+	sfcbrepos -f
+	if test $? != 0
+	then
+	    echo "Repository rebuild failed."
+	    return 1
+	fi
+	
+	if test $INITSCRIPT == none
+	then
+	    echo "No init script found - you need to start sfcbd manually."
+	    return 1
+	else
+	    echo "Restarting sfcb."
+	    $INITSCRIPT start
+	fi
+    else
+	# Not running - rebuild repository
+	echo "Rebuilding repository."
+	sfcbrepos -f
+    fi
 }
 
 function sfcb_install()
-{
-    if test $1 == mofs 
+{    
+    mymofs=
+    mregs=
+    mofmode=1
+    while test x$1 != x
+    do 
+      if test $1 == ":"
+      then 
+	  mofmode=0
+	  shift
+	  baseregname=`basename -$1 .registration`
+	  continue
+      fi
+      if test $mofmode == 1
+      then
+	  mymofs="$mymofs $1"
+      else
+	  myregs="$myregs $1"
+      fi
+      shift
+    done
+
+    for _TEMPDIR in /var/tmp /tmp
+    do
+      if test -w $_TEMPDIR
+      then
+	  _REGFILENAME=$_TEMPDIR/$baseregname.reg
+	  break
+      fi
+    done
+
+    trap "rm -f $_REGFILENAME" EXIT
+
+    if sfcb_transform $_REGFILENAME $myregs
     then
-	action="Staging Schemas"
-	shift
-	params="$*"
-    else if test $1 == regs
-    then
-	action="Staging Provider Registration -- rebuild repository and restart sfcb!"
-	shift
-	params="-r $*"
+	echo "Staging provider registration."
+	sfcbstage -r $_REGFILENAME $mymofs
+	if test $? != 0 
+	then
+	    echo "Failed to stage provider registration."
+	    return 1
+	fi
+	sfcb_rebuild
     else
-	echo "Invalid install mode " $1
+	echo "Failed to build sfcb registration file."
 	return 1
     fi
-    fi
+}
+
+function sfcb_uninstall()
+{    
+    mymofs=
+    while test x$1 != x
+    do 
+      if test $1 == ":"
+      then 
+	  shift
+	  baseregname=`basename -$1 .registration`
+	  break
+      fi
+      mymofs="$mymofs `basename $1`"
+      shift
+    done
     
-    echo $action
-    sfcbstage $params
+    # "Unstage" MOFs and the registration file
+    sfcbunstage -r $baseregname.reg $mymofs
+
+    # Rebuild repository
+    sfcb_rebuild
 }
 
 function usage() 
 {
-    echo "usage: $0 [-h] -t <cimserver> [ -s mof ... | -r  regfile ... ]"
+    echo "usage: $0 [-h] [-d] -t <cimserver> -r regfile [-r regfile ...]  mof ..."
 }
 
-args=`getopt ht:r:s: $*`
+args=`getopt dht:r:s: $*`
 
 if [ $? != 0 ]
 then
@@ -89,11 +440,11 @@ do
       -h) help=1; 
 	  shift;
 	  break;;
+      -d) deregister=1; 
+	  shift;;
       -t) cimserver=$2;
 	  shift 2;;
-      -s) mofs=$2;
-	  shift 2;;
-      -r) regs=$2;
+      -r) regs="$regs $2";
 	  shift 2;;
       --) shift;
 	  break;;
@@ -101,17 +452,18 @@ do
   esac
 done
 
+mofs=$*
+
 if [ "$help" == "1" ]
 then
     usage
     echo -e "\t-h display help message"
+    echo -e "\t-d deregister provider and uninstall schema"
     echo -e "\t-t specify cimserver type (pegasus|sfcb|openwbem|sniacimom)"
-    echo -e "\t-s specify schema mofs"
-    echo -e "\t-r specify registration files"
+    echo -e "\t-r specify registration file - this option can be multiply specified"
     echo
-    echo Use this command install schema mofs or register provider
-    echo CIM Server Type is required, schema and registration files are
-    echo mutually exclusive.
+    echo Use this command to install schema mofs and register providers.
+    echo CIM Server Type is required as well as at least one registration file and one mof.
     exit 0
 fi
 
@@ -121,33 +473,28 @@ then
     exit 1
 fi
 
-if test x"$mofs" == x && test x"$regs" == x
+if test x"$mofs" == x || test x"$regs" == x
 then
     usage $0
     exit 1
 fi
 
-if test x"$mofs" != x && test x"$regs" != x
-then
-    usage $0
-    exit 1
-fi
 
-if test x"$mofs" != x
+if test x$deregister == x
 then
-    mode=mofs
-    mofs="$mofs $*"
-else if test x"$regs" != x
-then
-    mode=regs
-    regs="$regs $*"
-fi
-fi
-
-case $cimserver in
-    pegasus) pegasus_install $mode $mofs $regs;;
-    sfcb)    sfcb_install $mode $mofs $regs;;
-    openwbem) echo openwbem not yet supported && exit 1 ;;
-    sniacimom) echo sniacimom not yet supported && exit 1 ;;
-    **)	echo "Invalid CIM Server Type " $cimserver && exit 1;;
-esac
+    case $cimserver in
+	pegasus) pegasus_install $mofs ":" $regs;;
+	sfcb)    sfcb_install $mofs ":" $regs;;
+	openwbem) echo openwbem not yet supported && exit 1 ;;
+	sniacimom) echo sniacimom not yet supported && exit 1 ;;
+	**)	echo "Invalid CIM Server Type " $cimserver && exit 1;;
+    esac
+else
+    case $cimserver in
+	pegasus) pegasus_uninstall $mofs ":" $regs;;
+	sfcb)    sfcb_uninstall $mofs ":" $regs;;
+	openwbem) echo openwbem not yet supported && exit 1 ;;
+	sniacimom) echo sniacimom not yet supported && exit 1 ;;
+	**)	echo "Invalid CIM Server Type " $cimserver && exit 1;;
+    esac
+fi    

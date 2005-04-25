@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2005/04/20 11:34:56 heidineu Exp $
+# $Id: Makefile.am,v 1.6 2005/04/25 17:07:21 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -152,22 +152,11 @@ EXTRA_DIST+=$(PACKAGE).spec
 #
 if NOEVENTS
 SCHEMAS=mof/Linux_Base.mof 
-REGISTRATIONS.pegasus=mof/Linux_BaseRegistration.mof
-REGISTRATIONS.sfcb=mof/Linux_Base.sfcb.reg
-REGISTRATIONS.openwbem=
-REGISTRATIONS.sniacimom=
+REGISTRATIONS=mof/Linux_Base.registration
 else
 SCHEMAS=mof/Linux_Base.mof mof/Linux_BaseIndication.mof
-REGISTRATIONS.pegasus=mof/Linux_BaseRegistration.mof \
-	mof/Linux_BaseIndicationReg.mof
-REGISTRATIONS.sfcb=mof/Linux_Base.sfcb.reg mof/Linux_BaseIndication.sfcb.reg
-REGISTRATIONS.openwbem=
-REGISTRATIONS.sniacimom=
+REGISTRATIONS=mof/Linux_BaseIndication.registration
 endif
-REGISTRATIONS=$(REGISTRATIONS.pegasus) \
-		$(REGISTRATIONS.sfcb) \
-		$(REGISTRATIONS.openwbem) \
-		$(REGISTRATIONS.sniacimom)
 
 # We must explicity add all the schema files to the distribution package
 pkgdata_DATA=$(SCHEMAS) $(REGISTRATIONS)
@@ -176,10 +165,10 @@ EXTRA_DIST+=mof $(pkgdata_SCRIPTS)
 
 # Register the provider(s) and class definition(s) to the current CIM server/CIMOM
 postinstall:
-	test x"$(SCHEMAS)" != x && \
-		sh provider-register.sh -t @CIMSERVER@ -s $(SCHEMAS)
-	test x"$(REGISTRATIONS.@CIMSERVER@)" != x && \
-		sh provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS.@CIMSERVER@)
+	sh provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS) $(SCHEMAS)
+
+preuninstall:
+	sh provider-register.sh -d -t @CIMSERVER@ -r $(REGISTRATIONS) $(SCHEMAS)
 
 dist-hook:
 	test -d "$(distdir)" &&	rm -rf `find $(distdir) -type d -name CVS`

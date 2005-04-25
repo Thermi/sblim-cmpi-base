@@ -61,6 +61,6 @@
 #
 [Linux_CSBaseBoard]
    provider: OSBase_CSBaseBoardProvider
-   location: cmpiOSBase_CSBaseBoardProvider
+    location: cmpiOSBase_CSBaseBoardProvider
    type: instance association
    namespace: root/cimv2

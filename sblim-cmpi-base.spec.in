@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.2 2005/04/13 13:01:11 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.3 2005/04/25 17:07:27 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -48,7 +48,7 @@ export PATCH_GET=0
 
 %build
 
-%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite
+%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite CIMSERVER=@CIMSERVER@
 make
 
 %clean
@@ -78,21 +78,21 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 
 %if "@LINDHELP@" != ""
 %define SCHEMA %{_datadir}/%{name}/Linux_Base.mof %{_datadir}/%{name}/Linux_BaseIndication.mof
-%define REGISTRATION_pegasus %{_datadir}/%{name}/Linux_BaseRegistration.mof %{_datadir}/%{name}/Linux_BaseIndicationReg.mof
-%define REGISTRATION_sfcb %{_datadir}/%{name}/Linux_Base.sfcb.reg %{_datadir}/%{name}/Linux_BaseIndication.sfcb.reg
+%define REGISTRATION %{_datadir}/%{name}/Linux_BaseIndication.registration
 %else
 %define SCHEMA %{_datadir}/%{name}/Linux_Base.mof
-%define REGISTRATION_pegasus %{_datadir}/%{name}/Linux_BaseRegistration.mof
-%define REGISTRATION_sfcb %{_datadir}/%{name}/Linux_Base.sfcb.reg 
+%define REGISTRATION %{_datadir}/%{name}/Linux_Base.registration
 %endif
 
 %{_datadir}/%{name}/provider-register.sh -t @CIMSERVER@ \
-	-s %{SCHEMA} > /dev/null
-
-%{_datadir}/%{name}/provider-register.sh -t @CIMSERVER@ \
-	-r %{REGISTRATION_@CIMSERVER@} > /dev/null
+	-r %{REGISTRATION} %{SCHEMA} > /dev/null
 
 /sbin/ldconfig
+
+%preun
+
+%{_datadir}/%{name}/provider-register.sh -d -t @CIMSERVER@ \
+	-r %{REGISTRATION} %{SCHEMA} > /dev/null
 
 %postun
 /sbin/ldconfig
