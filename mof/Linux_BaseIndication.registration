@@ -1,3 +1,4 @@
+# Classname Namespace ProviderName ProviderModule ProviderTypes ...
 Linux_Processor root/cimv2 OSBase_ProcessorProvider cmpiOSBase_ProcessorProvider instance
 Linux_UnixProcess root/cimv2 OSBase_UnixProcessProvider cmpiOSBase_UnixProcessProvider instance
 Linux_ComputerSystem root/cimv2 OSBase_ComputerSystemProvider cmpiOSBase_ComputerSystemProvider instance

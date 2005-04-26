@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.3 2005/04/25 17:07:27 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.4 2005/04/26 16:39:40 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -85,14 +85,14 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 %endif
 
 %{_datadir}/%{name}/provider-register.sh -t @CIMSERVER@ \
-	-r %{REGISTRATION} %{SCHEMA} > /dev/null
+	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 /sbin/ldconfig
 
 %preun
 
 %{_datadir}/%{name}/provider-register.sh -d -t @CIMSERVER@ \
-	-r %{REGISTRATION} %{SCHEMA} > /dev/null
+	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 %postun
 /sbin/ldconfig

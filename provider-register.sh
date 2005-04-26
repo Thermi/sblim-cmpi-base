@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.2 2005/04/25 17:07:22 mihajlov Exp $
+# $Id: provider-register.sh,v 1.3 2005/04/26 16:39:39 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -35,13 +35,13 @@ function pegasus_transform()
     OUTFILE=$1
     shift
     regfiles=$*
-    PROVIDERMODULES=`cat $regfiles 2> /dev/null | cut -d ' ' -f 4 | sort | uniq`
+    PROVIDERMODULES=`cat $regfiles 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 4 | sort | uniq`
     if test x"$PROVIDERMODULES" == x
     then
 	echo Failed to read registration files
 	return 1
     fi
-    PROVIDERS=`cat $regfiles 2> /dev/null | cut -d ' ' -f 3-4 | sort | uniq`
+    PROVIDERS=`cat $regfiles 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 3-4 | sort | uniq`
     
 # produce ProviderModules
     echo > $OUTFILE
@@ -79,8 +79,7 @@ EOFP
 #produce Capabilities
     for rf in $regfiles
     do
-      echo $rf
-      while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
+      cat $rf | grep -v '^[[:space:]]*#.*' | while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
       do
 	numcap=
 	for cap in $CAPS
@@ -124,7 +123,7 @@ instance of PG_ProviderCapabilities
 };
 
 EOFC
-      done < $rf
+      done
     done
 }
 
@@ -216,7 +215,7 @@ function pegasus_uninstall()
   
     if ps -C cimserver > /dev/null 2>&1 
     then
-	PROVIDERMODULES=`cat $myregs 2> /dev/null | cut -d ' ' -f 4 | sort | uniq`
+	PROVIDERMODULES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 4 | sort | uniq`
 	echo $PROVIDERMODULES
 	if test x"$PROVIDERMODULES" == x
 	    then
@@ -240,7 +239,7 @@ function pegasus_uninstall()
 	    echo "Error: wbemexec not found" >&2
 	    return 1
 	fi
-	CLASSES=`cat $myregs 2> /dev/null | cut -d ' ' -f 1`
+	CLASSES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 1`
 	for cls in $CLASSES
 	do
 	  echo Delete CIM Class $cls
@@ -278,8 +277,7 @@ function sfcb_transform()
 #produce sfcb registraion
     for rf in $regfiles
     do
-      echo $rf
-      while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
+      cat $rf | grep -v '^[[:space:]]*#.*' | while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
       do
 	cat >> $OUTFILE <<EOFC
 [$CLASSNAME]   
@@ -289,7 +287,7 @@ function sfcb_transform()
    namespace: $NAMESPACE
 #
 EOFC
-      done < $rf
+      done
     done
 }
 
@@ -421,10 +419,44 @@ function sfcb_uninstall()
 
 function usage() 
 {
-    echo "usage: $0 [-h] [-d] -t <cimserver> -r regfile [-r regfile ...]  mof ..."
+    echo "usage: $0 [-h] [-d] -t <cimserver> -r regfile ...  -m mof ..."
 }
 
-args=`getopt dht:r:s: $*`
+function gb_getopt()
+{
+    rmode=0
+    mmode=0
+    options=
+    moffiles=
+    registrations=
+    while [ -n "$1" ]
+    do
+      case $1 in
+	  -r) mmode=0;
+	      rmode=1;
+	      shift;;
+	  -m) mmode=1;
+	      rmode=0;
+	      shift;;
+	  -*) mmode=0;
+	      rmode=0;
+	      options="$options $1";
+	      shift;;
+	  **) if [ $mmode == 1 ] 
+	      then moffiles="$moffiles $1"       
+	      elif [ $rmode == 1 ]
+	      then registrations="$registrations -r $1" 
+	      else options="$options $1";
+	      fi; 
+	      shift;;
+      esac
+    done
+    echo $options $registrations $moffiles 
+}
+
+
+prepargs=`gb_getopt $*`
+args=`getopt dht:r: $prepargs`
 
 if [ $? != 0 ]
 then

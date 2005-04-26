@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.6 2005/04/25 17:07:21 mihajlov Exp $
+# $Id: Makefile.am,v 1.7 2005/04/26 16:39:39 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -165,10 +165,10 @@ EXTRA_DIST+=mof $(pkgdata_SCRIPTS)
 
 # Register the provider(s) and class definition(s) to the current CIM server/CIMOM
 postinstall:
-	sh provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS) $(SCHEMAS)
+	sh provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS) -m $(SCHEMAS)
 
 preuninstall:
-	sh provider-register.sh -d -t @CIMSERVER@ -r $(REGISTRATIONS) $(SCHEMAS)
+	sh provider-register.sh -d -t @CIMSERVER@ -r $(REGISTRATIONS) -m $(SCHEMAS)
 
 dist-hook:
 	test -d "$(distdir)" &&	rm -rf `find $(distdir) -type d -name CVS`
