@@ -1,5 +1,0 @@
-[Linux_OperatingSystem]
-   provider: OSBase_OperatingSystemProvider
-   location: cmpiOSBase_OperatingSystemProvider
-   type: instance indication
-   namespace: root/cimv2
