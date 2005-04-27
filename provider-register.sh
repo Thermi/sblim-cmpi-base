@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.4 2005/04/27 09:13:45 mihajlov Exp $
+# $Id: provider-register.sh,v 1.5 2005/04/27 13:05:37 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -19,7 +19,7 @@
 function pegasus_path()
 {
     for p in /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin \
-	/opt/tog-pegasus/bin /opt/tog-pegasus/sbin
+	/opt/tog-pegasus/bin /opt/tog-pegasus/sbin $PEGASUS_HOME/bin
     do
       if test -x $p/$1
       then
