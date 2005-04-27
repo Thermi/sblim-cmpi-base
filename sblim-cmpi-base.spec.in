@@ -1,10 +1,10 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.4 2005/04/26 16:39:40 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.5 2005/04/27 11:06:27 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
 
-BuildRoot: /var/tmp/buildroot
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
 Summary: Sample CMPI Provider
 Name: @PACKAGE_TARNAME@
