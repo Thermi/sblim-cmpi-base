@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.3 2005/04/26 16:39:39 mihajlov Exp $
+# $Id: provider-register.sh,v 1.4 2005/04/27 09:13:45 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -419,7 +419,7 @@ function sfcb_uninstall()
 
 function usage() 
 {
-    echo "usage: $0 [-h] [-d] -t <cimserver> -r regfile ...  -m mof ..."
+    echo "usage: $0 [-h] [-d] -t <cimserver> -r regfile ... -m mof ..."
 }
 
 function gb_getopt()
