@@ -1,5 +1,5 @@
 dnl
-dnl $Id: acinclude.m4,v 1.6 2005/04/14 15:25:58 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.7 2005/04/27 09:17:46 mihajlov Exp $
 dnl
  dnl 
  dnl (C) Copyright IBM Corp. 2004, 2005
@@ -27,7 +27,10 @@ dnl
 AC_DEFUN([CHECK_PEGASUS_2_3_2],
 	[
 	AC_MSG_CHECKING(for Pegasus 2.3.2)
-	test_CIMSERVER=`cimserver -v`
+	if which cimserver > /dev/null 2>&1 
+	then
+	   test_CIMSERVER=`cimserver -v`
+	fi	
 	if test "$test_CIMSERVER" == "2.3.2"; then
 		AC_MSG_RESULT(yes)		
 		AC_DEFINE_UNQUOTED(HAVE_PEGASUS_2_3_2,1,[Defined to 1 if Pegasus 2.3.2 is used])
@@ -45,7 +48,10 @@ dnl
 AC_DEFUN([CHECK_PEGASUS_2_4],
 	[
 	AC_MSG_CHECKING(for Pegasus 2.4)
-	test_CIMSERVER=`cimserver -v`
+	if which cimserver > /dev/null 2>&1 
+	then
+	   test_CIMSERVER=`cimserver -v`
+	fi	
 	if test "$test_CIMSERVER" == "2.4"; then
 		AC_MSG_RESULT(yes)		
 		CPPFLAGS="$CPPFLAGS -DPEGASUS_USE_EXPERIMENTAL_INTERFACES"
@@ -308,3 +314,45 @@ AC_DEFUN([CHECK_TESTSUITE],
 	]
 )
 
+dnl
+dnl The main function to check for the cmpi-base common header
+dnl Modifies the CPPFLAGS with the right include directory and sets
+dnl the 'have_SBLIMBASE' to either 'no' or 'yes'
+dnl
+
+AC_DEFUN([CHECK_SBLIM_BASE],
+	[
+	AC_MSG_CHECKING(for SBLIM Base)
+        SBLIMBASE_CPP_FLAGS="$CPPFLAGS"
+	dnl Check just with the standard include paths
+	_CHECK_SBLIM_BASE(standard)
+	if test "$have_SBLIMBASE" == "yes"; then
+		dnl The standard include paths worked.
+		AC_MSG_RESULT(yes)
+	else
+	  _DIRS_="/usr/include/sblim \
+                  /usr/local/include/sblim"
+	  for _DIR_ in $_DIRS_
+	  do
+		 _cppflags=$CPPFLAGS
+		 _include_SBLIMBASE="$_DIR_"
+		 CPPFLAGS="$CPPFLAGS -I$_include_SBLIMBASE"
+		 _CHECK_SBLIM_BASE($_DIR_)
+		 if test "$have_SBLIMBASE" == "yes"; then
+		  	dnl Found it
+		  	AC_MSG_RESULT(yes)
+			dnl Save the new -I parameter  
+			SBLIMBASE_CPP_FLAGS="$CPPFLAGS"
+			LIBSBLIMBASE=-lcmpiOSBase_Common	
+			break
+		 fi
+	         CPPFLAGS=$_cppflags
+	  done
+	fi	
+	CPPFLAGS=$SBLIMBASE_CPP_FLAGS
+	AC_SUBST(LIBSBLIMBASE)
+	if test "$have_SBLIMBASE" == "no"; then
+		AC_MSG_ERROR(no. The required SBLIM Base package is missing.)
+        fi
+	]
+)
