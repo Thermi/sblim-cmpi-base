@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.5 2005/04/27 11:06:27 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.6 2005/04/28 12:36:48 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -9,7 +9,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 Summary: Sample CMPI Provider
 Name: @PACKAGE_TARNAME@
 Version: @PACKAGE_VERSION@
-Release: @CIMSERVER@
+Release: 1
 Group: Systems Management/Base
 License: Common Public License 1.0
 
@@ -48,7 +48,7 @@ export PATCH_GET=0
 
 %build
 
-%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite CIMSERVER=@CIMSERVER@
+%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite
 make
 
 %clean
@@ -84,14 +84,14 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 %define REGISTRATION %{_datadir}/%{name}/Linux_Base.registration
 %endif
 
-%{_datadir}/%{name}/provider-register.sh -t @CIMSERVER@ \
+%{_datadir}/%{name}/provider-register.sh \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 /sbin/ldconfig
 
 %preun
 
-%{_datadir}/%{name}/provider-register.sh -d -t @CIMSERVER@ \
+%{_datadir}/%{name}/provider-register.sh -d \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 %postun

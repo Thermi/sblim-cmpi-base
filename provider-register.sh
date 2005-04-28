@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.5 2005/04/27 13:05:37 mihajlov Exp $
+# $Id: provider-register.sh,v 1.6 2005/04/28 12:36:48 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -15,6 +15,7 @@
 # Description:  Script to install class definitions (MOFs) and 
 #               registration data for a variety of supported CIMOMs
 # ==================================================================
+
 
 function pegasus_path()
 {
@@ -38,13 +39,14 @@ function pegasus_transform()
     PROVIDERMODULES=`cat $regfiles 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 4 | sort | uniq`
     if test x"$PROVIDERMODULES" == x
     then
-	echo Failed to read registration files
+	echo Failed to read registration files >&2
 	return 1
     fi
     PROVIDERS=`cat $regfiles 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 3-4 | sort | uniq`
     
 # produce ProviderModules
     echo > $OUTFILE
+    chatter "Processing provider modules:" $PROVIDERMODULES
     for pm in $PROVIDERMODULES
     do
       cat >> $OUTFILE <<EOFPM
@@ -105,7 +107,7 @@ EOFP
 		  then numcap=5
 		  else numcap="$numcap, 5"
 		  fi;;
-	      **) echo unknown provider type $cap
+	      **) echo unknown provider type $cap >&2
 		  return 1;;
 	  esac	  
 	done
@@ -182,11 +184,11 @@ function pegasus_install()
 
     if pegasus_transform $_REGFILENAME $myregs
     then
-	echo Registering providers with $state cimserver
+	chatter Registering providers with $state cimserver
 	$CIMMOF -n root/cimv2 $mymofs &&
 	$CIMMOF -n root/PG_Interop $_REGFILENAME
     else
-	echo "Failed to build pegasus registration MOF."
+	echo "Failed to build pegasus registration MOF." >&2
 	return 1
     fi
 }
@@ -216,10 +218,9 @@ function pegasus_uninstall()
     if ps -C cimserver > /dev/null 2>&1 
     then
 	PROVIDERMODULES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 4 | sort | uniq`
-	echo $PROVIDERMODULES
 	if test x"$PROVIDERMODULES" == x
 	    then
-	    echo Failed to read registration files
+	    echo Failed to read registration files >&2
 	    return 1
 	fi
 	CIMPROVIDER=`pegasus_path cimprovider`	
@@ -230,8 +231,9 @@ function pegasus_uninstall()
 	fi
 	for pm in $PROVIDERMODULES
 	do
-	  $CIMPROVIDER -d -m $pm &&
-	  $CIMPROVIDER -r -m $pm
+	  chatter "Remove provider module" $pm
+	  $CIMPROVIDER -d -m $pm > /dev/null &&
+	  $CIMPROVIDER -r -m $pm > /dev/null
 	done
 	WBEMEXEC=`pegasus_path wbemexec`	
 	if test $? != 0
@@ -242,7 +244,7 @@ function pegasus_uninstall()
 	CLASSES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 1`
 	for cls in $CLASSES
 	do
-	  echo Delete CIM Class $cls
+	  chatter Delete CIM Class $cls
 	  $WBEMEXEC > /dev/null <<EOFWX
 <?xml version="1.0" encoding="utf-8" ?>
 <CIM CIMVERSION="2.0" DTDVERSION="2.0">
@@ -263,7 +265,7 @@ function pegasus_uninstall()
 EOFWX
 	done
     else
-	echo "Sorry, cimserver must be running to deregister the providers."
+	echo "Sorry, cimserver must be running to deregister the providers." >&2
 	return 1
     fi
 }
@@ -279,6 +281,7 @@ function sfcb_transform()
     do
       cat $rf | grep -v '^[[:space:]]*#.*' | while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
       do
+	chatter "Registering class" $CLASSNAME
 	cat >> $OUTFILE <<EOFC
 [$CLASSNAME]   
    provider: $PROVIDERNAME
@@ -303,7 +306,7 @@ function sfcb_rebuild()
 	      break;
 	  fi
 	done
-	echo "Shutting down sfcb."
+	chatter "Shutting down sfcb."
 	if test $INITSCRIPT == none
 	then
 	    killall sfcbd
@@ -317,30 +320,30 @@ function sfcb_rebuild()
 	  t=`expr $t + 1`
 	  if test $t > 10
 	  then
-	      echo "Timed out waiting for sfcb shutdown..."
-	      echo "Please stop sfcb manually and rebuild the repository using sfcbrepos."
+	      echo "Timed out waiting for sfcb shutdown..." >&2
+	      echo "Please stop sfcb manually and rebuild the repository using sfcbrepos." >&2
 	      return 1
 	  fi
 	done
-	echo "Rebuilding repository."
+	chatter "Rebuilding repository."
 	sfcbrepos -f
 	if test $? != 0
 	then
-	    echo "Repository rebuild failed."
+	    echo "Repository rebuild failed." >&2
 	    return 1
 	fi
 	
 	if test $INITSCRIPT == none
 	then
-	    echo "No init script found - you need to start sfcbd manually."
+	    echo "No init script found - you need to start sfcbd manually." >&2
 	    return 1
 	else
-	    echo "Restarting sfcb."
+	    chatter "Restarting sfcb."
 	    $INITSCRIPT start
 	fi
     else
 	# Not running - rebuild repository
-	echo "Rebuilding repository."
+	chatter "Rebuilding repository."
 	sfcbrepos -f
     fi
 }
@@ -381,16 +384,16 @@ function sfcb_install()
 
     if sfcb_transform $_REGFILENAME $myregs
     then
-	echo "Staging provider registration."
+	chatter "Staging provider registration."
 	sfcbstage -r $_REGFILENAME $mymofs
 	if test $? != 0 
 	then
-	    echo "Failed to stage provider registration."
+	    echo "Failed to stage provider registration." >&2
 	    return 1
 	fi
 	sfcb_rebuild
     else
-	echo "Failed to build sfcb registration file."
+	echo "Failed to build sfcb registration file." >&2
 	return 1
     fi
 }
@@ -411,15 +414,42 @@ function sfcb_uninstall()
     done
     
     # "Unstage" MOFs and the registration file
+    chatter "Unstaging provider regsiatrations."
     sfcbunstage -r $baseregname.reg $mymofs
 
     # Rebuild repository
     sfcb_rebuild
 }
 
+function cim_server()
+{
+    for exname in sfcbd cimserver owcimomd
+    do
+      if pegasus_path $exname > /dev/null
+      then
+	  case $exname in
+	      sfcbd) echo sfcb; return 0;;
+	      cimserver) echo pegasus; return 0;;
+	      owcimomd) echo openwbem; return 0;;
+	  esac
+	  break;
+      fi
+    done
+    echo unknown
+    return 1
+}
+
 function usage() 
 {
-    echo "usage: $0 [-h] [-d] -t <cimserver> -r regfile ... -m mof ..."
+    echo "usage: $0 [-h] [-v] [-d] [-t <cimserver>] -r regfile ... -m mof ..."
+}
+
+function chatter()
+{
+    if test x$verbose != x
+    then
+	echo $*
+    fi
 }
 
 function gb_getopt()
@@ -456,7 +486,7 @@ function gb_getopt()
 
 
 prepargs=`gb_getopt $*`
-args=`getopt dht:r: $prepargs`
+args=`getopt dvht:r: $prepargs`
 
 if [ $? != 0 ]
 then
@@ -472,6 +502,8 @@ do
       -h) help=1; 
 	  shift;
 	  break;;
+      -v) verbose=1; 
+	  shift;;
       -d) deregister=1; 
 	  shift;;
       -t) cimserver=$2;
@@ -490,19 +522,15 @@ if [ "$help" == "1" ]
 then
     usage
     echo -e "\t-h display help message"
+    echo -e "\t-v verbose mode"
     echo -e "\t-d deregister provider and uninstall schema"
     echo -e "\t-t specify cimserver type (pegasus|sfcb|openwbem|sniacimom)"
-    echo -e "\t-r specify registration file - this option can be multiply specified"
+    echo -e "\t-r specify registration files"
+    echo -e "\t-m specify schema mof files"
     echo
     echo Use this command to install schema mofs and register providers.
     echo CIM Server Type is required as well as at least one registration file and one mof.
     exit 0
-fi
-
-if test x$cimserver == x
-then
-    usage $0
-    exit 1
 fi
 
 if test x"$mofs" == x || test x"$regs" == x
@@ -511,6 +539,17 @@ then
     exit 1
 fi
 
+if test x$cimserver == x
+then
+    cimserver=`cim_server`
+    if test $? == 0
+    then
+	chatter "Autoselected CIM server type:" $cimserver
+    else
+	echo "CIM server type could not be determined, specify with -t." >&2
+	exit 1
+    fi
+fi
 
 if test x$deregister == x
 then
