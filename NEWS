@@ -1,0 +1,5 @@
+Changes in 1.5.1
+================
+
+Bugs:
+- 1199129 Added toleration for newer (spec-conforming) CMPI headers.

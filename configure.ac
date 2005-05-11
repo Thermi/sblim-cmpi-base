@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(SBLIM BaseOS Providers Base, 1.5.0, sblim-devel@lists.sourceforge.net,sblim-cmpi-base)
+AC_INIT(SBLIM BaseOS Providers Base, 1.5.0a, sblim-devel@lists.sourceforge.net,sblim-cmpi-base)
 AC_CONFIG_SRCDIR([OSBase_Common.c])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
@@ -86,7 +86,13 @@ AC_CONFIG_FILES([Makefile sblim-cmpi-base.spec])
 AM_CONDITIONAL(NOEVENTS,[test x"$EVENTFLAGS" != x])
 
 # Extend CPPFLAGS
-CPPFLAGS="$CPPFLAGS -D$HW $EVENTFLAGS"
+if echo $CPPFLAGS | grep -v CMPI_VERSION
+then
+   CPPFLAGS="$CPPFLAGS -D$HW $EVENTFLAGS -DCMPI_VERSION=90"
+else
+   CPPFLAGS="$CPPFLAGS -D$HW $EVENTFLAGS"
+fi
+
 if test x"$EVENTFLAGS" == x; then
    INDICATION_SUPPORT=Enabled
 else	

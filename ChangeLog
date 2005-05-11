@@ -1,4 +1,7 @@
+2005-05-10    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
 
+	* configure.ac: Bug 1199129 added -DCMPI_VERSION=90 to CPPFLAGS 
+	in order to support newer CMPI header versions.
 
 // ===================================================================
 // new in version 1.2.3 :
