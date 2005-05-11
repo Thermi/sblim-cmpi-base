@@ -23,10 +23,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef NOEVENTS
-#define CMPI_VER_86 1
-#endif
-
 #include "cmpidt.h"
 #include "cmpift.h"
 #include "cmpimacs.h"
@@ -537,7 +533,8 @@ static void ind_init(CMPIContext *ctx) {
     if(ind_reg_pollfnc(INDCLASSNAME,
 		       "Poll function",
 		       check,
-		       10) != IND_OK) {
+		       10,
+		       IND_BEHAVIOUR_LEVEL_EDGE) != IND_OK) {
       _OSBASE_TRACE(1,("--- %s ind_init() failed: register poll function",_ClassName));
       CMRelease(sourceInstance);
       return;

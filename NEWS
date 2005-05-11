@@ -3,3 +3,4 @@ Changes in 1.5.1
 
 Bugs:
 - 1199129 Added toleration for newer (spec-conforming) CMPI headers.
+- 1199449 Fixed compile problem with new indication_helper 0.4.0 .

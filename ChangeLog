@@ -1,3 +1,11 @@
+2005-05-11    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
+
+	* cmpiOSBase_OperatingSystemProvider.c:
+	Bug 1199449: Removed CMPI_VER_86 definition as the CMPI_VER_nn
+	macros are not for provider usage. Further, fixed the ind_reg_pollfnc
+	invokation.
+	
+
 2005-05-10    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
 
 	* configure.ac: Bug 1199129 added -DCMPI_VERSION=90 to CPPFLAGS 
