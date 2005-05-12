@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.6 2005/04/28 12:36:48 mihajlov Exp $
+# $Id: provider-register.sh,v 1.7 2005/05/12 15:15:07 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -414,11 +414,125 @@ function sfcb_uninstall()
     done
     
     # "Unstage" MOFs and the registration file
-    chatter "Unstaging provider regsiatrations."
+    chatter "Unstaging provider registrations."
     sfcbunstage -r $baseregname.reg $mymofs
 
     # Rebuild repository
     sfcb_rebuild
+}
+
+function openwbem_transform()
+{
+    OUTFILE=$1
+    shift
+    moffiles=$*
+    
+    if rm -f $OUTFILE
+    then
+	for _f in $moffiles
+	do
+	  sed "s/Provider *( *\"cmpi:/Provider(\"cmpi::/g" < $_f >> $OUTFILE
+	done
+    fi
+}
+
+function openwbem_repository()
+{
+    for p in /var/lib/openwbem /usr/local/var/openwbem
+    do
+      if test -f $p/schema.dat
+      then
+	  echo $p
+	  return 0
+      fi
+    done
+    return 1
+}
+
+function openwbem_install()
+{
+    CIMMOF=`which owmofc 2> /dev/null`
+    if test $? != 0
+    then
+	echo "Error: cimmof not found" >&2
+	return 1
+    fi
+
+    if ps -C owcimomd > /dev/null 2>&1 
+    then
+	state=active
+    else
+	CIMMOF="$CIMMOF -d `openwbem_repository`"
+	if test $? != 0
+	then
+	    echo "Error: OpenWBEM repository not found" >&2
+	    return 1
+	fi
+	state=inactive
+    fi
+
+    for _TEMPDIR in /var/tmp /tmp
+    do
+      if test -w $_TEMPDIR
+      then
+	  _REGFILENAME=$_TEMPDIR/$$.mof
+	  break
+      fi
+    done
+
+    trap "rm -f $_REGFILENAME" EXIT
+
+    if openwbem_transform $_REGFILENAME $*
+    then
+	chatter Registering providers with $state owcimomd
+	$CIMMOF $_REGFILENAME > /dev/null
+    else
+	echo "Failed to build OpenWBEM registration MOF." >&2
+	return 1
+    fi       
+}
+
+function openwbem_uninstall()
+{
+    CIMMOF=`which owmofc 2> /dev/null`
+    if test $? != 0
+    then
+	echo "Error: cimmof not found" >&2
+	return 1
+    fi
+
+    if ps -C owcimomd > /dev/null 2>&1 
+    then
+	state=active
+    else
+	CIMMOF="$CIMMOF -d `openwbem_repository`"
+	if test $? != 0
+	then
+	    echo "Error: OpenWBEM repository not found" >&2
+	    return 1
+	fi
+	state=inactive
+    fi
+
+    for _TEMPDIR in /var/tmp /tmp
+    do
+      if test -w $_TEMPDIR
+      then
+	  _REGFILENAME=$_TEMPDIR/$$.mof
+	  break
+      fi
+    done
+
+    trap "rm -f $_REGFILENAME" EXIT
+
+    if openwbem_transform $_REGFILENAME $*
+    then
+	chatter Deregistering providers with $state owcimomd
+	$CIMMOF -r $_REGFILENAME > /dev/null
+    else
+	echo "Failed to build OpenWBEM registration MOF." >&2
+	return 1
+    fi       
 }
 
 function cim_server()
@@ -556,7 +670,7 @@ then
     case $cimserver in
 	pegasus) pegasus_install $mofs ":" $regs;;
 	sfcb)    sfcb_install $mofs ":" $regs;;
-	openwbem) echo openwbem not yet supported && exit 1 ;;
+	openwbem) openwbem_install $mofs ;;
 	sniacimom) echo sniacimom not yet supported && exit 1 ;;
 	**)	echo "Invalid CIM Server Type " $cimserver && exit 1;;
     esac
@@ -564,7 +678,7 @@ else
     case $cimserver in
 	pegasus) pegasus_uninstall $mofs ":" $regs;;
 	sfcb)    sfcb_uninstall $mofs ":" $regs;;
-	openwbem) echo openwbem not yet supported && exit 1 ;;
+	openwbem) openwbem_uninstall $mofs ;;
 	sniacimom) echo sniacimom not yet supported && exit 1 ;;
 	**)	echo "Invalid CIM Server Type " $cimserver && exit 1;;
     esac

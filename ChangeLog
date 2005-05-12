@@ -1,3 +1,13 @@
+2005-05-12    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
+
+	* provider-register.sh: Updated for OpenWBEM support.
+
+	* acinclude.m4: Updated for OpenWBEM support.
+
+	* OSBase_OperatingSystem.c: 
+	Bug 1198184: Enhanced the release determination logic to ignore
+	directories in /etc .
+
 2005-05-11    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
 
 	* cmpiOSBase_OperatingSystemProvider.c:

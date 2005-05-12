@@ -1,5 +1,5 @@
 dnl
-dnl $Id: acinclude.m4,v 1.7 2005/04/27 09:17:46 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.8 2005/05/12 15:15:07 mihajlov Exp $
 dnl
  dnl 
  dnl (C) Copyright IBM Corp. 2004, 2005
@@ -242,7 +242,8 @@ AC_DEFUN([CHECK_PROVIDERDIR],
 )
 
 dnl
-dnl The "check" for the CIM server type
+dnl The "check" for the CIM server type in PATH and
+dnl the sbin directories.
 dnl Sets the CIMSERVER variable.
 dnl
 
@@ -250,6 +251,8 @@ AC_DEFUN([CHECK_CIMSERVER],
 	[
 	AC_MSG_CHECKING(for CIM servers)
 	_SERVERS="sfcbd cimserver owcimomd"
+	_SAVE_PATH=$PATH
+	PATH=/usr/sbin:/usr/local/sbin:$PATH
 	for _name in $_SERVERS
 	do
 	 	AC_MSG_CHECKING( $_name )
@@ -267,6 +270,7 @@ AC_DEFUN([CHECK_CIMSERVER],
 		  break;
 		fi
         done
+	PATH=$_SAVE_PATH
 	if test x"$CIMSERVER" == x ; then
 		CIMSERVER=sfcb
 		AC_MSG_RESULT(implied: $CIMSERVER)
