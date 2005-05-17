@@ -534,7 +534,7 @@ static void ind_init(CMPIContext *ctx) {
 		       "Poll function",
 		       check,
 		       10,
-		       IND_BEHAVIOUR_LEVEL_EDGE) != IND_OK) {
+		       IND_BEHAVIOR_LEVEL_EDGE) != IND_OK) {
       _OSBASE_TRACE(1,("--- %s ind_init() failed: register poll function",_ClassName));
       CMRelease(sourceInstance);
       return;
