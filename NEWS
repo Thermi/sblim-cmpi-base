@@ -6,3 +6,4 @@ Bugs Fixed:
 - 1199449 Fixed compile problem with new indication_helper 0.4.0 .
 - 1198184 Fixed release determination logic.
 - 1183805 Added support for OpenWBEM provider registration.
+- 1211913 Fixed UnixProcess Name, State and Argument field scanning and formatting.

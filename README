@@ -110,8 +110,8 @@ issue the following command:
 Load Schema into CIMOM's repository
 ...................................
 
-with Pegasus :
-..............
+with Pegasus / OpenWBEM /sfcb :
+...............................
 The loading and registering of the classes/associations and
 their provider is done during the "make postinstall".
 

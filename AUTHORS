@@ -6,3 +6,6 @@ Contributions:
 support for class Linux_OperatingSytemStatisticalData and the association
 Linux_OperatingSystemStatistics was done by Michael Schuele 
 <schuelem@de.ibm.com> ... thx :)
+
+bugfix for release determination if no /etc/*release* file is found has
+been suggested by Ferenc Szalai <szferi@einstein.ki.iif.hu>

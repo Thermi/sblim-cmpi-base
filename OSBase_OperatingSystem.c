@@ -13,6 +13,7 @@
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               C. Eric Wu <cwu@us.ibm.com>               
+ *               Ferenc Szalai <szferi@einstein.ki.iif.hu>
  *
  * Description:
  * This shared library provides resource access functionality for the class
@@ -125,6 +126,7 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 char * get_os_distro() {
   char ** hdout   = NULL;
   char *  ptr     = NULL;
+  char *  cmd     = NULL;
   int     strl    = 0;
   int     i       = 0;
   int     rc      = 0;
@@ -133,25 +135,40 @@ char * get_os_distro() {
     
     _OSBASE_TRACE(4,("--- get_os_distro() called : init"));
 
-    rc = runcommand( "cat `find /etc/ -type f -maxdepth 1 -name *release* 2>/dev/null`" , NULL , &hdout , NULL );
-    if( rc == 0 ) {
-      while ( hdout[i]) {
-	strl = strl+strlen(hdout[i])+1;
-	ptr = strchr(hdout[i], '\n');
+    rc = runcommand( "find /etc/ -type f -maxdepth 1 -name *release* 2>/dev/null" , NULL , &hdout , NULL );
+    if( rc == 0 && hdout != NULL && hdout[0] && strcmp (hdout[0], "") ) {
+      strl = strlen ("cat  2>/dev/null") + strlen (hdout[0]) + 1;
+      ptr = strchr(hdout[0], '\n');
+      if (ptr) {
 	*ptr = '\0';
-	i++;
-      }	
-      i=0;
-      CIM_OS_DISTRO = calloc(1,strl);
-      strcpy( CIM_OS_DISTRO , hdout[0] );
-      i++;
-      while ( hdout[i]) {
-	strcat( CIM_OS_DISTRO , " " );
-	strcat( CIM_OS_DISTRO , hdout[i] );
-	i++;
       }
-    }
-    else {
+      cmd = calloc (strl, sizeof(char));
+      snprintf(cmd, strl, "cat %s 2>/dev/null", hdout[0]);
+      freeresultbuf(hdout);
+      hdout = NULL;
+      strl = 0;
+      rc = runcommand(cmd, NULL , &hdout , NULL );
+      if( rc == 0 ) {
+	while ( hdout[i]) {
+	  strl = strl+strlen(hdout[i])+1;
+	  ptr = strchr(hdout[i], '\n');
+	  if (ptr) {
+	    *ptr = '\0';
+	  }
+	  i++;
+	}	
+	i=0;
+	CIM_OS_DISTRO = calloc(1,strl);
+	strcpy( CIM_OS_DISTRO , hdout[0] );
+	i++;
+	while ( hdout[i]) {
+	  strcat( CIM_OS_DISTRO , " " );
+	  strcat( CIM_OS_DISTRO , hdout[i] );
+	  i++;
+	}
+      }
+      free (cmd);
+    } else {
       CIM_OS_DISTRO = calloc(1,6);
       strcpy( CIM_OS_DISTRO , "Linux" );
     }

@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <errno.h>  
 #include <dirent.h>
+#include <libgen.h>
 #include <sys/stat.h>    
 #include <sys/wait.h>
 #include <sys/time.h>
@@ -59,7 +60,7 @@ int enum_all_process( struct processlist ** lptr ){
   
   _OSBASE_TRACE(3,("--- enum_all_process() called"));
   
-  rc = runcommand( "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,comm,session,state,args" , NULL, &hdout, NULL );
+  rc = runcommand( "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,session,state,args" , NULL, &hdout, NULL );
 
   if( rc == 0 ) {
     lptrhelp = (struct processlist *)calloc(1,sizeof(struct processlist));
@@ -91,17 +92,10 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
 
   _OSBASE_TRACE(3,("--- get_process_data() called"));
 
-  cmd = (char*)malloc((strlen(pid)+7));
-  strcpy(cmd, "/proc/");
-  strcat(cmd, pid);
-  dpid=opendir(cmd);
-  if(cmd) free(cmd);
-
-  if ( dpid != NULL ) {
-    cmd = (char*)malloc((strlen(pid)+95));
-    strcpy(cmd, "ps --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,comm,session,state | grep ");
-    strcat(cmd, pid);
+  cmd = (char*)malloc((strlen(pid)+100));
+  sprintf(cmd, "ps -p %s --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,session,state,args",pid);
     rc = runcommand( cmd , NULL, &hdout, NULL );
+  if (rc == 0) {
     while( hdout[i] ) {
       if((ptr=strchr(hdout[i], '\n'))) { *ptr = '\0'; }
       str = hdout[i];
@@ -126,11 +120,9 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
 
 static int _process_data( char * phd , struct cim_process ** sptr ){
   char               ** parr   = NULL;
-  char               ** hdout  = NULL;
   char               *  d      = NULL;
   char               *  end    = NULL;
   char               *  cmd    = NULL;
-  char               *  ptr    = NULL;
   FILE               *  fpstat = NULL;
   struct tm             tmdate;
   unsigned long long    kmtime = 0;        // Kernel Mode Time
@@ -170,8 +162,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
   (*sptr)->pmem = atoll(parr[7]);
   (*sptr)->pcpu = atol(parr[8]);
 
-  (*sptr)->pcmd = strdup(parr[10]);
-  (*sptr)->sid = atoll(parr[11]);
+  (*sptr)->sid = atoll(parr[10]);
 
   /* state of Linux processes :
      D   uninterruptible sleep (usually IO) = Blocked (4)
@@ -192,34 +183,19 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
    * 8 ... Stopped
    * 9 ... Growing
    */
-  if(strcmp(parr[12],"R")==0)
+  if(strcmp(parr[11],"R")==0)
     (*sptr)->state = 3 ;
-  else if( strcmp(parr[12],"D")==0)
+  else if( strcmp(parr[11],"D")==0)
     (*sptr)->state = 4 ;
-  else if( strcmp(parr[12],"S")==0)
+  else if( strcmp(parr[11],"S")==0)
     (*sptr)->state = 6 ;
-  else if( strcmp(parr[12],"Z")==0)
+  else if( strcmp(parr[11],"Z")==0)
     (*sptr)->state = 7 ;
-  else if( strcmp(parr[12],"T")==0)
+  else if( strcmp(parr[11],"T")==0)
     (*sptr)->state = 8 ;
 
   /* values for array of Parameters */
-  if( parr[13] == NULL ) {
-    cmd = (char*)malloc((strlen((*sptr)->pid)+28));
-    memset(cmd, 0, (strlen((*sptr)->pid)+28));
-    strcpy(cmd, "ps -p");
-    strcat(cmd, (*sptr)->pid);
-    strcat(cmd, " --no-headers -o args");
-    rc = runcommand( cmd, NULL, &hdout, NULL );
-    if((ptr=strchr(hdout[0], '\n'))) { *ptr = '\0'; }
-    if( rc == 0 ) {
-      (*sptr)->args = line_to_array( hdout[0], ' ' );
-    }
-    if(cmd) free(cmd);
-    freeresultbuf(hdout);
-  }
-  else {
-    i=13;
+  i=12;
     j=0;
     (*sptr)->args = calloc(100,sizeof(char*));  
     while(( parr[i] != NULL ) && (i < 100))  /* preventing buffer overflows */ {
@@ -228,8 +204,12 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
       j++;
       i++;
     }
+  if (parr[12][0]=='[' && parr[12][strlen(parr[12])-1]==']') {
+    (*sptr)->pcmd = calloc(strlen(parr[12])-1,1);
+    strncpy((*sptr)->pcmd,parr[12]+1,strlen(parr[12])-2);
+  } else {
+    (*sptr)->pcmd = strdup(basename(parr[12]));
   }
-
   freeresultbuf(parr);
   
   /* ModulePath */
@@ -288,7 +268,7 @@ static char * _get_process_execpath( char * id , char * cmd ) {
   buf = (char*)malloc(1024);
   memset(buf, 0, 1024);
 
-  rc = readlink(path, buf, sizeof(buf));
+  rc = readlink(path, buf, 1024);
   if( rc == -1 ) {
     free(buf);
     buf = strdup(cmd);

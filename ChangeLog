@@ -1,3 +1,11 @@
+2005-05-31    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
+
+	* OSBase_UnixProcess.c: 
+	Bug 1211913: Fixed the UnixProcess field formatting problems.
+	Uses ps -p <pid> to retrieve single process data now.
+	Process name is determined using basename and brackets are stripped
+	from kernel daemons.
+
 2005-05-12    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
 
 	* provider-register.sh: Updated for OpenWBEM support.
