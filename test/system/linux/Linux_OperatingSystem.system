@@ -19,7 +19,7 @@ OtherEnabledState : -empty
 RequestedState : -eq 2
 EnabledDefault : -eq 2
 Status : -empty
-OperationalStatus : -eq 2
+OperationalStatus : -set
 
 OSType : -eq 36
 Version : -eq -cmd Linux_OperatingSystem.version.sh

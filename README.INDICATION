@@ -15,6 +15,7 @@ Changes:      03/07/2005: added description to register Pegasus Simple Display
                           consumer
 	      03/09/2005: added sample indication subscription for Pegasus to 
 			  test/indication directory
+	      06/01/2005: removed references to old build process.
 
 /* ---------------------------------------------------------------------------*/
 
@@ -27,10 +28,6 @@ support now. To enable this, you need to do the following:
 
 - install the SBLIM package indication_helper. Please follow the instructions
   in the package.
-- remove -DNOEVENTS from the CFLAGS (makefile)
-- for PEGASUS:
-  - edit mof/makefile.pegasus to enable the registration of the Indication 
-    class and provider (SimpleDisplayConsumerR.mof, Linux_BaseIndicationReg.mof)
 - now build the cmpi-base package as described in the README
 
 
@@ -42,7 +39,7 @@ A sample indication subscription can be found under test/indication. You
 need to register the Pegasus Simple Display consumer. The registration 
 command and mof is:
 
-> cimmofl -nroot/PG_InterOp $(PEGASUS_ROOT)/src/Providers/sample/Load/SimpleDisplayConsumerR.mof
+> cimmofl -nroot/PG_InterOp $PEGASUS_ROOT/src/Providers/sample/Load/SimpleDisplayConsumerR.mof
 
 The openPegasus SimpleDisplayConsumer writes received indications into the
 indicationLog file. You only need to set the PEGASUS_DISPLAYCONSUMER_DIR 

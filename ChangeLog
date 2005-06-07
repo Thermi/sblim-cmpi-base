@@ -1,3 +1,22 @@
+2005-06-07    <mihajlov@localhost.localdomain>
+
+	* mof/Linux_BaseIndication.registration: 
+	Bug 1214090: Fixed registration information for indication provider.
+
+	* cmpiOSBase_OperatingSystem.c (getpctcpu): 
+	Bug 1214092: Improved algorithm for computation of the CPU utilization.
+
+	* test/system/linux/Linux_OperatingSystem.system: 
+	Bug 1214092:Take into account that OperationalStatus is more volatile 
+	now.
+
+2005-06-01    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
+
+	* provider-register.sh: 
+	Bug 1214090: Make sure not to delete CIM_ classes on de-registration.
+	Use unique capability id to allow multiple registrations
+	of a provider.
+
 2005-05-31    <mihajlov@dyn-9-152-141-53.boeblingen.de.ibm.com>
 
 	* OSBase_UnixProcess.c: 

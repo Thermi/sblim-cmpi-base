@@ -1,3 +1,10 @@
+Changes in 1.5.2
+================
+
+Bugs Fixed:
+- 1214092 Improved algorithm for CPU percentage calculation.
+- 1214090 Fixed provider registration.
+
 Changes in 1.5.1
 ================
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.7 2005/05/12 15:15:07 mihajlov Exp $
+# $Id: provider-register.sh,v 1.8 2005/06/07 13:12:42 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -79,10 +79,12 @@ EOFP
     done
 
 #produce Capabilities
+    let serial=0
     for rf in $regfiles
     do
       cat $rf | grep -v '^[[:space:]]*#.*' | while read CLASSNAME NAMESPACE PROVIDERNAME PROVIDERMODULE CAPS
       do
+	let serial=serial+1
 	numcap=
 	for cap in $CAPS
 	do
@@ -121,7 +123,7 @@ instance of PG_ProviderCapabilities
    Namespaces = {"$NAMESPACE"};
    SupportedProperties = NULL;
    SupportedMethods = NULL;
-   CapabilityID = "1";
+   CapabilityID = "$serial";
 };
 
 EOFC
@@ -241,7 +243,7 @@ function pegasus_uninstall()
 	    echo "Error: wbemexec not found" >&2
 	    return 1
 	fi
-	CLASSES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 1`
+	CLASSES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 1 | grep -v '^CIM_'`
 	for cls in $CLASSES
 	do
 	  chatter Delete CIM Class $cls

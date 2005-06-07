@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "cmpidt.h"
 #include "cmpimacs.h"
@@ -56,6 +57,8 @@ typedef struct _CpuSample {
 } CpuSample;
 
 static int getcpu(CpuSample * cps);
+
+static int getpctcpu(CpuSample * cps);
 
 /* ---------------------------------------------------------------------------*/
 
@@ -150,8 +153,31 @@ static int getcpu(CpuSample * cps)
     cps->cpu=cps->total - idle;
     return 0;
   }
-  else
+  else {
     return -1;
+  }
+}
+
+static int getpctcpu(CpuSample * cps)
+{
+  static CpuSample ocps = {0,0};
+  int  pctcpu = 0;
+  static pthread_mutex_t cpumux = PTHREAD_MUTEX_INITIALIZER;
+  if (cps) {
+    if (cps->total == ocps.total) {
+      if (cps->cpu == ocps.cpu) {
+	pctcpu = 0;
+      } else {
+	pctcpu = 100;
+      }
+    } else {
+      pctcpu = (100*(cps->cpu-ocps.cpu))/(cps->total-ocps.total);
+    }
+    ocps.total = cps->total;
+    ocps.cpu = cps->cpu;
+  }
+  pthread_mutex_unlock(&cpumux);
+  return pctcpu;
 }
 
 static CMPIInstance * _makeOS( CMPIBroker * _broker,
@@ -220,7 +246,7 @@ static CMPIInstance * _makeOS( CMPIBroker * _broker,
   free(keys);
 
   /* calculate cpu percentage */
-  if(getcpu(&cs) == 0) { pctcpu = (100*cs.cpu)/cs.total; }
+  if(getcpu(&cs) == 0) { pctcpu = getpctcpu(&cs); }
 
   CMSetProperty( ci, "CSCreationClassName", CSCreationClassName, CMPI_chars );
   CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
@@ -334,7 +360,7 @@ int check_OperationalStatus(int *OperationalStatus) {
   unsigned short pctcpu = 0;
 
   if(getcpu(&cs) == 0) {
-    pctcpu = 100*cs.cpu/cs.total;
+    pctcpu = getpctcpu(&cs);
     _OSBASE_TRACE(2,("--- _check_OperationalStatus(): TotalCPUTimePct %d",pctcpu));
     if(pctcpu>=90 && *OperationalStatus!=4) {
       *OperationalStatus = 4;
