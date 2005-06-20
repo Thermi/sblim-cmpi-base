@@ -409,6 +409,23 @@ void freeresultbuf(char ** buf)
 static void addstring(char *** buf, const char * str)
 {
   int i=0;
+  size_t s;
+  while ((*buf)[i++] != NULL);
+  s = i == 1 ? 0 : strlen((*buf)[i-2]);
+  if (i == 1 || (*buf)[i-2][s-1] == '\n') { 
+    *buf=realloc(*buf,(i+1)*sizeof(char*));
+    (*buf)[i-1] = strdup(str);
+    (*buf)[i] = NULL;
+  } else {
+    fprintf(stderr, "******* append (%s)\n", str);
+    (*buf)[i-2]=realloc((*buf)[i-2],s + strlen(str) + 1);
+    strcpy((*buf)[i-2] + s, str);
+  }
+}
+
+static void addstring_noconc(char *** buf, const char * str)
+{
+  int i=0;
   while ((*buf)[i++] != NULL);
   *buf=realloc(*buf,(i+1)*sizeof(char*));
   (*buf)[i-1] = strdup(str);
@@ -449,11 +466,11 @@ char ** line_to_array( char * buf , int c ){
 
   while( ( ptr = strchr( ent , c )) != NULL ) {
     *ptr='\0';
-    addstring( &data , ent );
+    addstring_noconc( &data , ent );
     ent = ptr+1;
     ptr = NULL ;
   }
-  addstring( &data , ent );
+  addstring_noconc( &data , ent );
 
   if(str) free(str);
   return data;

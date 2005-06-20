@@ -1,3 +1,9 @@
+2005-06-20    <mihajlov@dyn-9-152-143-42.boeblingen.de.ibm.com>
+
+	* OSBase_Common.c:
+	Bug 1222571: Changed addstring to support lines longer than 4K and
+	added new function addstring_noconc for lines not ending in newlines.
+
 2005-06-07    <mihajlov@localhost.localdomain>
 
 	* mof/Linux_BaseIndication.registration: 
