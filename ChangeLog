@@ -1,3 +1,17 @@
+2005-07-12    <mihajlov@dyn-9-152-143-42.boeblingen.de.ibm.com>
+
+	* provider-register.sh: 
+	Bug 1236584: Additional functionality to detect the location of
+	the pegasus repository (in well known places - sigh).
+
+	* sblim-cmpi-base.spec.in: 
+	Bug 1236584: Added RPM macro tog_pegasus to support the tog-pegasus
+	RPM (reluctantly).
+
+	* test/test-cmpi-base.sh: 
+	Bug 1236584: Allow invocation from arbitrary directories 
+	(by Mark Hamzy).
+
 2005-06-20    <mihajlov@dyn-9-152-143-42.boeblingen.de.ibm.com>
 
 	* OSBase_Common.c:

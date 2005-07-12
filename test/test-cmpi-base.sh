@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 # test sblim-cmpi-base package
+
+SCRIPT_PATH=`dirname ${BASH_SOURCE}`
 
 #******************************************************************************#
 
@@ -19,6 +21,6 @@ declare -i i=0;
 
 while(($i<=$max))
 do
-  . run.sh ${CLASSNAMES[$i]} $1 $2 $3 $4 || exit 1;
+  . ${SCRIPT_PATH}/run.sh ${CLASSNAMES[$i]} $1 $2 $3 $4 || exit 1;
   i=$i+1;
 done

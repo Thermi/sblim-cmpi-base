@@ -1,22 +1,24 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.6 2005/04/28 12:36:48 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.7 2005/07/12 13:06:55 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
+
+# for TOG Pegasus invoke with rpmbuild --define 'tog_pegasus 1'
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
 Summary: Sample CMPI Provider
 Name: @PACKAGE_TARNAME@
 Version: @PACKAGE_VERSION@
-Release: 1
+Release: %{?tog_pegasus:tog_pegasus}%{!?tog_pegasus:1}
 Group: Systems Management/Base
 License: Common Public License 1.0
 
 Source0: http://prdownloads.sourceforge.net/sblim/%{name}-%{version}.tar.bz2
 
 BuildRequires: cmpi-devel
-Requires: cimserver
+Requires: %{?tog_pegasus:tog-pegasus}%{!?tog_pegasus:cimserver}
 
 %Description
 Standards Based Linux Instrumentation Base Providers
@@ -33,7 +35,7 @@ SBLIM Base Provider Development Package
 Summary: SBLIM Base Instrumentation Testcase Files
 Group: Systems Management/Base
 Requires: %{name} = %{version}
-Requires: sblim-wbemcli
+Requires: sblim-testsuite
 
 %Description test
 SBLIM Base Provider Testcase Files for the SBLIM Testsuite
@@ -48,7 +50,8 @@ export PATCH_GET=0
 
 %build
 
-%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite
+%configure TESTSUITEDIR=%{_datadir}/sblim-testsuite \
+	%{?tog_pegasus:CIMSERVER=pegasus PROVIDERDIR=/opt/tog-pegasus/providers/lib}
 make
 
 %clean
@@ -72,6 +75,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 # remove unused libtool files
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
+rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
 
 %post
 # Register Schema and Provider - this is higly provider specific
@@ -84,14 +88,14 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 %define REGISTRATION %{_datadir}/%{name}/Linux_Base.registration
 %endif
 
-%{_datadir}/%{name}/provider-register.sh \
+%{_datadir}/%{name}/provider-register.sh %{?tog_pegasus:-t pegasus} \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 /sbin/ldconfig
 
 %preun
 
-%{_datadir}/%{name}/provider-register.sh -d \
+%{_datadir}/%{name}/provider-register.sh -d %{?tog_pegasus:-t pegasus} \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 %postun
@@ -103,8 +107,11 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 %{_datadir}/%{name}
 %{_datadir}/doc/%{name}-%{version}
 %{_libdir}/*.so*
+%if %{?tog_pegasus:0}%{!?tog_pegasus:1}
 %{_libdir}/cmpi/*.so*
-
+%else
+/opt/tog-pegasus/providers/lib/*.so*
+%endif
 
 %files devel
 

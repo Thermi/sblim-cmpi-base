@@ -3,7 +3,7 @@ Changes in 1.5.3
 
 Bugs Fixed:
 - 1222571 Fixed segmentation fault on long process command lines.
-
+- 1236584 Better support for the peculiarities of tog-pegasus
 
 Changes in 1.5.2
 ================

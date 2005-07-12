@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.8 2005/06/07 13:12:42 mihajlov Exp $
+# $Id: provider-register.sh,v 1.9 2005/07/12 13:06:54 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -16,6 +16,19 @@
 #               registration data for a variety of supported CIMOMs
 # ==================================================================
 
+function pegasus_repository()
+{
+    for p in /var/lib/pegasus /usr/local/var/lib/pegasus \
+	/var/local/lib/pegasus /var/opt/tog-pegasus $PEGASUS_HOME
+    do
+      if test -d $p/repository
+      then
+	  echo $p/$1
+	  return 0
+      fi
+    done
+    return 1
+}
 
 function pegasus_path()
 {
@@ -149,6 +162,13 @@ function pegasus_install()
 	    echo "Error: cimmof not found" >&2
 	    return 1
 	fi
+	PEGASUSREPOSITORY=`pegasus_repository`
+	if test $? != 0
+	then
+	    echo "Error: pegasus repository not found" >&2
+	    return 1
+	fi
+	CIMMOF="$CIMMOF -R $PEGASUSREPOSITORY"
 	state=inactive
     fi
 
