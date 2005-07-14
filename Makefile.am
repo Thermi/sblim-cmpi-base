@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7 2005/04/26 16:39:39 mihajlov Exp $
+# $Id: Makefile.am,v 1.8 2005/07/14 14:27:47 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -188,6 +188,8 @@ testsuitesystem_DATA=test/system/linux/Linux_CSProcessor.system \
 	test/system/linux/Linux_OSProcess.system \
 	test/system/linux/Linux_OperatingSystem.system \
 	test/system/linux/Linux_Processor.system \
+	test/system/linux/Linux_OperatingSystemStatisticalData.system \
+	test/system/linux/Linux_OperatingSystemStatistics.system \
 	test/system/linux/Linux_RunningOS.system \
 	test/system/linux/Linux_UnixProcess.system 
 testsuitesystem_SCRIPTS=test/system/linux/Linux_OperatingSystem.version.sh \

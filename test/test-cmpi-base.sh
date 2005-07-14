@@ -19,6 +19,7 @@ CLASSNAMES=([0]=Linux_ComputerSystem [1]=Linux_OperatingSystem \
 declare -i max=8;
 declare -i i=0;
 
+cd $SCRIPT_PATH
 while(($i<=$max))
 do
   . ${SCRIPT_PATH}/run.sh ${CLASSNAMES[$i]} $1 $2 $3 $4 || exit 1;
