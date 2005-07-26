@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.7 2005/07/12 13:06:55 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.8 2005/07/26 13:51:07 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -11,9 +11,10 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 Summary: Sample CMPI Provider
 Name: @PACKAGE_TARNAME@
 Version: @PACKAGE_VERSION@
-Release: %{?tog_pegasus:tog_pegasus}%{!?tog_pegasus:1}
+Release: 1%{?tog_pegasus:.tog_pegasus}
 Group: Systems Management/Base
-License: Common Public License 1.0
+URL: http://www.sblim.org
+License: CPL
 
 Source0: http://prdownloads.sourceforge.net/sblim/%{name}-%{version}.tar.bz2
 
@@ -56,26 +57,21 @@ make
 
 %clean
 
-if [ `id -ur` != 0 ]
-then
-# paranoia check 
-	rm -rf $RPM_BUILD_ROOT 
-fi
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %install
 
-if [ `id -ur` != 0 ]
-then
-# paranoia check 
-	rm -rf $RPM_BUILD_ROOT 
-fi
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR=$RPM_BUILD_ROOT install
 
 # remove unused libtool files
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*a
+%if %{?tog_pegasus:0}%{!?tog_pegasus:1}
 rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
+%else
 rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
+%endif
 
 %post
 # Register Schema and Provider - this is higly provider specific
@@ -98,8 +94,7 @@ rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
 %{_datadir}/%{name}/provider-register.sh -d %{?tog_pegasus:-t pegasus} \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
-%postun
-/sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 
@@ -116,11 +111,13 @@ rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
 %files devel
 
 %defattr(-,root,root)
-%{_includedir}
+%{_includedir}/*
 
 %files test
 
 %defattr(-,root,root)
 %{_datadir}/sblim-testsuite
 
-
+%changelog
+* Wed Jul 20 2005 Mark Hamzy <hamzy@us.ibm.com>	1.5.2b-1%{?tog_pegasus:.tog-pegasus}
+  - initial support
