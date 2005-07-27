@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.8 2005/07/14 14:27:47 mihajlov Exp $
+# $Id: Makefile.am,v 1.9 2005/07/27 16:01:08 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -59,6 +59,7 @@ libcmpiOSBase_ComputerSystemProvider_la_SOURCES = \
 		cmpiOSBase_ComputerSystem.c \
 		OSBase_ComputerSystem.c
 libcmpiOSBase_ComputerSystemProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_ComputerSystemProvider_la_LDFLAGS = -avoid-version
 
 # Operating System
 libcmpiOSBase_OperatingSystemProvider_la_SOURCES = \
@@ -69,7 +70,7 @@ libcmpiOSBase_OperatingSystemProvider_la_SOURCES = \
 libcmpiOSBase_OperatingSystemProvider_la_LIBADD = -lcmpiOSBase_Common \
 						-ldmiinfo @LINDHELP@
 # This gcc/ld specific flag is ugly - need to check in configure
-libcmpiOSBase_OperatingSystemProvider_la_LDFLAGS = -Wc,-nostartfiles
+libcmpiOSBase_OperatingSystemProvider_la_LDFLAGS = -Wc,-nostartfiles -avoid-version
 
 # Operating System Statistical Data
 libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_SOURCES = \
@@ -77,6 +78,7 @@ libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_SOURCES = \
 		cmpiOSBase_OperatingSystemStatisticalData.c \
 		OSBase_OperatingSystemStatisticalData.c
 libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_LIBADD =  -lcmpiOSBase_Common
+libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_LDFLAGS = -avoid-version
 
 # Unix Process
 libcmpiOSBase_UnixProcessProvider_la_SOURCES = \
@@ -84,6 +86,7 @@ libcmpiOSBase_UnixProcessProvider_la_SOURCES = \
 		cmpiOSBase_UnixProcess.c \
 		OSBase_UnixProcess.c
 libcmpiOSBase_UnixProcessProvider_la_LIBADD =  -lcmpiOSBase_Common
+libcmpiOSBase_UnixProcessProvider_la_LDFLAGS =  -avoid-version
 
 # Processor 
 libcmpiOSBase_ProcessorProvider_la_SOURCES = \
@@ -91,6 +94,7 @@ libcmpiOSBase_ProcessorProvider_la_SOURCES = \
 		cmpiOSBase_Processor.c \
 		OSBase_Processor.c
 libcmpiOSBase_ProcessorProvider_la_LIBADD =  -lcmpiOSBase_Common
+libcmpiOSBase_ProcessorProvider_la_LDFLAGS =  -avoid-version
 
 # Base Board
 libcmpiOSBase_BaseBoardProvider_la_SOURCES = \
@@ -98,17 +102,27 @@ libcmpiOSBase_BaseBoardProvider_la_SOURCES = \
 		cmpiOSBase_BaseBoard.c \
 		OSBase_BaseBoard.c
 libcmpiOSBase_BaseBoardProvider_la_LIBADD = -lcmpiOSBase_Common -ldmiinfo
+libcmpiOSBase_BaseBoardProvider_la_LDFLAGS = -avoid-version
 
 libcmpiOSBase_RunningOSProvider_la_SOURCES = cmpiOSBase_RunningOSProvider.c
 libcmpiOSBase_RunningOSProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_RunningOSProvider_la_LDFLAGS = -avoid-version
+
 libcmpiOSBase_OSProcessProvider_la_SOURCES = cmpiOSBase_OSProcessProvider.c
 libcmpiOSBase_OSProcessProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_OSProcessProvider_la_LDFLAGS = -avoid-version
+
 libcmpiOSBase_OperatingSystemStatisticsProvider_la_SOURCES = cmpiOSBase_OperatingSystemStatisticsProvider.c
 libcmpiOSBase_OperatingSystemStatisticsProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_OperatingSystemStatisticsProvider_la_LDFLAGS = -avoid-version
+
 libcmpiOSBase_CSProcessorProvider_la_SOURCES = cmpiOSBase_CSProcessorProvider.c
 libcmpiOSBase_CSProcessorProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_CSProcessorProvider_la_LDFLAGS = -avoid-version
+
 libcmpiOSBase_CSBaseBoardProvider_la_SOURCES = cmpiOSBase_CSBaseBoardProvider.c
 libcmpiOSBase_CSBaseBoardProvider_la_LIBADD = -lcmpiOSBase_Common
+libcmpiOSBase_CSBaseBoardProvider_la_LDFLAGS = -avoid-version
 
 
 # OSBase support utility libraries

@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.8 2005/07/26 13:51:07 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.9 2005/07/27 16:01:09 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -67,11 +67,15 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 # remove unused libtool files
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*a
+strip $RPM_BUILD_ROOT/%{_libdir}/*.so*
 %if %{?tog_pegasus:0}%{!?tog_pegasus:1}
 rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
+strip $RPM_BUILD_ROOT/%{_libdir}/cmpi/*.so* 
 %else
 rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
+strip $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*.so*
 %endif
+
 
 %post
 # Register Schema and Provider - this is higly provider specific
@@ -99,19 +103,21 @@ rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
 %files
 
 %defattr(-,root,root) 
+%docdir %{_datadir}/doc/%{name}-%{version}
 %{_datadir}/%{name}
 %{_datadir}/doc/%{name}-%{version}
-%{_libdir}/*.so*
+%{_libdir}/*.so.*
 %if %{?tog_pegasus:0}%{!?tog_pegasus:1}
-%{_libdir}/cmpi/*.so*
+%{_libdir}/cmpi/*.so
 %else
-/opt/tog-pegasus/providers/lib/*.so*
+/opt/tog-pegasus/providers/lib/*.so
 %endif
 
 %files devel
 
 %defattr(-,root,root)
 %{_includedir}/*
+%{_libdir}/*.so
 
 %files test
 
@@ -119,5 +125,5 @@ rm -f $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*a
 %{_datadir}/sblim-testsuite
 
 %changelog
-* Wed Jul 20 2005 Mark Hamzy <hamzy@us.ibm.com>	1.5.2b-1%{?tog_pegasus:.tog-pegasus}
+* Wed Jul 20 2005 Mark Hamzy <hamzy@us.ibm.com>	%{version}-%{release}
   - initial support
