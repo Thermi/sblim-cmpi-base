@@ -1,5 +1,5 @@
 /*
- * $Id: dmiinfo.c,v 1.1 2005/01/24 11:29:05 heidineu Exp $
+ * $Id: dmiinfo.c,v 1.2 2005/07/28 10:36:51 mihajlov Exp $
  *
  * (C) Copyright IBM Corp. 2003
  *
@@ -71,10 +71,12 @@ void cimdmi_init()
 	/* find DMI anchor */
 	for (dmif=biosptr;(void*)dmif<(biosptr+bioslen);dmif++) {
 	  if (memcmp("_DMI_",dmif->dmi_sig,5)==0) {
+#ifdef DEBUG
 	    printf("DMI Signature found at %08x\n",
 		   (void*)dmif-biosptr+offbios);
 	    printf("SMBIOS Structures reside at %08x\n",
 		   dmif->dmi_base);
+#endif
 	    break;
 	  }
 	}

@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.spec.in,v 1.9 2005/07/27 16:01:09 mihajlov Exp $
+# $Id: sblim-cmpi-base.spec.in,v 1.10 2005/07/28 10:36:51 mihajlov Exp $
 #
 # Package spec for @PACKAGE@
 #
@@ -8,7 +8,7 @@
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
-Summary: Sample CMPI Provider
+Summary: SBLIM Base Providers
 Name: @PACKAGE_TARNAME@
 Version: @PACKAGE_VERSION@
 Release: 1%{?tog_pegasus:.tog_pegasus}
@@ -22,7 +22,8 @@ BuildRequires: cmpi-devel
 Requires: %{?tog_pegasus:tog-pegasus}%{!?tog_pegasus:cimserver}
 
 %Description
-Standards Based Linux Instrumentation Base Providers
+Standards Based Linux Instrumentation Base CMPI Providers for
+System-related CIM classes
 
 %Package devel
 Summary: SBLIM Base Instrumentation Header Development Files
@@ -30,7 +31,9 @@ Group: Systems Management/Base
 Requires: %{name} = %{version}
 
 %Description devel
-SBLIM Base Provider Development Package
+SBLIM Base Provider Development Package contains header files and 
+link libraries
+for dependent provider packages
 
 %Package test
 Summary: SBLIM Base Instrumentation Testcase Files
@@ -77,9 +80,8 @@ strip $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*.so*
 %endif
 
 
-%post
-# Register Schema and Provider - this is higly provider specific
-
+%pre
+# Conditional definition of schema and registration files
 %if "@LINDHELP@" != ""
 %define SCHEMA %{_datadir}/%{name}/Linux_Base.mof %{_datadir}/%{name}/Linux_BaseIndication.mof
 %define REGISTRATION %{_datadir}/%{name}/Linux_BaseIndication.registration
@@ -88,17 +90,35 @@ strip $RPM_BUILD_ROOT/opt/tog-pegasus/providers/lib/*.so*
 %define REGISTRATION %{_datadir}/%{name}/Linux_Base.registration
 %endif
 
+# If upgrading, deregister old version
+if [ $1 -gt 1 ]
+then
+  %{_datadir}/%{name}/provider-register.sh -d %{?tog_pegasus:-t pegasus} \
+	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
+fi
+
+%post
+# Register Schema and Provider - this is higly provider specific
+
 %{_datadir}/%{name}/provider-register.sh %{?tog_pegasus:-t pegasus} \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
 
 /sbin/ldconfig
 
 %preun
-
-%{_datadir}/%{name}/provider-register.sh -d %{?tog_pegasus:-t pegasus} \
+# Deregister only if not upgrading 
+if [ $1 -eq 0 ]
+then
+  %{_datadir}/%{name}/provider-register.sh -d %{?tog_pegasus:-t pegasus} \
 	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
+fi
 
-%postun -p /sbin/ldconfig
+%postun 
+# Run ldconfig only if not upgrading
+if [ $1 -eq 0 ]
+then
+  /sbin/ldconfig
+fi
 
 %files
 

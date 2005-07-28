@@ -1,3 +1,16 @@
+2005-07-28    <mihajlov@dyn-9-152-143-97.boeblingen.de.ibm.com>
+
+	* dmiinfo.c: 
+	Bug 1246639: Unwanted debug output removed.
+
+	* Makefile.am: 
+	Bug 1236584: Added per provider LDFLAGS to suppress version number
+	generation, as rpmlint doesn't like .so.n.n files and .so files
+	in the same RPM.
+
+	* sblim-cmpi-base.spec.in: 
+	Bug 1236584: Modified scriptlets to support RPM upgrade.
+	
 2005-07-12    <mihajlov@dyn-9-152-143-42.boeblingen.de.ibm.com>
 
 	* provider-register.sh: 
