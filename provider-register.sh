@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.9 2005/07/12 13:06:54 mihajlov Exp $
+# $Id: provider-register.sh,v 1.10 2005/08/18 19:33:13 tyreld Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -381,7 +381,7 @@ function sfcb_install()
       then 
 	  mofmode=0
 	  shift
-	  baseregname=`basename -$1 .registration`
+	  baseregname=`basename $1 .registration`
 	  continue
       fi
       if test $mofmode == 1
@@ -428,7 +428,7 @@ function sfcb_uninstall()
       if test $1 == ":"
       then 
 	  shift
-	  baseregname=`basename -$1 .registration`
+	  baseregname=`basename $1 .registration`
 	  break
       fi
       mymofs="$mymofs `basename $1`"
