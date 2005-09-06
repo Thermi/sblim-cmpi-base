@@ -1,3 +1,9 @@
+Changes in 1.5.4
+================
+
+Bugs Fixed:
+- 1246886 Fixed provider-register.sh multi-class registration.
+
 Changes in 1.5.3
 ================
 
