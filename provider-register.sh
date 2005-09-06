@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.10 2005/08/18 19:33:13 tyreld Exp $
+# $Id: provider-register.sh,v 1.11 2005/09/06 14:57:03 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -136,7 +136,7 @@ instance of PG_ProviderCapabilities
    Namespaces = {"$NAMESPACE"};
    SupportedProperties = NULL;
    SupportedMethods = NULL;
-   CapabilityID = "$serial";
+   CapabilityID = "$CLASSNAME-$serial";
 };
 
 EOFC
