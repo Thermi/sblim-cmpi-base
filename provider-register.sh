@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.11 2005/09/06 14:57:03 mihajlov Exp $
+# $Id: provider-register.sh,v 1.12 2005/09/09 11:43:15 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -16,9 +16,9 @@
 #               registration data for a variety of supported CIMOMs
 # ==================================================================
 
-function pegasus_repository()
+pegasus_repository()
 {
-    for p in /var/lib/pegasus /usr/local/var/lib/pegasus \
+    for p in /var/lib/Pegasus /var/lib/pegasus /usr/local/var/lib/pegasus \
 	/var/local/lib/pegasus /var/opt/tog-pegasus $PEGASUS_HOME
     do
       if test -d $p/repository
@@ -30,7 +30,7 @@ function pegasus_repository()
     return 1
 }
 
-function pegasus_path()
+pegasus_path()
 {
     for p in /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin \
 	/opt/tog-pegasus/bin /opt/tog-pegasus/sbin $PEGASUS_HOME/bin
@@ -44,13 +44,13 @@ function pegasus_path()
     return 1
 }
 
-function pegasus_transform()
+pegasus_transform()
 {
     OUTFILE=$1
     shift
     regfiles=$*
     PROVIDERMODULES=`cat $regfiles 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 4 | sort | uniq`
-    if test x"$PROVIDERMODULES" == x
+    if test x"$PROVIDERMODULES" = x
     then
 	echo Failed to read registration files >&2
 	return 1
@@ -103,22 +103,22 @@ EOFP
 	do
 	  case $cap in
 	      instance) 
-		  if test x$numcap == x 
+		  if test x$numcap = x 
 		  then numcap=2
 		  else numcap="$numcap, 2"
 		  fi;;
 	      association) 
-		  if test x$numcap == x 
+		  if test x$numcap = x 
 		  then numcap=3
 		  else numcap="$numcap, 3"
 		  fi;;
 	      indication) 
-		  if test x$numcap == x 
+		  if test x$numcap = x 
 		  then numcap=4
 		  else numcap="$numcap, 4"
 		  fi;;
 	      method) 
-		  if test x$numcap == x 
+		  if test x$numcap = x 
 		  then numcap=5
 		  else numcap="$numcap, 5"
 		  fi;;
@@ -144,7 +144,7 @@ EOFC
     done
 }
 
-function pegasus_install()
+pegasus_install()
 {
     if ps -C cimserver > /dev/null 2>&1 
     then
@@ -159,7 +159,7 @@ function pegasus_install()
 	CIMMOF=`pegasus_path cimmofl`
 	if test $? != 0
 	then
-	    echo "Error: cimmof not found" >&2
+	    echo "Error: cimmofl not found" >&2
 	    return 1
 	fi
 	PEGASUSREPOSITORY=`pegasus_repository`
@@ -172,19 +172,24 @@ function pegasus_install()
 	state=inactive
     fi
 
+    mofpath=
     mymofs=
     mregs=
     mofmode=1
     while test x$1 != x
     do 
-      if test $1 == ":"
+      if test $1 = ":"
       then 
 	  mofmode=0
 	  shift
 	  continue
       fi
-      if test $mofmode == 1
+      if test $mofmode = 1
       then
+	  if test x$mofpath = x
+	  then
+	      mofpath=`dirname $1`
+	  fi
 	  mymofs="$mymofs $1"
       else
 	  myregs="$myregs $1"
@@ -207,28 +212,28 @@ function pegasus_install()
     if pegasus_transform $_REGFILENAME $myregs
     then
 	chatter Registering providers with $state cimserver
-	$CIMMOF -n root/cimv2 $mymofs &&
-	$CIMMOF -n root/PG_Interop $_REGFILENAME
+	$CIMMOF -uc -I $mofpath -n root/cimv2 $mymofs &&
+	$CIMMOF -uc -n root/PG_Interop $_REGFILENAME
     else
 	echo "Failed to build pegasus registration MOF." >&2
 	return 1
     fi
 }
 
-function pegasus_uninstall()
+pegasus_uninstall()
 {
     mymofs=
     mregs=
     mofmode=1
     while test x$1 != x
     do 
-      if test $1 == ":"
+      if test $1 = ":"
       then 
 	  mofmode=0
 	  shift
 	  continue
       fi
-      if test $mofmode == 1
+      if test $mofmode = 1
       then
 	  mymofs="$mymofs $1"
       else
@@ -240,7 +245,7 @@ function pegasus_uninstall()
     if ps -C cimserver > /dev/null 2>&1 
     then
 	PROVIDERMODULES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 4 | sort | uniq`
-	if test x"$PROVIDERMODULES" == x
+	if test x"$PROVIDERMODULES" = x
 	    then
 	    echo Failed to read registration files >&2
 	    return 1
@@ -292,7 +297,7 @@ EOFWX
     fi
 }
 
-function sfcb_transform()
+sfcb_transform()
 {
     OUTFILE=$1
     shift
@@ -316,7 +321,7 @@ EOFC
     done
 }
 
-function sfcb_rebuild()
+sfcb_rebuild()
 {
     if ps -C sfcbd > /dev/null 2>&1
     then
@@ -329,7 +334,7 @@ function sfcb_rebuild()
 	  fi
 	done
 	chatter "Shutting down sfcb."
-	if test $INITSCRIPT == none
+	if test $INITSCRIPT = none
 	then
 	    killall sfcbd
 	else
@@ -340,7 +345,7 @@ function sfcb_rebuild()
 	do
 	  sleep 1
 	  t=`expr $t + 1`
-	  if test $t > 10
+	  if test $t -gt 10
 	  then
 	      echo "Timed out waiting for sfcb shutdown..." >&2
 	      echo "Please stop sfcb manually and rebuild the repository using sfcbrepos." >&2
@@ -355,7 +360,7 @@ function sfcb_rebuild()
 	    return 1
 	fi
 	
-	if test $INITSCRIPT == none
+	if test $INITSCRIPT = none
 	then
 	    echo "No init script found - you need to start sfcbd manually." >&2
 	    return 1
@@ -370,21 +375,21 @@ function sfcb_rebuild()
     fi
 }
 
-function sfcb_install()
+sfcb_install()
 {    
     mymofs=
     mregs=
     mofmode=1
     while test x$1 != x
     do 
-      if test $1 == ":"
+      if test $1 = ":"
       then 
 	  mofmode=0
 	  shift
 	  baseregname=`basename $1 .registration`
 	  continue
       fi
-      if test $mofmode == 1
+      if test $mofmode = 1
       then
 	  mymofs="$mymofs $1"
       else
@@ -420,12 +425,12 @@ function sfcb_install()
     fi
 }
 
-function sfcb_uninstall()
+sfcb_uninstall()
 {    
     mymofs=
     while test x$1 != x
     do 
-      if test $1 == ":"
+      if test $1 = ":"
       then 
 	  shift
 	  baseregname=`basename $1 .registration`
@@ -443,7 +448,7 @@ function sfcb_uninstall()
     sfcb_rebuild
 }
 
-function openwbem_transform()
+openwbem_transform()
 {
     OUTFILE=$1
     shift
@@ -458,7 +463,7 @@ function openwbem_transform()
     fi
 }
 
-function openwbem_repository()
+openwbem_repository()
 {
     for p in /var/lib/openwbem /usr/local/var/openwbem
     do
@@ -471,7 +476,7 @@ function openwbem_repository()
     return 1
 }
 
-function openwbem_install()
+openwbem_install()
 {
     CIMMOF=`which owmofc 2> /dev/null`
     if test $? != 0
@@ -514,7 +519,7 @@ function openwbem_install()
     fi       
 }
 
-function openwbem_uninstall()
+openwbem_uninstall()
 {
     CIMMOF=`which owmofc 2> /dev/null`
     if test $? != 0
@@ -557,7 +562,7 @@ function openwbem_uninstall()
     fi       
 }
 
-function cim_server()
+cim_server()
 {
     for exname in sfcbd cimserver owcimomd
     do
@@ -575,12 +580,12 @@ function cim_server()
     return 1
 }
 
-function usage() 
+usage() 
 {
     echo "usage: $0 [-h] [-v] [-d] [-t <cimserver>] -r regfile ... -m mof ..."
 }
 
-function chatter()
+chatter()
 {
     if test x$verbose != x
     then
@@ -588,7 +593,7 @@ function chatter()
     fi
 }
 
-function gb_getopt()
+gb_getopt()
 {
     rmode=0
     mmode=0
@@ -608,9 +613,9 @@ function gb_getopt()
 	      rmode=0;
 	      options="$options $1";
 	      shift;;
-	  **) if [ $mmode == 1 ] 
+	  **) if [ $mmode = 1 ] 
 	      then moffiles="$moffiles $1"       
-	      elif [ $rmode == 1 ]
+	      elif [ $rmode = 1 ]
 	      then registrations="$registrations -r $1" 
 	      else options="$options $1";
 	      fi; 
@@ -620,11 +625,15 @@ function gb_getopt()
     echo $options $registrations $moffiles 
 }
 
-
 prepargs=`gb_getopt $*`
 args=`getopt dvht:r: $prepargs`
+rc=$?
 
-if [ $? != 0 ]
+if [ $rc = 127 ]
+then
+    echo "warning: getopt not found ...continue without syntax check"
+    args=$prepargs
+elif [ $rc != 0 ]
 then
     usage $0
     exit 1
@@ -654,7 +663,7 @@ done
 
 mofs=$*
 
-if [ "$help" == "1" ]
+if [ "$help" = "1" ]
 then
     usage
     echo -e "\t-h display help message"
@@ -669,16 +678,16 @@ then
     exit 0
 fi
 
-if test x"$mofs" == x || test x"$regs" == x
+if test x"$mofs" = x || test x"$regs" = x
 then
     usage $0
     exit 1
 fi
 
-if test x$cimserver == x
+if test x$cimserver = x
 then
     cimserver=`cim_server`
-    if test $? == 0
+    if test $? = 0
     then
 	chatter "Autoselected CIM server type:" $cimserver
     else
@@ -687,7 +696,7 @@ then
     fi
 fi
 
-if test x$deregister == x
+if test x$deregister = x
 then
     case $cimserver in
 	pegasus) pegasus_install $mofs ":" $regs;;
