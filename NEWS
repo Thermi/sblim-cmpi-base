@@ -3,6 +3,8 @@ Changes in 1.5.4
 
 Bugs Fixed:
 - 1246886 Fixed provider-register.sh multi-class registration.
+- 1285011 Fixes portability issues (syntax)
+- 1285324 Enhanced pegasus repository detection
 
 Changes in 1.5.3
 ================
