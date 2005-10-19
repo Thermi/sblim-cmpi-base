@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.9 2005/07/27 16:01:08 mihajlov Exp $
+# $Id: Makefile.am,v 1.10 2005/10/19 16:04:33 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -158,7 +158,7 @@ noinst_HEADERS = OSBase_ComputerSystem.h \
 	cmpiOSBase_BaseBoard.h
 
 # We must explicity add the RPM spec file to the distribution package
-EXTRA_DIST+=$(PACKAGE).spec
+EXTRA_DIST+=$(PACKAGE).spec $(PACKAGE).rh.spec
 
 
 #

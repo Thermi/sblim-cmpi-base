@@ -1,3 +1,11 @@
+2005-10-19    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
+
+	* sblim-cmpi-base.spec.in:
+	Bugs 1236584 Removed RH specific stuff.
+
+	* sblim-cmpi-base.rh.spec:
+	Bugs 1236584 Entirely new spec for RH/Fedora.
+
 2005-09-09    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
 	* provider-register.sh:
