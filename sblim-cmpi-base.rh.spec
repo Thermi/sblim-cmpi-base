@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.rh.spec,v 1.1 2005/10/19 16:04:33 mihajlov Exp $
+# $Id: sblim-cmpi-base.rh.spec,v 1.2 2005/10/28 15:10:24 mihajlov Exp $
 #
 # Package spec for sblim-cmpi-base - RedHat/Fedora Flavor
 #
@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Summary: SBLIM Base Providers
 Name: sblim-cmpi-base
 Version: 1.5.4
-Release: 1
+Release: 2
 Group: Systems Management/Base
 URL: http://www.sblim.org
 License: CPL
@@ -20,7 +20,7 @@ License: CPL
 Source0: http://download.sourceforge.net/pub/sourceforge/s/sb/sblim/%{name}-%{version}.tar.bz2
 
 BuildRequires: tog-pegasus-devel >= 2.5
-Requires: tog-pegasus >= 2.5
+Requires: tog-pegasus >= 2.5.1
 
 %Description
 Standards Based Linux Instrumentation Base CMPI Providers for
@@ -51,7 +51,7 @@ SBLIM Base Provider Testcase Files for the SBLIM Testsuite
 %build
 
 %configure TESTSUITEDIR=%{_datadir}/sblim-testsuite \
-	CIMSERVER=pegasus PROVIDERDIR=/usr/lib/Pegasus/providers
+	CIMSERVER=pegasus
 make %{?_smp_mflags}
 
 %install
@@ -62,7 +62,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 # remove unused libtool files
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*a
-rm -f $RPM_BUILD_ROOT/usr/lib/Pegasus/providers/*a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 
 %pre
 
@@ -105,7 +105,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}
 %{_datadir}/doc/%{name}-%{version}
 %{_libdir}/*.so.*
-/usr/lib/Pegasus/providers/*.so
+%{_libdir}/cmpi/*.so
 
 %files devel
 
@@ -119,6 +119,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/sblim-testsuite
 
 %changelog
+
+* Wed Oct 27 2005  <mihajlov@de.ibm.com> - 1.5.4-2
+- went back to original provider dir location as FC5 pegasus 2.5.1 support
+  /usr/lib[64]/cmpi
+
 * Wed Oct 12 2005  <mihajlov@de.ibm.com> - 1.5.4-1
 - new spec file specifically for Fedora/RedHat
 
