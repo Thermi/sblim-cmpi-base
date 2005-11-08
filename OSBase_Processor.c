@@ -48,6 +48,7 @@ char * CPUINFO = "/proc/cpuinfo";
 
 //char * CPUINFO = "/home/heidineu/local/sblim/cmpi-base-cpuinfo/s390_ibm_s390";
 //char * CPUINFO = "/home/heidineu/local/sblim/cmpi-base-cpuinfo/s390_ibm_s390_2x";
+//char * CPUINFO = "/tmp/ia64_cpuinfo";
 
 /* ---------------------------------------------------------------------------*/
 
@@ -187,7 +188,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   hdout=NULL;
   if(cmd) free(cmd);
   rc = 0;
-#elif defined (S390) || defined (PPC)
+#elif defined (S390) || defined (PPC) || defined (IA64)
   (*sptr)->step = (char*)malloc(12);
   strcpy((*sptr)->step,"no stepping");
 #elif defined (GENERIC)
@@ -202,8 +203,11 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 #if defined (INTEL) || defined (X86_64)
   strcat(cmd, " | grep '^model name'");
   rc = runcommand( cmd , NULL , &hdout , NULL );
+#elif defined (IA64)
+  strcat(cmd, " | grep '^family'");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (S390)
-  strcat(cmd, " | grep '^vendor_id'");
+  strcat(cmd, " | grep '^vendor'");
   rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (PPC)
   strcat(cmd, " | grep '^cpu'");
@@ -222,7 +226,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   if( rc == 0 ) {
 #if defined (S390)
     ptr = strchr( hdout[0], ':');
-#elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (GENERIC)
+#elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (IA64) || defined (GENERIC) 
     ptr = strchr( hdout[id], ':');
 #endif
     ptr = ptr+2;
@@ -243,7 +247,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   cmd = (char *)malloc((strlen(CPUINFO)+64));
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
-#if defined (INTEL) || defined (X86_64)
+#if defined (INTEL) || defined (X86_64) || defined (IA64)
   strcat(cmd, " | grep 'cpu MHz'");
   rc = runcommand( cmd, NULL, &hdout, NULL );
 #elif defined (S390)
@@ -274,7 +278,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   if( rc == 0 ) {
 #if defined (S390)
     ptr = strchr( hdout[0], ':');
-#elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (GENERIC)
+#elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (IA64) || defined (GENERIC) 
     ptr = strchr( hdout[id], ':');
 #endif
     ptr = ptr+1;
@@ -301,8 +305,8 @@ static unsigned short _processor_family( int id ) {
   strcpy(cmd, "cat ");
   strcat(cmd, CPUINFO);
 
-#if defined (INTEL) || defined (S390) || defined (X86_64)
-  strcat(cmd, " | grep vendor_id");
+#if defined (INTEL) || defined (S390) || defined (X86_64) || defined (IA64)
+  strcat(cmd, " | grep vendor");
   rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (PPC)
   strcat(cmd, " | grep cpu");
@@ -321,8 +325,19 @@ static unsigned short _processor_family( int id ) {
     if( strstr( hdout[0], "S390") != NULL ) {
       rv = 200;
     }
-
-#elif defined (INTEL) || defined (PPC) || defined (X86_64)
+#elif defined (IA64)
+    /* Itanium Family */
+    if (strstr (hdout[id], "Intel") ) {
+      freeresultbuf(hdout);
+      strcat(cmd, " | grep 'family'");
+      rc = runcommand( cmd, NULL , &hdout , NULL );
+      if ( strstr(hdout[id], "Itanium 2") != NULL ) {
+	rv = 180; 
+      } else {
+	rv = 144;
+      }
+    }
+#elif defined (INTEL) || defined (PPC) || defined (X86_64) 
 
     /* Intel Family */
     if( strstr( hdout[id], "Intel") != NULL ) {
