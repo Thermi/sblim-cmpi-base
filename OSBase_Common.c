@@ -226,7 +226,7 @@ signed short get_os_timezone() {
     _OSBASE_TRACE(4,("--- get_os_timezone() called : init"));
 
     tzset();
-    CIM_OS_TIMEZONE = -timezone;
+    CIM_OS_TIMEZONE = -(timezone/60);
   }
   return CIM_OS_TIMEZONE;
 }
