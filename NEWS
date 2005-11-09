@@ -10,6 +10,7 @@ Bugs Fixed:
 - 1328703 Fixed strange version string problem 
 - 1203849 Removed compile warnings with CMPI >= 1.0.0
 - 1199129 Full support of CMPI 1.0.0
+- 1331750 Removed invalid clock speeds for zSeries/S390
 
 Changes in 1.5.3
 ================

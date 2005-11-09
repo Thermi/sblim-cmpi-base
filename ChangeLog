@@ -1,5 +1,8 @@
 2005-11-09    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
+	* OSBase_Processor.c, cmpiOSBase_Processor.c:
+	Bugs 1331750: Remove meaningless clock speeds for zSeries platform.
+	
 	* cmpiOSBase_BaseBoard.c, cmpiOSBase_BaseBoard.h,
 	cmpiOSBase_BaseBoardProvider.c, cmpiOSBase_CSBaseBoardProvider.c,
 	cmpiOSBase_CSProcessorProvider.c, cmpiOSBase_Common.c,

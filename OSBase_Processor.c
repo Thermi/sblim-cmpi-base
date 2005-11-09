@@ -251,8 +251,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   strcat(cmd, " | grep 'cpu MHz'");
   rc = runcommand( cmd, NULL, &hdout, NULL );
 #elif defined (S390)
-  strcat(cmd, " | grep 'bogomips per cpu'");
-  rc = runcommand( cmd, NULL, &hdout, NULL );
+  rc = 0; /* clock speed cannot be determined on zSeries */
 #elif defined (PPC)
   strcat(cmd, " | grep '^clock' | sed -e s/mhz//i");
   rc = runcommand( cmd, NULL, &hdout, NULL );
@@ -277,7 +276,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 
   if( rc == 0 ) {
 #if defined (S390)
-    ptr = strchr( hdout[0], ':');
+    ptr = ":0"; /* don't support clock speed on zSeries */
 #elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (IA64) || defined (GENERIC) 
     ptr = strchr( hdout[id], ':');
 #endif

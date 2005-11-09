@@ -158,9 +158,12 @@ CMPIInstance * _makeInst_Processor( const CMPIBroker * _broker,
   CMSetProperty( ci, "Family", (CMPIValue*)&(sptr->family), CMPI_uint16);
   CMSetProperty( ci, "OtherFamilyDescription", "NULL", CMPI_chars);
 
-  CMSetProperty( ci, "MaxClockSpeed", (CMPIValue*)&(sptr->maxClockSpeed), CMPI_uint32);
-  CMSetProperty( ci, "CurrentClockSpeed", (CMPIValue*)&(sptr->curClockSpeed), CMPI_uint32);
-
+  if (sptr->maxClockSpeed > 0) {
+    CMSetProperty( ci, "MaxClockSpeed", (CMPIValue*)&(sptr->maxClockSpeed), CMPI_uint32);
+  }
+  if (sptr->curClockSpeed > 0) {
+    CMSetProperty( ci, "CurrentClockSpeed", (CMPIValue*)&(sptr->curClockSpeed), CMPI_uint32);
+  }
   CMSetProperty( ci, "Name", sptr->id, CMPI_chars );
 
   /* 2.7 */
