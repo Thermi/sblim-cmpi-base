@@ -1,5 +1,23 @@
 2005-11-09    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
+	* cmpiOSBase_BaseBoard.c, cmpiOSBase_BaseBoard.h,
+	cmpiOSBase_BaseBoardProvider.c, cmpiOSBase_CSBaseBoardProvider.c,
+	cmpiOSBase_CSProcessorProvider.c, cmpiOSBase_Common.c,
+	cmpiOSBase_Common.h, cmpiOSBase_ComputerSystem.c,
+	cmpiOSBase_ComputerSystem.h, cmpiOSBase_ComputerSystemProvider.c,
+	cmpiOSBase_OSProcessProvider.c, cmpiOSBase_OperatingSystem.c,
+	cmpiOSBase_OperatingSystem.h, cmpiOSBase_OperatingSystemProvider.c,
+	cmpiOSBase_OperatingSystemStatisticalData.c,
+	cmpiOSBase_OperatingSystemStatisticalData.h,
+	cmpiOSBase_OperatingSystemStatisticalDataProvider.c,
+	cmpiOSBase_OperatingSystemStatisticsProvider.c,
+	cmpiOSBase_Processor.c, cmpiOSBase_Processor.h,
+	cmpiOSBase_ProcessorProvider.c, cmpiOSBase_RunningOSProvider.c,
+	cmpiOSBase_UnixProcess.c, cmpiOSBase_UnixProcess.h,
+	cmpiOSBase_UnixProcessProvider.c, configure.ac:
+	Bugs 1199129, 1203849: Updates for warning-free compilation
+	with CMPI headers >= 1.0.0.
+	
 	* OSBase_OperatingSystem.c: 
 	Bugs 1328703 Use lsb-release only if not other /etc/*release files
 	could be found.

@@ -37,10 +37,13 @@
 #include "cmpiOSBase_Common.h"
 #include "cmpiOSBase_UnixProcess.h"
 
-static CMPIBroker * _broker;
+static const CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
+#ifdef CMPI_VER_100
+#define OSBase_UnixProcessProviderSetInstance OSBase_UnixProcessProviderModifyInstance 
+#endif
 
 
 /* ---------------------------------------------------------------------------*/
@@ -52,16 +55,16 @@ static CMPIBroker * _broker;
 
 
 CMPIStatus OSBase_UnixProcessProviderCleanup( CMPIInstanceMI * mi, 
-           CMPIContext * ctx) { 
+           const CMPIContext * ctx, CMPIBoolean terminate) { 
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus OSBase_UnixProcessProviderEnumInstanceNames( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref) { 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref) { 
   CMPIObjectPath     * op    = NULL;  
   CMPIStatus           rc    = {CMPI_RC_OK, NULL};
   struct processlist * lptr  = NULL;
@@ -103,10 +106,10 @@ CMPIStatus OSBase_UnixProcessProviderEnumInstanceNames( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_UnixProcessProviderEnumInstances( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref, 
-           char ** properties) { 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref, 
+           const char ** properties) { 
   CMPIInstance       * ci    = NULL;
   CMPIStatus           rc    = {CMPI_RC_OK, NULL};
   struct processlist * lptr  = NULL;
@@ -148,10 +151,10 @@ CMPIStatus OSBase_UnixProcessProviderEnumInstances( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_UnixProcessProviderGetInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop, 
-           char ** properties) {  
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop, 
+           const char ** properties) {  
   CMPIInstance       * ci    = NULL;
   CMPIStatus           rc    = {CMPI_RC_OK, NULL};
   struct cim_process * sptr  = NULL;
@@ -207,10 +210,10 @@ CMPIStatus OSBase_UnixProcessProviderGetInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_UnixProcessProviderCreateInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop, 
-           CMPIInstance * ci) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop, 
+           const CMPIInstance * ci) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() called",_ClassName));
@@ -223,11 +226,11 @@ CMPIStatus OSBase_UnixProcessProviderCreateInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_UnixProcessProviderSetInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop,
-           CMPIInstance * ci, 
-           char **properties) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop,
+           const CMPIInstance * ci, 
+           const char ** properties) {
   CMPIStatus           rc    = {CMPI_RC_OK, NULL};
 #ifdef MODULE_SYSMAN
   struct cim_process * sptr  = NULL;
@@ -310,9 +313,9 @@ CMPIStatus OSBase_UnixProcessProviderSetInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_UnixProcessProviderDeleteInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop) {
   CMPIStatus rc = {CMPI_RC_OK, NULL}; 
 
   _OSBASE_TRACE(1,("--- %s CMPI DeleteInstance() called",_ClassName));
@@ -325,11 +328,11 @@ CMPIStatus OSBase_UnixProcessProviderDeleteInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_UnixProcessProviderExecQuery( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref, 
-           char * lang, 
-           char * query) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref, 
+           const char * lang, 
+           const char * query) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI ExecQuery() called",_ClassName));
@@ -348,18 +351,18 @@ CMPIStatus OSBase_UnixProcessProviderExecQuery( CMPIInstanceMI * mi,
 
 
 CMPIStatus OSBase_UnixProcessProviderMethodCleanup( CMPIMethodMI * mi, 
-           CMPIContext * ctx) {
+           const CMPIContext * ctx, CMPIBoolean terminate) {
   _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus OSBase_UnixProcessProviderInvokeMethod( CMPIMethodMI * mi,
-           CMPIContext * ctx,
-           CMPIResult * rslt,
-           CMPIObjectPath * ref,
-           char * methodName,
-           CMPIArgs * in,
+           const CMPIContext * ctx,
+           const CMPIResult * rslt,
+           const CMPIObjectPath * ref,
+           const char * methodName,
+           const CMPIArgs * in,
            CMPIArgs * out) {
   CMPIData         pid;
   CMPIValue        valrc;

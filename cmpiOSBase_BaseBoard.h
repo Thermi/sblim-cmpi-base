@@ -38,17 +38,17 @@ static char * _ClassName = "Linux_BaseBoard";
 
 /* method to create a CMPIObjectPath of this class                            */
 
-CMPIObjectPath * _makePath_BaseBoard( CMPIBroker * _broker,
-	         CMPIContext * ctx, 
-	         CMPIObjectPath * cop,
+CMPIObjectPath * _makePath_BaseBoard( const CMPIBroker * _broker,
+	         const CMPIContext * ctx, 
+	         const CMPIObjectPath * cop,
 	         CMPIStatus * rc);
 
 
 /* method to create a CMPIInstance of this class                              */
 
-CMPIInstance * _makeInst_BaseBoard( CMPIBroker * _broker,
-	       CMPIContext * ctx, 
-	       CMPIObjectPath * cop,
+CMPIInstance * _makeInst_BaseBoard( const CMPIBroker * _broker,
+	       const CMPIContext * ctx, 
+	       const CMPIObjectPath * cop,
 	       const char ** properties,
 	       CMPIStatus * rc);
 

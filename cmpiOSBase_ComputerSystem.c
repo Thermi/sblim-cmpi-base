@@ -48,9 +48,9 @@
 
 /* ---------- method to create a CMPIObjectPath of this class ----------------*/
 
-CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
-		 CMPIContext * ctx, 
-	         CMPIObjectPath * ref,
+CMPIObjectPath * _makePath_ComputerSystem( const CMPIBroker * _broker,
+		 const CMPIContext * ctx, 
+	         const CMPIObjectPath * ref,
 	         CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
@@ -85,9 +85,9 @@ CMPIObjectPath * _makePath_ComputerSystem( CMPIBroker * _broker,
 
 /* ----------- method to create a CMPIInstance of this class ----------------*/
 
-CMPIInstance * _makeInst_ComputerSystem( CMPIBroker * _broker,
-	       CMPIContext * ctx, 
-	       CMPIObjectPath * ref,
+CMPIInstance * _makeInst_ComputerSystem( const CMPIBroker * _broker,
+	       const CMPIContext * ctx, 
+	       const CMPIObjectPath * ref,
 	       const char ** properties,
 	       CMPIStatus * rc) {
   CMPIObjectPath *  op        = NULL;

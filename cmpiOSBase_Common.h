@@ -41,22 +41,22 @@ extern unsigned char CMPI_false;
 
 /* ---------------------------------------------------------------------------*/
 
-void _check_system_key_value_pairs( CMPIBroker * _broker,
-				    CMPIObjectPath * cop,
-				    char * creationClassName,
-				    char * className,
+void _check_system_key_value_pairs( const CMPIBroker * _broker,
+				    const CMPIObjectPath * cop,
+				    const char * creationClassName,
+				    const char * className,
 				    CMPIStatus * rc );
 
 
-int _assoc_create_inst_1toN( CMPIBroker * _broker,
-			     CMPIContext * ctx,
-			     CMPIResult * rslt,
-			     CMPIObjectPath * cop,
-			     char * _ClassName,
-			     char * _RefLeftClass,
-			     char * _RefRightClass,
-			     char * _RefLeft,
-			     char * _RefRight,
+int _assoc_create_inst_1toN( const CMPIBroker * _broker,
+			     const CMPIContext * ctx,
+			     const CMPIResult * rslt,
+			     const CMPIObjectPath * cop,
+			     const char * _ClassName,
+			     const char * _RefLeftClass,
+			     const char * _RefRightClass,
+			     const char * _RefLeft,
+			     const char * _RefRight,
 			     int left,
 			     int inst,
 			     CMPIStatus * rc);
@@ -64,57 +64,57 @@ int _assoc_create_inst_1toN( CMPIBroker * _broker,
 
 /* - method to create CMPIInstance out of the CMPIObjectPath of an            */
 /*   association instance                                                     */
-CMPIInstance * _assoc_get_inst( CMPIBroker * _broker,
-				CMPIContext * ctx,
-				CMPIObjectPath * cop,
-				char * _ClassName,
-				char * _RefLeft,
-				char * _RefRight,
+CMPIInstance * _assoc_get_inst( const CMPIBroker * _broker,
+				const CMPIContext * ctx,
+				const CMPIObjectPath * cop,
+				const char * _ClassName,
+				const char * _RefLeft,
+				const char * _RefRight,
 				CMPIStatus * rc );
 
 
 /* - method to create CMPIInstance(s) / CMPIObjectPath(s) of association      */
-int _assoc_create_refs_1toN( CMPIBroker * _broker,
-			     CMPIContext * ctx,
-			     CMPIResult * rslt,
-			     CMPIObjectPath * ref,
-			     char * _ClassName,
-			     char * _RefLeftClass,
-			     char * _RefRightClass,
-			     char * _RefLeft,
-			     char * _RefRight,
+int _assoc_create_refs_1toN( const CMPIBroker * _broker,
+			     const CMPIContext * ctx,
+			     const CMPIResult * rslt,
+			     const CMPIObjectPath * ref,
+			     const char * _ClassName,
+			     const char * _RefLeftClass,
+			     const char * _RefRightClass,
+			     const char * _RefLeft,
+			     const char * _RefRight,
 			     int inst,
 			     int associators,
 			     CMPIStatus * rc);
 
 
 /* - method to get the name of the target class                               */
-char * _assoc_targetClass_Name( CMPIBroker * _broker,
-				CMPIObjectPath * ref,
-				char * _RefLeftClass,
-				char * _RefRightClass,
-				CMPIStatus * rc);
+const char * _assoc_targetClass_Name( const CMPIBroker * _broker,
+				      const CMPIObjectPath * ref,
+				      const char * _RefLeftClass,
+				      const char * _RefRightClass,
+				      CMPIStatus * rc);
 
 
 /* - method to get an empty CMPIObjectPath of the target class                */
-CMPIObjectPath * _assoc_targetClass_OP( CMPIBroker * _broker,
-					CMPIObjectPath * ref,
-					char * _RefLeftClass,
-					char * _RefRightClass,
+CMPIObjectPath * _assoc_targetClass_OP( const CMPIBroker * _broker,
+					const CMPIObjectPath * ref,
+					const char * _RefLeftClass,
+					const char * _RefRightClass,
 					CMPIStatus * rc );
 
 
 /* - method to check the input parameter resultClass, role and resultRole     */
 /*   submitted to the methods of the association interface                    */
-int _assoc_check_parameter_const( CMPIBroker * _broker,
-				  CMPIObjectPath * cop,
-				  char * _RefLeft,
-				  char * _RefRight,
-				  char * _RefLeftClass,
-				  char * _RefRightClass,
-				  char * resultClass,
-				  char * role,
-				  char * resultRole,
+int _assoc_check_parameter_const( const CMPIBroker * _broker,
+				  const CMPIObjectPath * cop,
+				  const char * _RefLeft,
+				  const char * _RefRight,
+				  const char * _RefLeftClass,
+				  const char * _RefRightClass,
+				  const char * resultClass,
+				  const char * role,
+				  const char * resultRole,
 				  CMPIStatus * rc );
 
 

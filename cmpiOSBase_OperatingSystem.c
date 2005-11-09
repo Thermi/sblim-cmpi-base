@@ -41,8 +41,8 @@
 
 /* ---------------------------------------------------------------------------*/
 
-static CMPIInstance * _makeOS( CMPIBroker * _broker,
-                               CMPIObjectPath * ref,
+static CMPIInstance * _makeOS( const CMPIBroker * _broker,
+                               const CMPIObjectPath * ref,
 			       const char ** properties,
                                struct cim_operatingsystem * sptr,
                                CMPIStatus * rc);
@@ -69,9 +69,9 @@ static int getpctcpu(CpuSample * cps);
 
 /* ---------- method to create a CMPIObjectPath of this class ----------------*/
 
-CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
-	         CMPIContext * ctx,  
-                 CMPIObjectPath * ref,
+CMPIObjectPath * _makePath_OperatingSystem( const CMPIBroker * _broker,
+	         const CMPIContext * ctx,  
+                 const CMPIObjectPath * ref,
 	         CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
  
@@ -116,9 +116,9 @@ CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
 /* ----------- method to create a CMPIInstance of this class ----------------*/
 
 
-CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
-	       CMPIContext * ctx, 
-               CMPIObjectPath * ref,
+CMPIInstance * _makeInst_OperatingSystem( const CMPIBroker * _broker,
+	       const CMPIContext * ctx, 
+               const CMPIObjectPath * ref,
 	       const char ** properties,
                CMPIStatus * rc) {
   CMPIInstance               * ci   = NULL;
@@ -180,8 +180,8 @@ static int getpctcpu(CpuSample * cps)
   return pctcpu;
 }
 
-static CMPIInstance * _makeOS( CMPIBroker * _broker,
-                               CMPIObjectPath * ref,
+static CMPIInstance * _makeOS( const CMPIBroker * _broker,
+                               const CMPIObjectPath * ref,
 			       const char ** properties,
                                struct cim_operatingsystem * sptr,
                                CMPIStatus * rc) {

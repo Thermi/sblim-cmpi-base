@@ -48,9 +48,9 @@
 
 /* ---------- method to create a CMPIObjectPath of this class ----------------*/
 
-CMPIObjectPath * _makePath_BaseBoard( CMPIBroker * _broker,
-		 CMPIContext * ctx, 
-	         CMPIObjectPath * ref,
+CMPIObjectPath * _makePath_BaseBoard( const CMPIBroker * _broker,
+		 const CMPIContext * ctx, 
+	         const CMPIObjectPath * ref,
 	         CMPIStatus * rc) {
   CMPIObjectPath * op = NULL;
   char tag[255];
@@ -82,9 +82,9 @@ CMPIObjectPath * _makePath_BaseBoard( CMPIBroker * _broker,
 
 /* ----------- method to create a CMPIInstance of this class ----------------*/
 
-CMPIInstance * _makeInst_BaseBoard( CMPIBroker * _broker,
-	       CMPIContext * ctx, 
-	       CMPIObjectPath * ref,
+CMPIInstance * _makeInst_BaseBoard( const CMPIBroker * _broker,
+	       const CMPIContext * ctx, 
+	       const CMPIObjectPath * ref,
 	       const char ** properties,
 	       CMPIStatus * rc) {
   CMPIObjectPath *  op            = NULL;

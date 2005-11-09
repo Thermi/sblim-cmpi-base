@@ -39,17 +39,17 @@ static char * _ClassName = "Linux_OperatingSystem";
 
 /* method to create a CMPIObjectPath of this class                            */
 
-CMPIObjectPath * _makePath_OperatingSystem( CMPIBroker * _broker,
-                 CMPIContext * ctx, 
-                 CMPIObjectPath * cop,
+CMPIObjectPath * _makePath_OperatingSystem( const CMPIBroker * _broker,
+                 const CMPIContext * ctx, 
+                 const CMPIObjectPath * cop,
                  CMPIStatus * rc);
 
 
 /* method to create a CMPIInstance of this class                              */
 
-CMPIInstance * _makeInst_OperatingSystem( CMPIBroker * _broker,
-               CMPIContext * ctx, 
-               CMPIObjectPath * cop,
+CMPIInstance * _makeInst_OperatingSystem( const CMPIBroker * _broker,
+               const CMPIContext * ctx, 
+               const CMPIObjectPath * cop,
 	       const char ** properties,
                CMPIStatus * rc);
 

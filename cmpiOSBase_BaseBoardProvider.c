@@ -32,7 +32,7 @@
 #include "cmpiOSBase_BaseBoard.h"
 
 
-static CMPIBroker * _broker;
+static const CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
@@ -40,6 +40,9 @@ static CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 
+#ifdef CMPI_VER_100
+#define OSBase_BaseBoardProviderSetInstance OSBase_BaseBoardProviderModifyInstance 
+#endif
 
 /* ---------------------------------------------------------------------------*/
 /*                      Instance Provider Interface                           */
@@ -47,16 +50,16 @@ static CMPIBroker * _broker;
 
 
 CMPIStatus OSBase_BaseBoardProviderCleanup( CMPIInstanceMI * mi, 
-           CMPIContext * ctx) { 
+           const CMPIContext * ctx, CMPIBoolean terminating) { 
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus OSBase_BaseBoardProviderEnumInstanceNames( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref) { 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref) { 
   CMPIObjectPath * op = NULL;
   CMPIStatus       rc = {CMPI_RC_OK, NULL};
   
@@ -79,9 +82,9 @@ CMPIStatus OSBase_BaseBoardProviderEnumInstanceNames( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_BaseBoardProviderEnumInstances( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref, 
            const char ** properties) { 
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
@@ -105,9 +108,9 @@ CMPIStatus OSBase_BaseBoardProviderEnumInstances( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_BaseBoardProviderGetInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop, 
            const char ** properties) {
   CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
@@ -132,10 +135,10 @@ CMPIStatus OSBase_BaseBoardProviderGetInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_BaseBoardProviderCreateInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop, 
-           CMPIInstance * ci) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop, 
+           const CMPIInstance * ci) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() called",_ClassName));
@@ -147,12 +150,12 @@ CMPIStatus OSBase_BaseBoardProviderCreateInstance( CMPIInstanceMI * mi,
   return rc;
 }
 
-CMPIStatus OSBase_BaseBoardProviderSetInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop,
-           CMPIInstance * ci, 
-           char **properties) {
+CMPIStatus OSBase_BaseBoardProviderSetInstance( const CMPIInstanceMI * mi, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop,
+           const CMPIInstance * ci, 
+           const char ** properties) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI SetInstance() called",_ClassName));
@@ -165,9 +168,9 @@ CMPIStatus OSBase_BaseBoardProviderSetInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_BaseBoardProviderDeleteInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop) {
   CMPIStatus rc = {CMPI_RC_OK, NULL}; 
 
   _OSBASE_TRACE(1,("--- %s CMPI DeleteInstance() called",_ClassName));
@@ -180,11 +183,11 @@ CMPIStatus OSBase_BaseBoardProviderDeleteInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_BaseBoardProviderExecQuery( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref, 
-           char * lang, 
-           char * query) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref, 
+           const char * lang, 
+           const char * query) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI ExecQuery() called",_ClassName));
@@ -203,18 +206,18 @@ CMPIStatus OSBase_BaseBoardProviderExecQuery( CMPIInstanceMI * mi,
 
 
 CMPIStatus OSBase_BaseBoardProviderMethodCleanup( CMPIMethodMI * mi, 
-           CMPIContext * ctx) {
+           const CMPIContext * ctx, CMPIBoolean terminating) {
   _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus OSBase_BaseBoardProviderInvokeMethod( CMPIMethodMI * mi,
-           CMPIContext * ctx,
-           CMPIResult * rslt,
-           CMPIObjectPath * ref,
-           char * methodName,
-           CMPIArgs * in,
+           const CMPIContext * ctx,
+           const CMPIResult * rslt,
+           const CMPIObjectPath * ref,
+           const char * methodName,
+           const CMPIArgs * in,
            CMPIArgs * out) {
   CMPIString * class = NULL; 
   CMPIStatus   rc    = {CMPI_RC_OK, NULL};

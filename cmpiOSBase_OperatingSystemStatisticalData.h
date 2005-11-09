@@ -41,17 +41,17 @@ static int _INSTANCE_PREFIX_LENGTH = 6;
 
 /* method to create a CMPIObjectPath of this class                            */
 
-CMPIObjectPath * _makePath_OperatingSystemStatisticalData(CMPIBroker * _broker,
-                                                          CMPIContext * ctx, 
-                                                          CMPIObjectPath * cop,
+CMPIObjectPath * _makePath_OperatingSystemStatisticalData(const CMPIBroker * _broker,
+                                                          const CMPIContext * ctx, 
+                                                          const CMPIObjectPath * cop,
                                                           CMPIStatus * rc);
 
 
 /* method to create a CMPIInstance of this class                              */
 
-CMPIInstance * _makeInst_OperatingSystemStatisticalData(CMPIBroker * _broker,
-                                                        CMPIContext * ctx, 
-                                                        CMPIObjectPath * cop,
+CMPIInstance * _makeInst_OperatingSystemStatisticalData(const CMPIBroker * _broker,
+                                                        const CMPIContext * ctx, 
+                                                        const CMPIObjectPath * cop,
                                                         const char ** properties,
                                                         CMPIStatus * rc);
 

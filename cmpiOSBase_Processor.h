@@ -41,18 +41,18 @@ static char * _ClassName = "Linux_Processor";
 
 /* method to create a CMPIObjectPath of this class                            */
 
-CMPIObjectPath * _makePath_Processor( CMPIBroker * _broker,
-                 CMPIContext * ctx, 
-                 CMPIObjectPath * cop,
+CMPIObjectPath * _makePath_Processor( const CMPIBroker * _broker,
+                 const CMPIContext * ctx, 
+                 const CMPIObjectPath * cop,
 		 struct cim_processor * sptr,
                  CMPIStatus * rc);
 
 
 /* method to create a CMPIInstance of this class                              */
 
-CMPIInstance * _makeInst_Processor( CMPIBroker * _broker,
-               CMPIContext * ctx, 
-               CMPIObjectPath * cop,
+CMPIInstance * _makeInst_Processor( const CMPIBroker * _broker,
+               const CMPIContext * ctx, 
+               const CMPIObjectPath * cop,
 	       const char ** properties,
 	       struct cim_processor * sptr,
                CMPIStatus * rc);

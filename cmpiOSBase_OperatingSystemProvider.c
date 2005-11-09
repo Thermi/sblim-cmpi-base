@@ -35,10 +35,13 @@
 #include <ind_helper.h>
 #endif
 
-static CMPIBroker * _broker;
+static const CMPIBroker * _broker;
 
 /* ---------------------------------------------------------------------------*/
 /* private declarations                                                       */
+#ifdef CMPI_VER_100
+#define OSBase_OperatingSystemProviderSetInstance OSBase_OperatingSystemProviderModifyInstance 
+#endif
 
 
 /* ---------------------------------------------------------------------------*/
@@ -50,16 +53,16 @@ static CMPIBroker * _broker;
 
 
 CMPIStatus OSBase_OperatingSystemProviderCleanup( CMPIInstanceMI * mi, 
-           CMPIContext * ctx) { 
+           const CMPIContext * ctx, CMPIBoolean terminate) { 
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI Cleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus OSBase_OperatingSystemProviderEnumInstanceNames( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref) { 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref) { 
   CMPIObjectPath * op = NULL;
   CMPIStatus       rc = {CMPI_RC_OK, NULL};
   
@@ -83,11 +86,11 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstanceNames( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_OperatingSystemProviderEnumInstances( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref, 
-           char ** properties) { 
-  CMPIInstance * ci = NULL;
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref, 
+           const char ** properties) { 
+  const CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI EnumInstances() called",_ClassName));
@@ -109,11 +112,11 @@ CMPIStatus OSBase_OperatingSystemProviderEnumInstances( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_OperatingSystemProviderGetInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop, 
-           char ** properties) {
-  CMPIInstance * ci = NULL;
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop, 
+           const char ** properties) {
+  const CMPIInstance * ci = NULL;
   CMPIStatus     rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI GetInstance() called",_ClassName));
@@ -147,10 +150,10 @@ CMPIStatus OSBase_OperatingSystemProviderGetInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_OperatingSystemProviderCreateInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop, 
-           CMPIInstance * ci) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop, 
+           const CMPIInstance * ci) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI CreateInstance() called",_ClassName));
@@ -163,11 +166,11 @@ CMPIStatus OSBase_OperatingSystemProviderCreateInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_OperatingSystemProviderSetInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop,
-           CMPIInstance * ci, 
-           char **properties) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop,
+           const CMPIInstance * ci, 
+           const char ** properties) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI SetInstance() called",_ClassName));
@@ -180,9 +183,9 @@ CMPIStatus OSBase_OperatingSystemProviderSetInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_OperatingSystemProviderDeleteInstance( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * cop) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * cop) {
   CMPIStatus rc = {CMPI_RC_OK, NULL}; 
 
   _OSBASE_TRACE(1,("--- %s CMPI DeleteInstance() called",_ClassName));
@@ -195,11 +198,11 @@ CMPIStatus OSBase_OperatingSystemProviderDeleteInstance( CMPIInstanceMI * mi,
 }
 
 CMPIStatus OSBase_OperatingSystemProviderExecQuery( CMPIInstanceMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt, 
-           CMPIObjectPath * ref, 
-           char * lang, 
-           char * query) {
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt, 
+           const CMPIObjectPath * ref, 
+           const char * lang, 
+           const char * query) {
   CMPIStatus rc = {CMPI_RC_OK, NULL};
 
   _OSBASE_TRACE(1,("--- %s CMPI ExecQuery() called",_ClassName));
@@ -219,18 +222,18 @@ CMPIStatus OSBase_OperatingSystemProviderExecQuery( CMPIInstanceMI * mi,
 static char * _copy_buf( char ** hdbuf );
 
 CMPIStatus OSBase_OperatingSystemProviderMethodCleanup( CMPIMethodMI * mi, 
-           CMPIContext * ctx) {
+           const CMPIContext * ctx, CMPIBoolean terminate) {
   _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() called",_ClassName));
   _OSBASE_TRACE(1,("--- %s CMPI MethodCleanup() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
-           CMPIContext * ctx,
-           CMPIResult * rslt,
-           CMPIObjectPath * ref,
-           char * methodName,
-           CMPIArgs * in,
+           const CMPIContext * ctx,
+           const CMPIResult * rslt,
+           const CMPIObjectPath * ref,
+           const char * methodName,
+           const CMPIArgs * in,
            CMPIArgs * out) {
   CMPIData      incmd;
   CMPIValue     valrc;
@@ -568,7 +571,7 @@ static void ind_init(CMPIContext *ctx) {
 
 CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup( 
            CMPIIndicationMI * mi, 
-           CMPIContext * ctx) {
+           const CMPIContext * ctx, CMPIBoolean terminate) {
   _OSBASE_TRACE(1,("--- %s CMPI IndicationCleanup() called",_ClassName));
 
   if(sourceInstance)   { CMRelease(sourceInstance); }
@@ -583,11 +586,11 @@ CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup(
 
 CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter( 
            CMPIIndicationMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt,
-           CMPISelectExp * filter, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt,
+           const CMPISelectExp * filter, 
            const char * indType, 
-           CMPIObjectPath * classPath,
+           const CMPIObjectPath * classPath,
            const char * owner) {
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() called",_ClassName));
 
@@ -607,11 +610,11 @@ CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter(
 
 CMPIStatus OSBase_OperatingSystemProviderMustPoll(
            CMPIIndicationMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt,
-           CMPISelectExp * filter, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt,
+           const CMPISelectExp * filter, 
            const char * indType, 
-           CMPIObjectPath * classPath) {
+           const CMPIObjectPath * classPath) {
   _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called: NO POLLING",_ClassName));  
   CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
   CMReturnDone(rslt);
@@ -621,11 +624,11 @@ CMPIStatus OSBase_OperatingSystemProviderMustPoll(
 
 CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
            CMPIIndicationMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt,
-           CMPISelectExp * filter, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt,
+           const CMPISelectExp * filter, 
            const char * indType, 
-           CMPIObjectPath * classPath,
+           const CMPIObjectPath * classPath,
            CMPIBoolean firstActivation) {
 
   CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -647,11 +650,11 @@ CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
 
 CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter( 
            CMPIIndicationMI * mi, 
-           CMPIContext * ctx, 
-           CMPIResult * rslt,
-           CMPISelectExp * filter, 
+           const CMPIContext * ctx, 
+           const CMPIResult * rslt,
+           const CMPISelectExp * filter, 
            const char * indType, 
-           CMPIObjectPath *classPath,
+           const CMPIObjectPath *classPath,
            CMPIBoolean lastActivation) {
   _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() called",_ClassName));
 
