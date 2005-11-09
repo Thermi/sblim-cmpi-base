@@ -1,5 +1,9 @@
 2005-11-09    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
+	* OSBase_OperatingSystem.c: 
+	Bugs 1328703 Use lsb-release only if not other /etc/*release files
+	could be found.
+
 	* OSBase_Common.c, OSBase_OperatingSystem.c: 
 	Bugs 1331755 Replace gettimeofday usage for timezone determination
 

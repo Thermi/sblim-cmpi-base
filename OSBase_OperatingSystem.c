@@ -129,6 +129,7 @@ char * get_os_distro() {
   char *  cmd     = NULL;
   int     strl    = 0;
   int     i       = 0;
+  int     j       = 0;
   int     rc      = 0;
 
   if( !CIM_OS_DISTRO ) {
@@ -136,36 +137,44 @@ char * get_os_distro() {
     _OSBASE_TRACE(4,("--- get_os_distro() called : init"));
 
     rc = runcommand( "find /etc/ -type f -maxdepth 1 -name *release* 2>/dev/null" , NULL , &hdout , NULL );
-    if( rc == 0 && hdout != NULL && hdout[0] && strcmp (hdout[0], "") ) {
-      strl = strlen ("cat  2>/dev/null") + strlen (hdout[0]) + 1;
-      ptr = strchr(hdout[0], '\n');
-      if (ptr) {
-	*ptr = '\0';
-      }
-      cmd = calloc (strl, sizeof(char));
-      snprintf(cmd, strl, "cat %s 2>/dev/null", hdout[0]);
-      freeresultbuf(hdout);
-      hdout = NULL;
-      strl = 0;
-      rc = runcommand(cmd, NULL , &hdout , NULL );
-      if( rc == 0 ) {
-	while ( hdout[i]) {
-	  strl = strl+strlen(hdout[i])+1;
-	  ptr = strchr(hdout[i], '\n');
-	  if (ptr) {
-	    *ptr = '\0';
-	  }
-	  i++;
-	}	
-	i=0;
-	CIM_OS_DISTRO = calloc(1,strl);
-	strcpy( CIM_OS_DISTRO , hdout[0] );
-	i++;
-	while ( hdout[i]) {
-	  strcat( CIM_OS_DISTRO , " " );
-	  strcat( CIM_OS_DISTRO , hdout[i] );
-	  i++;
+    if( rc == 0 && hdout != NULL) {
+      while (hdout[j] && hdout[j][0]) {
+	if (strstr(hdout[j],"lsb-release") && hdout[j+1] && hdout[j+1][0]) {
+	  /* found lsb-release but there are other (preferred) release files */
+	  j++;
+	  continue;
 	}
+	strl = strlen ("cat  2>/dev/null") + strlen (hdout[j]) + 1;
+	ptr = strchr(hdout[j], '\n');
+	if (ptr) {
+	  *ptr = '\0';
+	}
+	cmd = calloc (strl, sizeof(char));
+	snprintf(cmd, strl, "cat %s 2>/dev/null", hdout[j]);
+	freeresultbuf(hdout);
+	hdout = NULL;
+	strl = 0;
+	rc = runcommand(cmd, NULL , &hdout , NULL );
+	if( rc == 0 ) {
+	  while ( hdout[i]) {
+	    strl = strl+strlen(hdout[i])+1;
+	    ptr = strchr(hdout[i], '\n');
+	    if (ptr) {
+	      *ptr = '\0';
+	    }
+	    i++;
+	  }	
+	  i=0;
+	  CIM_OS_DISTRO = calloc(1,strl);
+	  strcpy( CIM_OS_DISTRO , hdout[0] );
+	  i++;
+	  while ( hdout[i]) {
+	    strcat( CIM_OS_DISTRO , " " );
+	    strcat( CIM_OS_DISTRO , hdout[i] );
+	    i++;
+	  }
+	}
+	break;
       }
       free (cmd);
     } else {
