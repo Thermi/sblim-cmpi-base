@@ -221,21 +221,12 @@ char * get_os_name(){
 /* ---------------------------------------------------------------------------*/
 
 signed short get_os_timezone() {
-  struct timeval  tv;
-  struct timezone tz;
-  
   if( CIM_OS_TIMEZONE == 999 ) {
 
     _OSBASE_TRACE(4,("--- get_os_timezone() called : init"));
 
-    if( gettimeofday( &tv, &tz) == 0 ) {
-      CIM_OS_TIMEZONE = tz.tz_minuteswest*-1;
-      _OSBASE_TRACE(4,("--- get_os_timezone() called : CIM_OS_TIMEZONE initialized with %i",CIM_OS_TIMEZONE));
-    }
-    else {
-      _OSBASE_TRACE(4,("--- get_os_timezone() failed : CIM_OS_TIMEZONE initialized with 0"));
-      CIM_OS_TIMEZONE = 0;
-    }
+    tzset();
+    CIM_OS_TIMEZONE = -timezone;
   }
   return CIM_OS_TIMEZONE;
 }
@@ -566,8 +557,6 @@ char * _format_trace(char *fmt,...) {
 void _osbase_trace( int level, char * file, int line, char * msg) {
 
   struct tm        cttm;
-  struct timeval   tv;
-  struct timezone  tz;
   long             sec  = 0;
   char           * tm   = NULL;
   FILE           * ferr = NULL;
@@ -575,15 +564,14 @@ void _osbase_trace( int level, char * file, int line, char * msg) {
   _init_trace_level();
   _init_trace_file();
 
-  if( gettimeofday( &tv, &tz) == 0 ) {
-    sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
-    tm = (char*)malloc(20);
-    memset(tm, 0, 20*sizeof(char));
-    if( gmtime_r( &sec , &cttm) != NULL ) {
-      strftime(tm,20,"%m/%d/%Y %H:%M:%S",&cttm);
-    }
-  }
 
+  sec = time(NULL) + get_os_timezone()*60;
+  tm = (char*)malloc(20);
+  memset(tm, 0, 20*sizeof(char));
+  if( gmtime_r( &sec , &cttm) != NULL ) {
+    strftime(tm,20,"%m/%d/%Y %H:%M:%S",&cttm);
+  }
+  
   if( (_SBLIM_TRACE_FILE != NULL) ) {
     if( (ferr=fopen(_SBLIM_TRACE_FILE,"a")) == NULL ) {
       perror("perror: Couldn't open/create trace file %s\n");

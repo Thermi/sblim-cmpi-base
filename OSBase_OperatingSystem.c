@@ -272,20 +272,16 @@ char * get_os_localdatetime() {
   char          * tm  = NULL;
   long            sec = 0;
   struct tm       cttm;
-  struct timeval  tv;
-  struct timezone tz;
 
   _OSBASE_TRACE(4,("--- get_os_localdatetime() called"));
 
-  if( gettimeofday( &tv, &tz) == 0 ) {
-    sec = tv.tv_sec + (tz.tz_minuteswest*-1*60);
-    if( gmtime_r( &sec , &cttm) != NULL ) {
-      tm = (char*)malloc(26);
-      strftime(tm,26,"%Y%m%d%H%M%S.000000",&cttm);
-      _cat_timezone(tm, get_os_timezone());
-    }
+  sec=time(NULL) + get_os_timezone()*60;
+  if( gmtime_r( &sec , &cttm) != NULL ) {
+    tm = (char*)malloc(26);
+    strftime(tm,26,"%Y%m%d%H%M%S.000000",&cttm);
+    _cat_timezone(tm, get_os_timezone());
   }
-
+  
   _OSBASE_TRACE(4,("--- get_os_localdatetime() exited : %s",tm));
   return tm;
 }

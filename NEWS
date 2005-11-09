@@ -6,6 +6,7 @@ Bugs Fixed:
 - 1285011 Fixes portability issues (syntax)
 - 1285324 Enhanced pegasus repository detection
 - 1228864 Fixed IA64 Processor Detection
+- 1331755 Fixed timezone recognition problem (on zSeries)
 
 Changes in 1.5.3
 ================
