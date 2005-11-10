@@ -495,7 +495,7 @@ IndErrorT check(CMPIData *v)
 
 
 /* The list of property names for the functions */
-static char *Linux_OperatingSystemIndication_DYNAMIC_PROPERTIES[] =
+static const char *Linux_OperatingSystemIndication_DYNAMIC_PROPERTIES[] =
   {"IndicationIdentifier",
    "CorrelatedIndications",
    "IndicationTime",
@@ -513,7 +513,7 @@ static IndErrorT (* Linux_OperatingSystemIndication_DYNAMIC_FUNCTIONS[])(CMPIDat
   };
 
 
-static void ind_init(CMPIContext *ctx) {
+static void ind_init(const CMPIContext *ctx) {
 
   CMPIObjectPath *cop = NULL;
   CMPIStatus      rc;
@@ -587,13 +587,16 @@ CMPIStatus OSBase_OperatingSystemProviderIndicationCleanup(
 CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter( 
            CMPIIndicationMI * mi, 
            const CMPIContext * ctx, 
+#ifndef CMPI_VER_100
            const CMPIResult * rslt,
+#endif
            const CMPISelectExp * filter, 
            const char * indType, 
            const CMPIObjectPath * classPath,
            const char * owner) {
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() called",_ClassName));
 
+#ifndef CMPI_VER_100
   if (strcasecmp(indType,INDCLASSNAME)==0) {     
     ind_init(ctx);
     _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter(): successfully authorized filter",_ClassName));
@@ -603,6 +606,7 @@ CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter(
     CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
   }
   CMReturnDone(rslt);
+#endif
 
   _OSBASE_TRACE(1,("--- %s CMPI AuthorizeFilter() exited",_ClassName));
   CMReturn(CMPI_RC_OK);
@@ -611,21 +615,27 @@ CMPIStatus OSBase_OperatingSystemProviderAuthorizeFilter(
 CMPIStatus OSBase_OperatingSystemProviderMustPoll(
            CMPIIndicationMI * mi, 
            const CMPIContext * ctx, 
+#ifndef CMPI_VER_100
            const CMPIResult * rslt,
+#endif
            const CMPISelectExp * filter, 
            const char * indType, 
            const CMPIObjectPath * classPath) {
   _OSBASE_TRACE(1,("--- %s CMPI MustPoll() called: NO POLLING",_ClassName));  
+#ifndef CMPI_VER_100
   CMReturnData(rslt,(CMPIValue*)&(CMPI_false),CMPI_boolean);
   CMReturnDone(rslt);
+#endif
   _OSBASE_TRACE(1,("--- %s CMPI MustPoll() exited",_ClassName));
-  CMReturn(CMPI_RC_OK);
+  CMReturn(CMPI_RC_ERR_FAILED);
 }
 
 CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
            CMPIIndicationMI * mi, 
            const CMPIContext * ctx, 
+#ifndef CMPI_VER_100
            const CMPIResult * rslt,
+#endif
            const CMPISelectExp * filter, 
            const char * indType, 
            const CMPIObjectPath * classPath,
@@ -635,14 +645,17 @@ CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
   _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() called",_ClassName));
   
   ind_init(ctx);
+#ifndef CMPI_VER_100
   if (strcasecmp(indType,INDCLASSNAME)==0) {
+#endif
     if(ind_set_select(INDNAMESPACE, INDCLASSNAME, filter) == IND_OK) {
       _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: filter activated (%s)",
 		       _ClassName,CMGetCharPtr(CMGetSelExpString(filter,&rc))));
       CMReturn(CMPI_RC_OK);
     }
+#ifndef CMPI_VER_100
   }  
-
+#endif
   _OSBASE_TRACE(1,("--- %s CMPI ActivateFilter() exited: filter not activated (%s)",
 		   _ClassName,CMGetCharPtr(CMGetSelExpString(filter,&rc))));
   CMReturn(CMPI_RC_ERR_FAILED);
@@ -651,25 +664,31 @@ CMPIStatus OSBase_OperatingSystemProviderActivateFilter(
 CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter( 
            CMPIIndicationMI * mi, 
            const CMPIContext * ctx, 
+#ifndef CMPI_VER_100
            const CMPIResult * rslt,
+#endif
            const CMPISelectExp * filter, 
            const char * indType, 
            const CMPIObjectPath *classPath,
            CMPIBoolean lastActivation) {
   _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() called",_ClassName));
 
+#ifndef CMPI_VER_100
   if (strcasecmp(indType,INDCLASSNAME)==0) {
+#endif
     if(ind_unreg_select(INDNAMESPACE, INDCLASSNAME, filter) == IND_OK) {
       _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited: filter deactivated",_ClassName));
       CMReturn(CMPI_RC_OK);
     }
+#ifndef CMPI_VER_100
   }  
+#endif
 
   _OSBASE_TRACE(1,("--- %s CMPI DeActivateFilter() exited: filter not deactivated",_ClassName));
   CMReturn(CMPI_RC_ERR_FAILED);
 }
 
-void OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi) {
+void OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi, const CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() called",_ClassName));
 
   if(!ind_enabled) {
@@ -684,7 +703,7 @@ void OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi) {
   _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() exited",_ClassName));
 }
 
-void OSBase_OperatingSystemProviderDisableIndications(CMPIIndicationMI * mi) {
+void OSBase_OperatingSystemProviderDisableIndications(CMPIIndicationMI * mi, const CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() called",_ClassName));
 
   if(ind_enabled) {
