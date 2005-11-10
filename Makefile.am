@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.10 2005/10/19 16:04:33 mihajlov Exp $
+# $Id: Makefile.am,v 1.11 2005/11/10 12:01:06 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -30,8 +30,8 @@ docdir=$(datadir)/doc/$(PACKAGE)-$(VERSION)
 doc_DATA=README AUTHORS COPYING 
 
 # ADD EXTRA DOC FILES IF PRESENT
-doc_DATA+=README.INDICATION DEBUG
-EXTRA_DIST+=README.INDICATION DEBUG
+doc_DATA+=README.INDICATION README.tog-pegasus DEBUG
+EXTRA_DIST+=README.INDICATION README.tog-pegasus DEBUG
 
 # providerdir defines where provider libraries will be installed (@PROVIDERDIR@ is set by the configure script). 
 providerdir = @PROVIDERDIR@

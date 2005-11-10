@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.rh.spec,v 1.2 2005/10/28 15:10:24 mihajlov Exp $
+# $Id: sblim-cmpi-base.rh.spec,v 1.3 2005/11/10 12:01:06 mihajlov Exp $
 #
 # Package spec for sblim-cmpi-base - RedHat/Fedora Flavor
 #
@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Summary: SBLIM Base Providers
 Name: sblim-cmpi-base
 Version: 1.5.4
-Release: 2
+Release: 3
 Group: Systems Management/Base
 URL: http://www.sblim.org
 License: CPL
@@ -73,14 +73,14 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/cmpi/*a
 if [ $1 -gt 1 ]
 then
   %{_datadir}/%{name}/provider-register.sh -d -t pegasus \
-	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
+	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null 2>&1
 fi
 
 %post
 # Register Schema and Provider - this is higly provider specific
 
 %{_datadir}/%{name}/provider-register.sh -t pegasus \
-	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
+	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null  2>&1
 
 /sbin/ldconfig
 
@@ -89,7 +89,7 @@ fi
 if [ $1 -eq 0 ]
 then
   %{_datadir}/%{name}/provider-register.sh -d -t pegasus \
-	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null
+	-r %{REGISTRATION} -m %{SCHEMA} > /dev/null 2>&1
 fi
 
 %postun -p /sbin/ldconfig
@@ -119,6 +119,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/sblim-testsuite
 
 %changelog
+
+* Thu Nov 10 2005  <mihajlov@de.ibm.com> - 1.5.4-3
+- suppress error output in post scriptlets
 
 * Wed Oct 27 2005  <mihajlov@de.ibm.com> - 1.5.4-2
 - went back to original provider dir location as FC5 pegasus 2.5.1 support

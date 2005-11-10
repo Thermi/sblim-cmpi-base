@@ -11,6 +11,7 @@ Bugs Fixed:
 - 1203849 Removed compile warnings with CMPI >= 1.0.0
 - 1199129 Full support of CMPI 1.0.0
 - 1331750 Removed invalid clock speeds for zSeries/S390
+- 1353086 Suppress error output in RPM scriptlets
 
 Changes in 1.5.3
 ================
