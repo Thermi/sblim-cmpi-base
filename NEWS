@@ -1,3 +1,9 @@
+Changes in 1.5.5
+================
+
+Bugs Fixed:
+- 1368636 Fixed infinite recursion with trace level 4.
+
 Changes in 1.5.4
 ================
 

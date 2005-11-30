@@ -1,3 +1,8 @@
+2005-11-30    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
+
+	* OSBase_Common.c: 
+	Bugs 1368636: fixed inifinite recursion in get_os_timezone.
+
 2005-11-10    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
 	* sblim-cmpi-spec.rh.in:
