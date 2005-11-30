@@ -222,9 +222,6 @@ char * get_os_name(){
 
 signed short get_os_timezone() {
   if( CIM_OS_TIMEZONE == 999 ) {
-
-    _OSBASE_TRACE(4,("--- get_os_timezone() called : init"));
-
     tzset();
     CIM_OS_TIMEZONE = -(timezone/60);
   }
