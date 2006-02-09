@@ -1,3 +1,12 @@
+2006-02-09    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
+
+	* provider-register.sh, acinclude.m4: 
+	Merged in updates of provider-register and acinclude.
+
+	* Makefile.am: 
+	Bug 1395363: fixed location dependence of postinstall
+	step.
+
 2005-11-30    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
 	* OSBase_Common.c: 

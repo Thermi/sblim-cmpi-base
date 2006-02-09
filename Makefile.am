@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.12 2006/01/24 00:05:08 lynnmoss Exp $
+# $Id: Makefile.am,v 1.13 2006/02/09 13:40:10 mihajlov Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -164,11 +164,11 @@ EXTRA_DIST+=$(PACKAGE).spec $(PACKAGE).rh.spec
 # Automake instructions for ./mof subdir
 #
 if NOEVENTS
-SCHEMAS=mof/Linux_Base.mof 
-REGISTRATIONS=mof/Linux_Base.registration
+SCHEMAS=$(srcdir)/mof/Linux_Base.mof 
+REGISTRATIONS=$(srcdir)/mof/Linux_Base.registration
 else
-SCHEMAS=mof/Linux_Base.mof mof/Linux_BaseIndication.mof
-REGISTRATIONS=mof/Linux_BaseIndication.registration
+SCHEMAS=$(srcdir)/mof/Linux_Base.mof $(srcdir)/mof/Linux_BaseIndication.mof
+REGISTRATIONS=$(srcdir)/mof/Linux_BaseIndication.registration
 endif
 
 # We must explicity add all the schema files to the distribution package
@@ -178,10 +178,10 @@ EXTRA_DIST+=mof $(pkgdata_SCRIPTS)
 
 # Register the provider(s) and class definition(s) to the current CIM server/CIMOM
 postinstall:
-	sh provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS) -m $(SCHEMAS)
+	sh $(srcdir)/provider-register.sh -t @CIMSERVER@ -r $(REGISTRATIONS) -m $(SCHEMAS)
 
 preuninstall:
-	sh provider-register.sh -d -t @CIMSERVER@ -r $(REGISTRATIONS) -m $(SCHEMAS)
+	sh $(srcdir)/provider-register.sh -d -t @CIMSERVER@ -r $(REGISTRATIONS) -m $(SCHEMAS)
 
 dist-hook:
 	test -d "$(distdir)" &&	rm -rf `find $(distdir) -type d -name CVS`
