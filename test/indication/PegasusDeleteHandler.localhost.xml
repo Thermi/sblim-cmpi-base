@@ -18,7 +18,7 @@
             <KEYBINDING NAME="CreationClassName"> 
               <KEYVALUE>CIM_IndicationHandlerCIMXML</KEYVALUE>
             </KEYBINDING>
-            <KEYBINDING NAME="Name" TYPE="string"> 
+            <KEYBINDING NAME="Name"> 
               <KEYVALUE>OperatingSystemHandler0</KEYVALUE>
             </KEYBINDING>
           </INSTANCENAME>
