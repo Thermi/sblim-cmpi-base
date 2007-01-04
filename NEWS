@@ -1,3 +1,7 @@
+Bugs Fixed:
+- 1626832 Test cases for class Linux_BaseBoard and 
+          association Linux_CSBaseBoard added
+
 Changes in 1.5.5
 ================
 

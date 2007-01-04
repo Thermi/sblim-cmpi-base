@@ -1,3 +1,12 @@
+2007-01-03  heidi eckhart  <heidineu@localhost.localdomain>
+
+	* Makefile.am, test/cim/Linux_BaseBoard.cim, 
+	test/cim/Linux_CSBaseBoard.cim,
+	test/system/linux/Linux_BaseBoard.system,
+	test/system/linux/Linux_CSBaseBoard.system: 
+	Bug 1626832: test cases for class Linux_BaseBoard and
+	association Linux_CSBaseBoard are missing
+
 2006-02-09    <mihajlov@dyn-9-152-143-45.boeblingen.de.ibm.com>
 
 	* provider-register.sh, acinclude.m4: 

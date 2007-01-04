@@ -14,9 +14,10 @@ declare -a CLASSNAMES[];
 CLASSNAMES=([0]=Linux_ComputerSystem [1]=Linux_OperatingSystem \
 [2]=Linux_UnixProcess [3]=Linux_Processor \
 [4]=Linux_RunningOS [5]=Linux_OSProcess [6]=Linux_CSProcessor \
-[7]=Linux_OperatingSystemStatisticalData [8]=Linux_OperatingSystemStatistics)
+[7]=Linux_OperatingSystemStatisticalData [8]=Linux_OperatingSystemStatistics \
+[9]=Linux_BaseBoard [10]=Linux_CSBaseBoard)
 
-declare -i max=8;
+declare -i max=10;
 declare -i i=0;
 
 cd $SCRIPT_PATH

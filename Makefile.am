@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.13 2006/02/09 13:40:10 mihajlov Exp $
+# $Id: Makefile.am,v 1.14 2007/01/04 09:07:16 heidineu Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -204,7 +204,9 @@ testsuitesystem_DATA=test/system/linux/Linux_CSProcessor.system \
 	test/system/linux/Linux_OperatingSystemStatisticalData.system \
 	test/system/linux/Linux_OperatingSystemStatistics.system \
 	test/system/linux/Linux_RunningOS.system \
-	test/system/linux/Linux_UnixProcess.system 
+	test/system/linux/Linux_UnixProcess.system \
+	test/system/linux/Linux_BaseBoard.system \
+	test/system/linux/Linux_CSBaseBoard.system
 testsuitesystem_SCRIPTS=test/system/linux/Linux_OperatingSystem.version.sh \
 	test/system/linux/Linux_Processor.pl \
 	test/system/linux/Linux_UnixProcess.pl \
@@ -217,7 +219,9 @@ testsuitecim_DATA=test/cim/Linux_CSProcessor.cim \
 	test/cim/Linux_OperatingSystemStatistics.cim \
 	test/cim/Linux_Processor.cim \
 	test/cim/Linux_RunningOS.cim \
-	test/cim/Linux_UnixProcess.cim
+	test/cim/Linux_UnixProcess.cim \
+	test/cim/Linux_BaseBoard.cim \
+	test/cim/Linux_CSBaseBoard.cim
 
 runtest: install
 	cd $(DESTDIR)$(TESTSUITEDIR) &&	./test-cmpi-base.sh
