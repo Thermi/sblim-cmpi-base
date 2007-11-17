@@ -1,3 +1,9 @@
+Changes in 1.5.7
+================
+
+Bugs Fixed:
+- 1832839 OperatingSystem provider returns wrong number of max processes
+
 Changes in 1.5.6
 ================
 

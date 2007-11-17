@@ -14,6 +14,7 @@
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               C. Eric Wu <cwu@us.ibm.com>               
  *               Ferenc Szalai <szferi@einstein.ki.iif.hu>
+ *               Chris Buccella <buccella@linux.vnet.ibm.com>
  *
  * Description:
  * This shared library provides resource access functionality for the class
@@ -31,6 +32,7 @@
 #include <time.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#include <sys/resource.h>
 #include <langinfo.h>
 
 /* ---------------------------------------------------------------------------*/
@@ -338,15 +340,14 @@ unsigned long get_os_numOfUsers() {
 }
 
 unsigned long get_os_maxNumOfProc() {
-  FILE          * ffilemax = NULL;
-  unsigned long   max      = 0;
+  struct rlimit   rlim;
+  unsigned long   max = 0;
+  int             rc  = 0;
 
   _OSBASE_TRACE(4,("--- get_os_maxNumOfProc() called"));
 
-  if ( (ffilemax=fopen("/proc/sys/fs/file-max","r")) != NULL ) {
-    fscanf(ffilemax,"%ld",&max);
-    fclose(ffilemax);
-  }
+  rc = getrlimit(RLIMIT_NPROC, &rlim);  /* same as calling 'ulimit -u' */
+  if (rc == 0) { max = rlim.rlim_max; }
 
   _OSBASE_TRACE(4,("--- get_os_maxNumOfProc() exited : %lu",max));
   return max;

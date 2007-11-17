@@ -1,3 +1,8 @@
+2007-11-16  Chris Buccella  <buccella@linux.vnet.ibm.com>
+
+	* OSBase_OperatingSystem.c
+	Bug 1832839: OSBase OperatingSystem provider returns wrong max processes
+
 2007-01-03  heidi eckhart  <heidineu@localhost.localdomain>
 
 	* Makefile.am, test/cim/Linux_BaseBoard.cim, 
