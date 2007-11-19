@@ -1,5 +1,5 @@
 /*
- * $Id: dmiinfo.c,v 1.2 2005/07/28 10:36:51 mihajlov Exp $
+ * $Id: dmiinfo.c,v 1.3 2007/11/19 16:44:58 buccella Exp $
  *
  * (C) Copyright IBM Corp. 2003
  *
@@ -8,7 +8,7 @@
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
  *
  * You can obtain a current copy of the Common Public License from
- * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
+ * http://www.opensource.org/licenses/cpl1.0.txt
  *
  * Author:       Viktor Mihajlovski <mihajlov@de.ibm.com>
  * Contributors: James Jeffers <jamesjef@us.ibm.com>
