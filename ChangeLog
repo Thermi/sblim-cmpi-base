@@ -1,5 +1,14 @@
 2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
 
+   * OSBase_Common.c, OSBase_Common.h, OSBase_ComputerSystem.c, 
+     OSBase_OperatingSystem.c OSBase_OperatingSystem.h, cmpiOSBase_Common.c,
+     cmpiOSBase_ComputerSystem.c, cmpiOSBase_OperatingSystem.c, 
+     cmpiOSBase_OperatingSystemStatisticalData.c, cmpiOSBase_Processor.c, 
+     cmpiOSBase_UnixProcess.c
+     Bug 2089546: CIM_OS_DISTRO should only be intialized once
+
+2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
+
    * OSBase_OperatingSystem.c
    Bug 1883918: OperatingSystem provider segfaults on file not found
 
