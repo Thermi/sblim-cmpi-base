@@ -15,6 +15,7 @@
  *               C. Eric Wu <cwu@us.ibm.com>               
  *               Ferenc Szalai <szferi@einstein.ki.iif.hu>
  *               Chris Buccella <buccella@linux.vnet.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Description:
  * This shared library provides resource access functionality for the class
@@ -227,7 +228,7 @@ char * get_os_installdate() {
 
   get_os_distro();
 
-  if( strstr( CIM_OS_DISTRO, "Red Hat" ) != NULL ) {
+  if( CIM_OS_DISTRO && strstr( CIM_OS_DISTRO, "Red Hat" ) ) {
     /* we guess it is Red Hat */
     rc = runcommand( "rpm -qi redhat-release | grep Install" , NULL , &hdout , NULL );
     if(rc!=0) { 
