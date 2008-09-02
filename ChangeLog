@@ -1,3 +1,13 @@
+2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * OSBase_OperatingSystem.c
+   Bug 1883918: OperatingSystem provider segfaults on file not found
+
+2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * OSBase_OperatingSystem.c, OSBase_Common.c, Makefile.am
+   Bug 2089383: Shared library use of _init/_fini obsolete
+
 2007-11-16  Chris Buccella  <buccella@linux.vnet.ibm.com>
 
 	* OSBase_OperatingSystem.c

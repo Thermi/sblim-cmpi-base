@@ -3,6 +3,8 @@ Changes in 1.5.7
 
 Bugs Fixed:
 - 1832839 OperatingSystem provider returns wrong number of max processes
+- 1883918 OperatingSystem provider segfaults on file not found
+- 2089383 Shared library use of _init/_fini obsolete
 
 Changes in 1.5.6
 ================
