@@ -13,6 +13,7 @@
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               C. Eric Wu <cwu@us.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Description:
  * This shared library provides common functionality for OS Base Instrumentation,
@@ -95,14 +96,14 @@ void _init_trace_file() {
 }
 
 /* initialization routine */
-void _init() {
+void __attribute__ ((constructor)) _osbase_common_init() {
   _init_trace_level();
   _init_trace_file();
   return;
 }
 
 /* deinitialization routine */
-void _fini() { 
+void __attribute__ ((destructor)) _osbase_common_fini() { 
   free ( CIM_HOST_NAME );
   free ( CIM_OS_NAME );
   _debug = 0;

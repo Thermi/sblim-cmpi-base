@@ -44,11 +44,11 @@ char * CIM_OS_DISTRO = NULL;
 /* ---------------------------------------------------------------------------*/
 
 /* initialization routine */
-void _init() {
+void __attribute__ ((constructor)) _osbase_os_init() {
 }
 
 /* deinitialization routine */
-void _fini() { 
+void __attribute__ ((destructor)) _osbase_os_fini() { 
   free ( CIM_OS_DISTRO );
 }
 

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2007/01/04 09:07:16 heidineu Exp $
+# $Id: Makefile.am,v 1.15 2008/09/02 18:58:23 tyreld Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005
 #
@@ -70,7 +70,7 @@ libcmpiOSBase_OperatingSystemProvider_la_SOURCES = \
 libcmpiOSBase_OperatingSystemProvider_la_LIBADD = -lcmpiOSBase_Common \
 						-ldmiinfo @LINDHELP@
 # This gcc/ld specific flag is ugly - need to check in configure
-libcmpiOSBase_OperatingSystemProvider_la_LDFLAGS = -Wc,-nostartfiles -avoid-version
+libcmpiOSBase_OperatingSystemProvider_la_LDFLAGS = -Wc,-avoid-version
 
 # Operating System Statistical Data
 libcmpiOSBase_OperatingSystemStatisticalDataProvider_la_SOURCES = \
@@ -130,7 +130,7 @@ lib_LTLIBRARIES = libcmpiOSBase_Common.la libdmiinfo.la
 
 libcmpiOSBase_Common_la_SOURCES=OSBase_Common.c cmpiOSBase_Common.c
 # This gcc/ld specific flag is ugly - need to check in configure
-libcmpiOSBase_Common_la_LDFLAGS = -Wc,-nostartfiles
+libcmpiOSBase_Common_la_LDFLAGS = -Wc
 
 libdmiinfo_la_SOURCES=dmiinfo.c dmiinfo.h dmifind.h
 
