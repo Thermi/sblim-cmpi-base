@@ -16,6 +16,7 @@
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               C. Eric Wu <cwu@us.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Description: CIM Base Instrumentation for Linux
 */
@@ -48,8 +49,8 @@ int kernel_release();
 
 /* ---------------------------------------------------------------------------*/
 
-char * get_system_name();
-char * get_os_name();
+void _init_system_name();
+void _init_os_name();
 
 signed short  get_os_timezone();
 unsigned long _get_os_boottime();

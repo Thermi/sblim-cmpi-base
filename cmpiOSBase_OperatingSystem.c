@@ -12,6 +12,7 @@
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Interface Type : Common Magabeablity Programming Interface ( CMPI )
  *
@@ -80,14 +81,14 @@ CMPIObjectPath * _makePath_OperatingSystem( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data 
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
-  if( !get_os_name() ) {
+  if( !CIM_OS_NAME ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
     _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
@@ -104,9 +105,9 @@ CMPIObjectPath * _makePath_OperatingSystem( const CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CSCreationClassName", CSCreationClassName, CMPI_chars);
-  CMAddKey(op, "CSName", get_system_name(), CMPI_chars);
+  CMAddKey(op, "CSName", CIM_HOST_NAME, CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
-  CMAddKey(op, "Name", get_os_name(), CMPI_chars);
+  CMAddKey(op, "Name", CIM_OS_NAME, CMPI_chars);
 
  exit:
   _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() exited"));
@@ -204,14 +205,14 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data 
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
-  if( !get_os_name() ) {
+  if( !CIM_OS_NAME ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
@@ -249,9 +250,9 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
   if(getcpu(&cs) == 0) { pctcpu = getpctcpu(&cs); }
 
   CMSetProperty( ci, "CSCreationClassName", CSCreationClassName, CMPI_chars );
-  CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
+  CMSetProperty( ci, "CSName", CIM_HOST_NAME, CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
-  CMSetProperty( ci, "Name", get_os_name(), CMPI_chars );
+  CMSetProperty( ci, "Name", CIM_OS_NAME, CMPI_chars );
 
   CMSetProperty( ci, "Status", "NULL", CMPI_chars);
   CMSetProperty( ci, "Caption", "Operating System", CMPI_chars);
@@ -336,7 +337,7 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
     CMSetProperty( ci, "OperationalStatus", (CMPIValue*)&(opstat), CMPI_uint16A);
   }
 
-  CMSetProperty( ci, "ElementName", get_os_distro(), CMPI_chars);  
+  CMSetProperty( ci, "ElementName", CIM_OS_DISTRO, CMPI_chars);  
   CMSetProperty( ci, "EnabledState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);

@@ -12,6 +12,7 @@
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Adrian Schuur <schuur@de.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Interface Type : Common Manageability Programming Interface ( CMPI )
  *
@@ -68,8 +69,8 @@ void _check_system_key_value_pairs( const CMPIBroker * _broker,
       return;
    }
 
-   if (( strcasecmp(CMGetCharPtr(name),get_system_name()) != 0 ) &&
-       ( strcasecmp(CMGetCharPtr(name),get_os_name()) != 0 )) {
+   if (( strcasecmp(CMGetCharPtr(name),CIM_HOST_NAME) != 0 ) &&
+       ( strcasecmp(CMGetCharPtr(name),CIM_OS_NAME) != 0 )) {
       CMSetStatusWithChars( _broker, rc,
                             CMPI_RC_ERR_NOT_FOUND, "This instance does not exist (wrong CS/OS Name)." );
       _OSBASE_TRACE(4,("--- _check_system_key_value_pairs() failed : %s",CMGetCharPtr(rc->msg)));

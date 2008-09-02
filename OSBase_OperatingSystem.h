@@ -16,6 +16,7 @@
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               C. Eric Wu <cwu@us.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Description: 
  * This file defines the interfaces for the resource access implementation 
@@ -68,7 +69,7 @@ struct cim_operatingsystem {
 int get_operatingsystem_data( struct cim_operatingsystem ** );
 void free_os_data( struct cim_operatingsystem * );
 
-char * get_os_distro();
+void _init_os_distro();
 char * get_os_installdate();
 char * get_os_lastbootup();
 char * get_os_localdatetime();

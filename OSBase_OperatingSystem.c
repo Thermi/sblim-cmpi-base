@@ -45,6 +45,7 @@ char * CIM_OS_DISTRO = NULL;
 
 /* initialization routine */
 void __attribute__ ((constructor)) _osbase_os_init() {
+   _init_os_distro();
 }
 
 /* deinitialization routine */
@@ -68,7 +69,7 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
   (*sptr) = calloc(1,sizeof(struct cim_operatingsystem));
 
-  (*sptr)->version = get_os_distro();
+  (*sptr)->version = CIM_OS_DISTRO;
   (*sptr)->osType = 36;
 
   (*sptr)->numOfProcesses = get_os_numOfProcesses();
@@ -126,7 +127,7 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 }
 
 
-char * get_os_distro() {
+void _init_os_distro() {
   char ** hdout   = NULL;
   char *  ptr     = NULL;
   char *  cmd     = NULL;
@@ -137,7 +138,7 @@ char * get_os_distro() {
 
   if( !CIM_OS_DISTRO ) {
     
-    _OSBASE_TRACE(4,("--- get_os_distro() called : init"));
+    _OSBASE_TRACE(4,("--- _init_os_distro() called : init"));
 
     rc = runcommand( "find /etc/ -type f -maxdepth 1 -name *release* 2>/dev/null" , NULL , &hdout , NULL );
     if( rc == 0 && hdout != NULL) {
@@ -185,11 +186,10 @@ char * get_os_distro() {
       strcpy( CIM_OS_DISTRO , "Linux" );
     }
     freeresultbuf(hdout);
-    _OSBASE_TRACE(4,("--- get_os_distro() : CIM_OS_DISTRO initialized with %s",CIM_OS_DISTRO));
+    _OSBASE_TRACE(4,("--- _init_os_distro() : CIM_OS_DISTRO initialized with %s",CIM_OS_DISTRO));
   }
 
-  _OSBASE_TRACE(4,("--- get_os_distro() exited : %s",CIM_OS_DISTRO));
-  return CIM_OS_DISTRO;
+  _OSBASE_TRACE(4,("--- _init_os_distro() exited : %s",CIM_OS_DISTRO));
 }
 
 
@@ -225,8 +225,6 @@ char * get_os_installdate() {
   int          rc    = 0;
 
   _OSBASE_TRACE(4,("--- get_os_installdate() called"));
-
-  get_os_distro();
 
   if( CIM_OS_DISTRO && strstr( CIM_OS_DISTRO, "Red Hat" ) ) {
     /* we guess it is Red Hat */

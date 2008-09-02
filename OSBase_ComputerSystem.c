@@ -13,6 +13,7 @@
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               C. Eric Wu <cwu@us.ibm.com>               
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Description:
  * This shared library provides resource access functionality for the class
@@ -63,7 +64,7 @@ char * get_cs_primownercontact() {
   _OSBASE_TRACE(4,("--- get_cs_primownercontact() called"));
 
   if( (own = get_cs_primownername()) != NULL ) {
-    host = get_system_name();
+    host = CIM_HOST_NAME;
     ptr = (char*)malloc( (strlen(own)+strlen(host)+2));
     strcpy( ptr, own);
     strcat( ptr,"@");

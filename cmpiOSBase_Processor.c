@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/cpl1.0.txt
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
- * Contributors:
+ * Contributors: Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Interface Type : Common Magabeablity Programming Interface ( CMPI )
  *
@@ -61,7 +61,7 @@ CMPIObjectPath * _makePath_Processor( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data
   */ 
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makePath_Processor() failed : %s",CMGetCharPtr(rc->msg)));
@@ -78,7 +78,7 @@ CMPIObjectPath * _makePath_Processor( const CMPIBroker * _broker,
   }
 
   CMAddKey(op, "SystemCreationClassName", CSCreationClassName, CMPI_chars);  
-  CMAddKey(op, "SystemName", get_system_name(), CMPI_chars);
+  CMAddKey(op, "SystemName", CIM_HOST_NAME, CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);  
   CMAddKey(op, "DeviceID", sptr->id, CMPI_chars);
     
@@ -108,7 +108,7 @@ CMPIInstance * _makeInst_Processor( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makeInst_Processor() failed : %s",CMGetCharPtr(rc->msg)));
@@ -143,7 +143,7 @@ CMPIInstance * _makeInst_Processor( const CMPIBroker * _broker,
   free(keys);
       
   CMSetProperty( ci, "SystemCreationClassName",CSCreationClassName , CMPI_chars ); 
-  CMSetProperty( ci, "SystemName", get_system_name(), CMPI_chars );
+  CMSetProperty( ci, "SystemName", CIM_HOST_NAME, CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars ); 
   CMSetProperty( ci, "DeviceID", sptr->id, CMPI_chars );
 

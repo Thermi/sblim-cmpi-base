@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/cpl1.0.txt
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
- * Contributors:
+ * Contributors: Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Interface Type : Common Magabeablity Programming Interface ( CMPI )
  *
@@ -59,7 +59,7 @@ CMPIObjectPath * _makePath_ComputerSystem( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data 
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
@@ -76,7 +76,7 @@ CMPIObjectPath * _makePath_ComputerSystem( const CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
-  CMAddKey(op, "Name", get_system_name(), CMPI_chars);
+  CMAddKey(op, "Name", CIM_HOST_NAME, CMPI_chars);
     
  exit:
   _OSBASE_TRACE(2,("--- _makePath_ComputerSystem() exited"));
@@ -108,7 +108,7 @@ CMPIInstance * _makeInst_ComputerSystem( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makeInst_ComputerSystem() failed : %s",CMGetCharPtr(rc->msg)));
@@ -141,7 +141,7 @@ CMPIInstance * _makeInst_ComputerSystem( const CMPIBroker * _broker,
   free(keys);
 
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
-  CMSetProperty( ci, "Name", get_system_name(), CMPI_chars );
+  CMSetProperty( ci, "Name", CIM_HOST_NAME, CMPI_chars );
   CMSetProperty( ci, "Status", "NULL", CMPI_chars);
   CMSetProperty( ci, "NameFormat", "IP", CMPI_chars);
   CMSetProperty( ci, "Caption", "Computer System", CMPI_chars);
@@ -162,7 +162,7 @@ CMPIInstance * _makeInst_ComputerSystem( const CMPIBroker * _broker,
 
   /* 2.7 */
 #ifndef CIM26COMPAT
-  CMSetProperty( ci, "ElementName", get_system_name(), CMPI_chars);
+  CMSetProperty( ci, "ElementName", CIM_HOST_NAME, CMPI_chars);
   CMSetProperty( ci, "EnabledState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);

@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/cpl1.0.txt
  *
  * Author:       Michael Schuele <schuelem@de.ibm.com>
- * Contributors:
+ * Contributors: Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Interface Type : Common Magabeablity Programming Interface ( CMPI )
  *
@@ -61,7 +61,7 @@ CMPIObjectPath * _makePath_OperatingSystemStatisticalData( const CMPIBroker * _b
 
 
 
-    if (!get_os_name()) {
+    if (!CIM_OS_NAME) {
         CMSetStatusWithChars(_broker, rc, 
                              CMPI_RC_ERR_FAILED, "no OS name found");
         _OSBASE_TRACE(2,("--- _makePath_OperatingSystemStatisticalData() failed : %s",CMGetCharPtr(rc->msg)));
@@ -80,7 +80,7 @@ CMPIObjectPath * _makePath_OperatingSystemStatisticalData( const CMPIBroker * _b
 
     /* keys are unique identifiers for an instance */
     // instanceID: Linux:<hostname>
-    hostname = get_system_name();
+    hostname = CIM_HOST_NAME;
     instanceID = calloc(_INSTANCE_PREFIX_LENGTH + strlen(hostname) + 1, sizeof(char));
     strcpy(instanceID, _INSTANCE_PREFIX);
     strcat(instanceID, hostname);
@@ -155,7 +155,7 @@ CMPIInstance * _makeInst_OperatingSystemStatisticalData( const CMPIBroker * _bro
     */
 
     // Linux:<hostname>
-    hostname = get_system_name();
+    hostname = CIM_HOST_NAME;
     instanceID = calloc(_INSTANCE_PREFIX_LENGTH + strlen(hostname) + 1, sizeof(char));
     strcpy(instanceID, _INSTANCE_PREFIX);
     strcat(instanceID, hostname);
@@ -166,7 +166,7 @@ CMPIInstance * _makeInst_OperatingSystemStatisticalData( const CMPIBroker * _bro
     /* from CIM_ManagedElement */
     CMSetProperty(ci, "Caption", _ClassName, CMPI_chars);
     CMSetProperty(ci, "Description", "statistical information about operating system", CMPI_chars);
-    CMSetProperty(ci, "ElementName", get_os_name(), CMPI_chars);
+    CMSetProperty(ci, "ElementName", CIM_OS_NAME, CMPI_chars);
 
     /* ResetSelectedStats is not yet supported so StartStatisticTime is always set to boottime */
     usecs = _get_os_boottime();

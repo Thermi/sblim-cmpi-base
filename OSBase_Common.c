@@ -99,6 +99,8 @@ void _init_trace_file() {
 void __attribute__ ((constructor)) _osbase_common_init() {
   _init_trace_level();
   _init_trace_file();
+  _init_system_name();
+  _init_os_name();
   return;
 }
 
@@ -141,7 +143,7 @@ int kernel_release() {
  * contains the full qualified IP hostname of the system, e.g. host.domain
  */
 
-char * get_system_name() {
+void _init_system_name() {
   char *  host   = NULL;
   char *  domain = NULL;
   char *  ptr    = NULL;
@@ -150,10 +152,10 @@ char * get_system_name() {
 
   if( !CIM_HOST_NAME ) {
 
-    _OSBASE_TRACE(4,("--- get_system_name() called : init"));
+    _OSBASE_TRACE(4,("--- _init_system_name() called : init"));
 
     host = calloc(1,255);
-    if ( gethostname(host, 255 ) == -1 ) { return NULL ; }
+    if ( gethostname(host, 255 ) == -1 ) { return; }
     /* if host does not contain a '.' we can suppose, that the domain is not
      * available in the current value. but we try to get the full qualified
      * hostname.
@@ -188,10 +190,9 @@ char * get_system_name() {
     if(host) free(host);
     if(domain) free(domain);
 
-    _OSBASE_TRACE(4,("--- get_system_name() : CIM_HOST_NAME initialized with %s",CIM_HOST_NAME));
+    _OSBASE_TRACE(4,("--- _init_system_name() : CIM_HOST_NAME initialized with %s",CIM_HOST_NAME));
   }
 
-  return CIM_HOST_NAME;
 }
 
 
@@ -199,22 +200,20 @@ char * get_system_name() {
 
 /* ---------------------------------------------------------------------------*/
 
-char * get_os_name(){
+void _init_os_name(){
 
   if(!CIM_OS_NAME) {
 
-    _OSBASE_TRACE(4,("--- get_os_name() called : init"));
+    _OSBASE_TRACE(4,("--- _init_os_name() called : init"));
 
-    get_system_name();
     if(CIM_HOST_NAME) {
       if((CIM_OS_NAME=calloc(1,strlen(CIM_HOST_NAME)+1)) != NULL) {
 	strcpy( CIM_OS_NAME, CIM_HOST_NAME );
       }
     }
     
-    _OSBASE_TRACE(4,("--- get_os_name() : CIM_OS_NAME initialized with %s",CIM_OS_NAME));
+    _OSBASE_TRACE(4,("--- _init_os_name() : CIM_OS_NAME initialized with %s",CIM_OS_NAME));
   }
-  return CIM_OS_NAME;
 }
 
 /* ---------------------------------------------------------------------------*/

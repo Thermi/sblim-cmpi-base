@@ -13,6 +13,7 @@
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
  *               Eric C. Wu <cwu@us.ibm.com>
+ *               Tyrel Datwyler <tyreld@us.ibm.com>
  *
  * Interface Type : Common Magabeablity Programming Interface ( CMPI )
  *
@@ -73,14 +74,14 @@ CMPIObjectPath * _makePath_UnixProcess( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data 
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makePath_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
-  if( !get_os_name() ) {
+  if( !CIM_OS_NAME ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
     _OSBASE_TRACE(2,("--- _makePath_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
@@ -97,9 +98,9 @@ CMPIObjectPath * _makePath_UnixProcess( const CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CSCreationClassName", CSCreationClassName, CMPI_chars);
-  CMAddKey(op, "CSName", get_system_name(), CMPI_chars);
+  CMAddKey(op, "CSName", CIM_HOST_NAME, CMPI_chars);
   CMAddKey(op, "OSCreationClassName", OSCreationClassName, CMPI_chars);
-  CMAddKey(op, "OSName", get_os_name(), CMPI_chars);
+  CMAddKey(op, "OSName", CIM_OS_NAME, CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
   CMAddKey(op, "Handle", sptr->pid, CMPI_chars);
     
@@ -140,14 +141,14 @@ CMPIInstance * _makeInst_UnixProcess( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data
   */
-  if( !get_system_name() ) {   
+  if( !CIM_HOST_NAME ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
-  if( !get_os_name() ) {
+  if( !CIM_OS_NAME ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
     _OSBASE_TRACE(2,("--- _makeInst_UnixProcess() failed : %s",CMGetCharPtr(rc->msg)));
@@ -184,9 +185,9 @@ CMPIInstance * _makeInst_UnixProcess( const CMPIBroker * _broker,
   free(keys);
 
   CMSetProperty( ci, "CSCreationClassName",CSCreationClassName , CMPI_chars );
-  CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
+  CMSetProperty( ci, "CSName", CIM_HOST_NAME, CMPI_chars );
   CMSetProperty( ci, "OSCreationClassName", OSCreationClassName, CMPI_chars );
-  CMSetProperty( ci, "OSName", get_os_name(), CMPI_chars );
+  CMSetProperty( ci, "OSName", CIM_OS_NAME, CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
   CMSetProperty( ci, "Handle", sptr->pid, CMPI_chars );
 
