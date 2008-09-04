@@ -64,7 +64,7 @@ char * get_cs_primownercontact() {
   _OSBASE_TRACE(4,("--- get_cs_primownercontact() called"));
 
   if( (own = get_cs_primownername()) != NULL ) {
-    host = CIM_HOST_NAME;
+    host = get_system_name();
     ptr = (char*)malloc( (strlen(own)+strlen(host)+2));
     strcpy( ptr, own);
     strcat( ptr,"@");

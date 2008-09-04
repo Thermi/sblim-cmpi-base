@@ -52,6 +52,8 @@ int kernel_release();
 void _init_system_name();
 void _init_os_name();
 
+static inline char * get_system_name() { return CIM_HOST_NAME; }
+static inline char * get_os_name() { return CIM_OS_NAME; }
 signed short  get_os_timezone();
 unsigned long _get_os_boottime();
 void          _cat_timezone( char * str, signed short zone );

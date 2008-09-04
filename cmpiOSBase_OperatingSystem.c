@@ -81,14 +81,14 @@ CMPIObjectPath * _makePath_OperatingSystem( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data 
   */
-  if( !CIM_HOST_NAME ) {   
+  if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
-  if( !CIM_OS_NAME ) {
+  if( !get_os_name() ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
     _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() failed : %s",CMGetCharPtr(rc->msg)));
@@ -105,9 +105,9 @@ CMPIObjectPath * _makePath_OperatingSystem( const CMPIBroker * _broker,
   }
 
   CMAddKey(op, "CSCreationClassName", CSCreationClassName, CMPI_chars);
-  CMAddKey(op, "CSName", CIM_HOST_NAME, CMPI_chars);
+  CMAddKey(op, "CSName", get_system_name(), CMPI_chars);
   CMAddKey(op, "CreationClassName", _ClassName, CMPI_chars);
-  CMAddKey(op, "Name", CIM_OS_NAME, CMPI_chars);
+  CMAddKey(op, "Name", get_os_name(), CMPI_chars);
 
  exit:
   _OSBASE_TRACE(2,("--- _makePath_OperatingSystem() exited"));
@@ -205,14 +205,14 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
   /* the sblim-cmpi-base package offers some tool methods to get common
    * system data 
   */
-  if( !CIM_HOST_NAME ) {   
+  if( !get_system_name() ) {   
     CMSetStatusWithChars( _broker, rc, 
 			  CMPI_RC_ERR_FAILED, "no host name found" );
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
     goto exit;
   }
 
-  if( !CIM_OS_NAME ) {
+  if( !get_os_name() ) {
     CMSetStatusWithChars( _broker, rc,
 			  CMPI_RC_ERR_FAILED, "no OS name found" );
     _OSBASE_TRACE(2,("--- _makeOS() failed : %s",CMGetCharPtr(rc->msg)));
@@ -250,9 +250,9 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
   if(getcpu(&cs) == 0) { pctcpu = getpctcpu(&cs); }
 
   CMSetProperty( ci, "CSCreationClassName", CSCreationClassName, CMPI_chars );
-  CMSetProperty( ci, "CSName", CIM_HOST_NAME, CMPI_chars );
+  CMSetProperty( ci, "CSName", get_system_name(), CMPI_chars );
   CMSetProperty( ci, "CreationClassName", _ClassName, CMPI_chars );
-  CMSetProperty( ci, "Name", CIM_OS_NAME, CMPI_chars );
+  CMSetProperty( ci, "Name", get_os_name(), CMPI_chars );
 
   CMSetProperty( ci, "Status", "NULL", CMPI_chars);
   CMSetProperty( ci, "Caption", "Operating System", CMPI_chars);
