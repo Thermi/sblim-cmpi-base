@@ -265,12 +265,13 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
 
   CMSetProperty( ci, "NumberOfUsers", (CMPIValue*)&(sptr->numOfUsers), CMPI_uint32);
   CMSetProperty( ci, "NumberOfProcesses", (CMPIValue*)&(sptr->numOfProcesses), CMPI_uint32);
+  CMSetProperty( ci, "MaxProcessesPerUser", (CMPIValue*)&(sptr->maxNumOfProc), CMPI_uint32);
   CMSetProperty( ci, "MaxNumberOfProcesses", (CMPIValue*)&(sptr->maxNumOfProc), CMPI_uint32);
   CMSetProperty( ci, "MaxProcessMemorySize", (CMPIValue*)&(sptr->maxProcMemSize), CMPI_uint64);
   CMSetProperty( ci, "PctTotalCPUTime", (CMPIValue*)&pctcpu, CMPI_uint16);
 
   CMSetProperty( ci, "Distributed",(CMPIValue*)&CMPI_false, CMPI_boolean);
-  CMSetProperty( ci, "TotalSwapSpaceSize",(CMPIValue*)&totalSwap, CMPI_uint64);
+  CMSetProperty( ci, "TotalSwapSpaceSize",(CMPIValue*)&(sptr->totalSwapSize), CMPI_uint64);
 
   CMSetProperty( ci, "TotalVirtualMemorySize", (CMPIValue*)&(sptr->totalVirtMem), CMPI_uint64);
   CMSetProperty( ci, "FreeVirtualMemory", (CMPIValue*)&(sptr->freeVirtMem), CMPI_uint64);
@@ -321,6 +322,7 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
   CMSetProperty( ci, "LanguageEdition", sptr->langEd, CMPI_chars);
 
   CMSetProperty( ci, "DefaultPageSize", (CMPIValue*)&(sptr->defPageSize), CMPI_uint32);
+  CMSetProperty( ci, "NumberOfLicensedUsers", (CMPIValue*)&(sptr->licensedUsers), CMPI_uint32);
 
   /* 2.7 */
 #ifndef CIM26COMPAT
@@ -342,6 +344,7 @@ static CMPIInstance * _makeOS( const CMPIBroker * _broker,
   CMSetProperty( ci, "OtherEnabledState", "NULL", CMPI_chars);
   CMSetProperty( ci, "RequestedState", (CMPIValue*)&(status), CMPI_uint16);
   CMSetProperty( ci, "EnabledDefault", (CMPIValue*)&(status), CMPI_uint16);
+  CMSetProperty( ci, "HealthState", (CMPIValue*)&(sptr->healthState), CMPI_uint16);
 
 #endif
 

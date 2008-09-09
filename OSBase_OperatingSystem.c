@@ -71,11 +71,14 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
   (*sptr)->version = CIM_OS_DISTRO;
   (*sptr)->osType = 36;
+  (*sptr)->licensedUsers = 0;
+  (*sptr)->healthState = 5;
 
   (*sptr)->numOfProcesses = get_os_numOfProcesses();
   (*sptr)->numOfUsers     = get_os_numOfUsers();
   (*sptr)->maxNumOfProc   = get_os_maxNumOfProc();
   (*sptr)->maxProcMemSize = get_os_maxProcMemSize();
+  (*sptr)->totalSwapSize  = get_os_totalSwapSize();
 
   /* get values for memory properties :
    * TotalVisibleMemorySize, FreePhysicalMemory, SizeStoredInPagingFiles,
@@ -213,6 +216,28 @@ char * get_kernel_version() {
 
   _OSBASE_TRACE(4,("--- get_kernel_version() exited : %s",str));
   return str;
+}
+
+
+unsigned long long get_os_totalSwapSize() {
+   char          ** hdout = NULL;
+   unsigned long long num = 0;
+   int                  i = 0;
+   int                 rc = 0;
+   
+   _OSBASE_TRACE(4,("--- get_os_totalSwapSize() called"));
+
+   rc = runcommand("cat /proc/swaps | awk '{print $3}' | sed '1d' 2>/dev/null", NULL, &hdout, NULL);
+   if ( rc == 0 && *hdout ) {
+      while (hdout[i] && hdout[i][0]) {
+         num += strtoull(hdout[i], NULL, 10);
+         i++;
+      }
+   }
+   freeresultbuf(hdout);
+   
+   _OSBASE_TRACE(4,("--- get_os_totalSwapSize() exited : %ld",num));
+   return num;
 }
 
 

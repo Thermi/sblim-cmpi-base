@@ -61,7 +61,10 @@ struct cim_operatingsystem {
   char * langEd;                       // LanguageEdition
 
   unsigned long defPageSize;           // DefaultPageSize
-
+  
+  unsigned long licensedUsers;         // 0
+  unsigned long long totalSwapSize;
+  unsigned short healthState;          // 5
 };
 
 /* ---------------------------------------------------------------------------*/
@@ -81,6 +84,7 @@ unsigned long get_os_numOfUsers();
 unsigned long get_os_maxNumOfProc();
 
 unsigned long long get_os_maxProcMemSize();
+unsigned long long get_os_totalSwapSize();
 
 char * get_kernel_version();
 
