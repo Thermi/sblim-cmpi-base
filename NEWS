@@ -6,6 +6,7 @@ Bugs Fixed:
 - 1883918 OperatingSystem provider segfaults on file not found
 - 2089383 Shared library use of _init/_fini obsolete
 - 2089546 CIM_OS_DISTRO should only be intialized once
+- 2093799 distro version script guesses wrong
 
 Changes in 1.5.6
 ================

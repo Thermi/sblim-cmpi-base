@@ -1,3 +1,9 @@
+2008-09-04  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * OSBase_OperatingSystem, 
+   test/system/linux/Linux_OperatingSystem.version.sh
+   Bug 2093799: distro version script guesses wrong 
+
 2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
 
    * OSBase_Common.c, OSBase_Common.h, OSBase_ComputerSystem.c, 

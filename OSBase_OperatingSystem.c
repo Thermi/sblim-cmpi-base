@@ -141,7 +141,7 @@ void _init_os_distro() {
     _OSBASE_TRACE(4,("--- _init_os_distro() called : init"));
 
     rc = runcommand( "find /etc/ -type f -maxdepth 1 -name *release* 2>/dev/null" , NULL , &hdout , NULL );
-    if( rc == 0 && hdout != NULL) {
+    if( rc == 0 && *hdout != NULL) {
       while (hdout[j] && hdout[j][0]) {
 	if (strstr(hdout[j],"lsb-release") && hdout[j+1] && hdout[j+1][0]) {
 	  /* found lsb-release but there are other (preferred) release files */
