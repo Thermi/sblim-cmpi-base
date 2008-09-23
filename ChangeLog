@@ -1,13 +1,18 @@
+2008-09-22  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * OSBase_Processor, configure.ac:
+   Bug 2065946: OSBase ProcessorProvider crashes on some platforms
+
 2008-09-09  Tyrel Datwyler <tyreld@us.ibm.com>
 
    * OSBase_OperatingSystem.c, OSBase_OperatingSystem.h,
-   cmpiOSBase_OperatingSystem.c
+   cmpiOSBase_OperatingSystem.c:
    Bug 2093965: Linux_OperatingSystem fails to set some properties
 
 2008-09-04  Tyrel Datwyler <tyreld@us.ibm.com>
 
    * OSBase_OperatingSystem.c, 
-   test/system/linux/Linux_OperatingSystem.version.sh
+   test/system/linux/Linux_OperatingSystem.version.sh:
    Bug 2093799: distro version script guesses wrong 
 
 2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
@@ -16,22 +21,22 @@
      OSBase_OperatingSystem.c OSBase_OperatingSystem.h, cmpiOSBase_Common.c,
      cmpiOSBase_ComputerSystem.c, cmpiOSBase_OperatingSystem.c, 
      cmpiOSBase_OperatingSystemStatisticalData.c, cmpiOSBase_Processor.c, 
-     cmpiOSBase_UnixProcess.c
+     cmpiOSBase_UnixProcess.c:
      Bug 2089546: CIM_OS_DISTRO should only be intialized once
 
 2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
 
-   * OSBase_OperatingSystem.c
+   * OSBase_OperatingSystem.c:
    Bug 1883918: OperatingSystem provider segfaults on file not found
 
 2008-09-02  Tyrel Datwyler <tyreld@us.ibm.com>
 
-   * OSBase_OperatingSystem.c, OSBase_Common.c, Makefile.am
+   * OSBase_OperatingSystem.c, OSBase_Common.c, Makefile.am:
    Bug 2089383: Shared library use of _init/_fini obsolete
 
 2007-11-16  Chris Buccella  <buccella@linux.vnet.ibm.com>
 
-	* OSBase_OperatingSystem.c
+	* OSBase_OperatingSystem.c:
 	Bug 1832839: OSBase OperatingSystem provider returns wrong max processes
 
 2007-01-03  heidi eckhart  <heidineu@localhost.localdomain>
