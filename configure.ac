@@ -14,6 +14,7 @@ case $host_cpu in
      ppc*) HW=PPC;; 
      x86_64) HW=X86_64;; 
      ia64) HW=IA64;; 
+     mips*) HW=MIPS;;
      **) HW=GENERIC;;
 esac
 

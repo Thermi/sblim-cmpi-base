@@ -188,7 +188,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   hdout=NULL;
   if(cmd) free(cmd);
   rc = 0;
-#elif defined (S390) || defined (PPC) || defined (IA64)
+#elif defined (S390) || defined (PPC) || defined (IA64) || defined (MIPS)
   (*sptr)->step = (char*)malloc(12);
   strcpy((*sptr)->step,"no stepping");
 #elif defined (GENERIC)
@@ -212,6 +212,9 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 #elif defined (PPC)
   strcat(cmd, " | grep '^cpu'");
   rc = runcommand( cmd, NULL , &hdout , NULL );
+#elif defined (MIPS)
+  strcat(cmd, " | grep '^cpu model'");
+  rc = runcommand( cmd, NULL , &hdout , NULL );
 #elif defined (GENERIC)
   strcat(cmd, " | grep '^processor'");
   rc = runcommand( cmd , NULL , &hdout , NULL );
@@ -226,7 +229,7 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   if( rc == 0 ) {
 #if defined (S390)
     ptr = strchr( hdout[0], ':');
-#elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (IA64) || defined (GENERIC) 
+#elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (IA64) || defined (MIPS) || defined (GENERIC) 
     ptr = strchr( hdout[id], ':');
 #endif
     ptr = ptr+2;
@@ -250,8 +253,8 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 #if defined (INTEL) || defined (X86_64) || defined (IA64)
   strcat(cmd, " | grep 'cpu MHz'");
   rc = runcommand( cmd, NULL, &hdout, NULL );
-#elif defined (S390)
-  rc = 0; /* clock speed cannot be determined on zSeries */
+#elif defined (S390) || defined (MIPS)
+  rc = 0; /* clock speed cannot be determined on zSeries or mips */
 #elif defined (PPC)
   strcat(cmd, " | grep '^clock' | sed -e s/mhz//i");
   rc = runcommand( cmd, NULL, &hdout, NULL );
@@ -275,8 +278,8 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
 #endif
 
   if( rc == 0 ) {
-#if defined (S390)
-    ptr = ":0"; /* don't support clock speed on zSeries */
+#if defined (S390) || defined (MIPS)
+    ptr = ":0"; /* don't support clock speed on zSeries or mips */
 #elif defined (INTEL) || defined (X86_64) || defined (PPC) || defined (IA64) || defined (GENERIC) 
     ptr = strchr( hdout[id], ':');
 #endif
@@ -310,6 +313,9 @@ static unsigned short _processor_family( int id ) {
 #elif defined (PPC)
   strcat(cmd, " | grep cpu");
   rc = runcommand( cmd, NULL , &hdout , NULL );
+#elif defined (MIPS)
+  strcat(cmd, " | grep system type");
+  rc = runcommand( cmd, NULL , &hdout , NULL);
 #endif
   if(cmd) free(cmd);
 
@@ -324,6 +330,8 @@ static unsigned short _processor_family( int id ) {
     if( strstr( hdout[0], "S390") != NULL ) {
       rv = 200;
     }
+#elif defined (MIPS)
+    rv = 64;
 #elif defined (IA64)
     /* Itanium Family */
     if (strstr (hdout[id], "Intel") ) {
