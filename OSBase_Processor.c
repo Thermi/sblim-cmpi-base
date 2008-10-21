@@ -1,7 +1,7 @@
 /*
  * OSBase_Processor.c
  *
- * (C) Copyright IBM Corp. 2002
+ * (C) Copyright IBM Corp. 2002, 2008
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -11,19 +11,20 @@
  * http://www.opensource.org/licenses/cpl1.0.txt
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
- * Contributors: 
+ * Contributors: Tyrel Datwyler <tyreld@us.ibm.com> 
  *               
  * Description:
  * This shared library provides resource access functionality for the class
  * Linux_Processor. 
  * It is independent from any specific CIM technology.
-*/
+ */
 
 /* ---------------------------------------------------------------------------*/
 
 #include "OSBase_Common.h"
 #include "OSBase_Processor.h"
 #include <unistd.h>
+#include <pthread.h>
 
 /* ---------------------------------------------------------------------------*/
 // private declarations
@@ -51,6 +52,96 @@ char * CPUINFO = "/proc/cpuinfo";
 //char * CPUINFO = "/tmp/ia64_cpuinfo";
 
 /* ---------------------------------------------------------------------------*/
+
+#define SAMPLE_PERIOD 60
+#define SAMPLE_INTERVAL 10
+static int SAMPLE_CPU = 1;
+
+static pthread_t tid;
+
+static void * sample_processors(void * ptr);
+static int get_cpu_sample(struct cpu_sample * cps, int cpid);
+static unsigned short cpu_load_perc(int id);
+
+static struct cpu_sample ** cpu_samples;
+static unsigned short * cpu_loads;
+static int num_cpus = 0;
+
+/* initialization routine */
+void __attribute__ ((constructor)) _osbase_processor_init() {
+  char ** hdout;
+  char * cmd;
+  int rc, i, j;
+
+  /* determine number of processors */
+  cmd = malloc(sizeof(char) * (strlen(CPUINFO) * 54));
+  strcpy(cmd, "cat ");
+  strcat(cmd, CPUINFO);
+  strcat(cmd, " | grep ^processor | sed -e s/processor// | wc -l");
+
+  rc = runcommand(cmd, NULL, &hdout, NULL);
+   if (rc == 0) {
+      if (hdout[0] != NULL)
+         num_cpus = atoi(hdout[0]);
+  }
+  freeresultbuf(hdout);
+  if (cmd) free(cmd);
+
+  /* initialize cpu load and base cpu sample for each processor */
+  cpu_samples = malloc(sizeof(struct cpu_sample *) * num_cpus);
+  /*  cpu_loads = malloc(sizeof(int) * num_cpus); */
+
+   for (i = 0; i < num_cpus; i++) {
+      struct cpu_sample * cur_ptr;
+      struct cpu_sample first_sample;
+      
+      get_cpu_sample(&first_sample, i);
+      /* cpu_loads[i] = first_sample.cpuLoad * 100 / first_sample.cpuLoadTotal; */
+         
+      cpu_samples[i] = malloc(sizeof(struct cpu_sample));
+               
+      cur_ptr = cpu_samples[i];
+      cur_ptr->cpuLoad = 0;
+      cur_ptr->cpuLoadTotal = 0;
+      
+      for (j = 0; j < (SAMPLE_PERIOD / SAMPLE_INTERVAL) - 1; j++) {
+         cur_ptr->next = malloc(sizeof(struct cpu_sample));
+         cur_ptr->next->cpuLoad = first_sample.cpuLoad;
+         cur_ptr->next->cpuLoadTotal = first_sample.cpuLoadTotal;
+         cur_ptr = cur_ptr->next;
+      }
+      cur_ptr->next = cpu_samples[i];
+      cpu_samples[i] = cur_ptr;
+   }
+  
+  /* start sampling thread */
+  pthread_create(&tid, NULL, sample_processors, NULL);
+}
+
+/* deinitialization routine */
+void __attribute__ ((destructor)) _osbase_prodessor_fini() {
+  struct cpu_sample * cur_ptr;
+  int i;
+  
+  /* SAMPLE_CPU = 0; */
+  /* pthread_join(tid, NULL); */
+  
+  pthread_cancel(tid);
+  /* sleep(1); */
+
+  for (i = 0; i < num_cpus; i++) {
+     cur_ptr = cpu_samples[i]->next;
+     cpu_samples[i]->next = NULL;
+     while (cur_ptr) {
+        struct cpu_sample * old_ptr = cur_ptr;
+        cur_ptr = cur_ptr->next;
+        free(old_ptr);
+     }
+  }
+  
+  free(cpu_samples);
+  /* free(cpu_loads); */
+}
 
 int enum_all_processor( struct processorlist ** lptr ) {
   struct processorlist *  lptrhelp = NULL;
@@ -244,7 +335,9 @@ static int _processor_data( int id, struct cim_processor ** sptr ) {
   rc = 0;
 
   /* LoadPercentage */
-  (*sptr)->loadPct = _processor_load_perc(id); 
+  /* (*sptr)->loadPct = _processor_load_perc(id); */
+  /* (*sptr)->loadPct = cpu_loads[id]; */
+  (*sptr)->loadPct = cpu_load_perc(id);
 
   /* MaxClockSpeed && CurrentClockSpeed */
   cmd = (char *)malloc((strlen(CPUINFO)+64));
@@ -407,7 +500,81 @@ static unsigned short _processor_family( int id ) {
   return rv;
 }
 
+/* retrieves current statistics for requested cpu id */
+static int get_cpu_sample(struct cpu_sample * cps, int cpid)
+{
+  char ** hdout;
+  char ** data;
+  char * sid;
+  char * cmd;
+  int rc;
+
+  sid = malloc(sizeof(char) * 5);
+  sprintf(sid, "%i", cpid);
+                           
+  cmd = malloc(sizeof(char) * (26 + strlen(sid)));
+  strcpy(cmd, "cat /proc/stat | grep cpu");
+  strcat(cmd, sid);
+
+  rc = runcommand(cmd, NULL, &hdout, NULL);
+  if (cmd) free(cmd);
+  
+  if (rc == 0) {
+      data = line_to_array(hdout[0], ' ');
+      cps->cpuLoadTotal = atol(data[1]) + atol(data[2]) + atol(data[3]) + atol(data[4]);
+      cps->cpuLoad = cps->cpuLoadTotal - atol(data[4]);
+      freeresultbuf(data);
+  } else {
+     cps->cpuLoadTotal = 0;
+     cps->cpuLoad = 0;
+     return -1;
+  }
+  freeresultbuf(hdout);
+  if(sid) free(sid);
+                                                   
+  return 0;
+}
+
+static unsigned short cpu_load_perc(int id) {
+   struct cpu_sample cur_sample;
+   unsigned long load, loadTotal;
+   unsigned short loadPerc;
+
+   get_cpu_sample(&cur_sample, id);
+
+   load = cur_sample.cpuLoad - cpu_samples[id]->next->cpuLoad;
+   loadTotal = cur_sample.cpuLoadTotal - cpu_samples[id]->next->cpuLoadTotal;
+
+   
+   loadPerc = 100 * load / loadTotal;
+   return loadPerc;
+}
+
+static void * sample_processors(void * data)
+{
+  int count = 0;
+  int i;
+  
+  while (1) {
+     sleep(SAMPLE_INTERVAL);
+     
+     for (i = 0; i < num_cpus; i++) {
+         struct cpu_sample cur_sample;
+         int load, loadTotal;
+
+         get_cpu_sample(&cur_sample, i);
+
+         cpu_samples[i]->next->cpuLoad = cur_sample.cpuLoad;
+         cpu_samples[i]->next->cpuLoadTotal = cur_sample.cpuLoadTotal;
+         cpu_samples[i] = cpu_samples[i]->next;
+     }
+  }
+
+  pthread_exit(NULL);
+}
+
 /* calculates the load of the processor 'id' in percent */
+/*
 static unsigned short _processor_load_perc( int id ) {
   char ** hdout = NULL;
   char ** hderr = NULL;
@@ -459,7 +626,7 @@ static unsigned short _processor_load_perc( int id ) {
   _OSBASE_TRACE(4,("--- _processor_load_perc() exited : %i",loadPct));
   return loadPct;
 }
-
+*/
 
 /* ---------------------------------------------------------------------------*/
 

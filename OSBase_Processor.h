@@ -4,7 +4,7 @@
 /*
  * OSBase_Processor.h
  *
- * (C) Copyright IBM Corp. 2002
+ * (C) Copyright IBM Corp. 2002, 2008
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -14,7 +14,7 @@
  * http://www.opensource.org/licenses/cpl1.0.txt
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
- * Contributors: 
+ * Contributors: Tyrel Datwyler <tyreld@us.ibm.com> 
  *
  * Description: 
  * This file defines the interfaces for the resource access implementation 
@@ -29,6 +29,12 @@ extern "C" {
 #endif
 
 /* ---------------------------------------------------------------------------*/
+
+struct cpu_sample {
+  unsigned long cpuLoad;
+  unsigned long cpuLoadTotal;
+  struct cpu_sample * next;
+};
 
 struct cim_processor {
   char * id;
