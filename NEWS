@@ -9,6 +9,7 @@ Bugs Fixed:
 - 2093799 distro version script guesses wrong
 - 2093965 Linux_OperatingSystem fails to set some properties
 - 2065946 OSBase ProcessorProvider crashes on some platforms
+- 2169940 Linux_Processor: reports wrong value for load percentage
 
 Changes in 1.5.6
 ================

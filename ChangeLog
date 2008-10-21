@@ -1,6 +1,11 @@
+2008-10-20  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * OSBase_Processor.c, OSBase_Processor.h:
+   Bug 2169940: Linux_Processor: reports wrong value for load percentage
+
 2008-09-22  Tyrel Datwyler <tyreld@us.ibm.com>
 
-   * OSBase_Processor, configure.ac:
+   * OSBase_Processor.c, configure.ac:
    Bug 2065946: OSBase ProcessorProvider crashes on some platforms
 
 2008-09-09  Tyrel Datwyler <tyreld@us.ibm.com>
