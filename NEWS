@@ -1,5 +1,6 @@
 Bugs Fixed:
 - 1203827 update cmpi-base README.INDICATION for sfcb support
+- 2308219 invokeMethod doesn't test parameter type
 
 Changes in 1.5.7
 ================

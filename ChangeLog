@@ -1,3 +1,8 @@
+2008-11-17  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * cmpiOSBase_OperatingSystem.c:
+   Bug 2308219: invokeMethod doesn't test parameter type
+
 2008-11-11  Tyrel Datwyler <tyreld@us.ibm.com>
 
    * README.INDICATION,

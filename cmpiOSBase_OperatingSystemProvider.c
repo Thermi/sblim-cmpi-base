@@ -256,7 +256,13 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
     valrc.uint8 = 0;
 
     incmd = CMGetArg( in, "cmd", &rc);
-    if( incmd.value.string == NULL ) {    
+    if (incmd.type != CMPI_string) {
+       valrc.uint8 = 2;
+       CMSetStatusWithChars(_broker, &rc,
+             CMPI_RC_ERR_INVALID_PARAMETER, "cmd parameter is not of type string.");
+       _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() failed : %s",_ClassName,CMGetCharPtr(rc.msg)));
+    }
+    else if( incmd.value.string == NULL ) {    
       valrc.uint8 = 2;
       CMSetStatusWithChars( _broker, &rc, 
 			    CMPI_RC_ERR_FAILED, "Could not get command string." ); 
@@ -333,7 +339,7 @@ CMPIStatus OSBase_OperatingSystemProviderInvokeMethod( CMPIMethodMI * mi,
   }
   else {
     CMSetStatusWithChars( _broker, &rc, 
-			  CMPI_RC_ERR_NOT_FOUND, methodName ); 
+			  CMPI_RC_ERR_METHOD_NOT_FOUND, methodName ); 
   }
  
   _OSBASE_TRACE(1,("--- %s CMPI InvokeMethod() exited",_ClassName));
