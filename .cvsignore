@@ -1,0 +1,17 @@
+Makefile.in
+Makefile
+*.lo
+*.la
+.deps
+.libs
+aclocal.m4
+autom4te.cache
+config.h
+config.h.in
+config.log
+config.status
+configure
+dmitest
+libtool
+sblim-cmpi-base.spec
+stamp-h1
