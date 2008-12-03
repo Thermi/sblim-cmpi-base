@@ -323,24 +323,17 @@ char * get_os_localdatetime() {
 
 
 unsigned long get_os_numOfProcesses() {
-  FILE          * fhd   = NULL;
-  char          * value = NULL;
-  char          * ptr   = NULL;
+  char         ** hdout = NULL;
+  int             rc    = 0;
   unsigned long   np    = 0;
 
   _OSBASE_TRACE(4,("--- get_os_numOfProcesses() called"));
 
-  if ( (fhd=fopen("/proc/loadavg","r")) != NULL ) {
-    value = calloc(1,256);
-    fscanf(fhd, 
-	   "%*s %*s %*s %s",
-	   value);
-    fclose(fhd);
-    ptr = strchr(value,'/');
-    ptr++;
-    np = atol(ptr);
-    if(value) { free(value); }
+  rc = runcommand( "ps -ef | wc -l" , NULL , &hdout , NULL );
+  if( rc == 0 ) {
+    np = atol(hdout[0]);
   }
+  freeresultbuf(hdout);
 
   _OSBASE_TRACE(4,("--- get_os_numOfProcesses() exited : %lu",np));
   return np;

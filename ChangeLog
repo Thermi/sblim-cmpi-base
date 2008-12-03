@@ -1,3 +1,9 @@
+2008-12-03  Tyrel Datwyler <tyreld@us.ibm.com>
+
+   * OSBase_OperatingSystem.c:
+   Bug 2384043: incorrect process count
+   Patch by Narasimha Sharoff <nsharoff@us.ibm.com>
+
 2008-11-17  Tyrel Datwyler <tyreld@us.ibm.com>
 
    * cmpiOSBase_OperatingSystem.c:
