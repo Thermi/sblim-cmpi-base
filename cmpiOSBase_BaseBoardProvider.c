@@ -150,7 +150,7 @@ CMPIStatus OSBase_BaseBoardProviderCreateInstance( CMPIInstanceMI * mi,
   return rc;
 }
 
-CMPIStatus OSBase_BaseBoardProviderSetInstance( const CMPIInstanceMI * mi, 
+CMPIStatus OSBase_BaseBoardProviderSetInstance( CMPIInstanceMI * mi, 
            const CMPIContext * ctx, 
            const CMPIResult * rslt, 
            const CMPIObjectPath * cop,
