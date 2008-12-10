@@ -1,3 +1,6 @@
+Changes in Version 1.5.8
+========================
+
 Bugs Fixed:
 - 1203827 Updated cmpi-base README.INDICATION for sfcb support
 - 2308219 Fixed invokeMethod doesn't test parameter type
