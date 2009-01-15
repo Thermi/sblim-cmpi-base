@@ -694,34 +694,36 @@ CMPIStatus OSBase_OperatingSystemProviderDeActivateFilter(
   CMReturn(CMPI_RC_ERR_FAILED);
 }
 
-void OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi, const CMPIContext * ctx) {
+CMPIStatus OSBase_OperatingSystemProviderEnableIndications(CMPIIndicationMI * mi, const CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() called",_ClassName));
 
   if(!ind_enabled) {
     /* start the polling mechanism */
     if(ind_start() != IND_OK) { 
       _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() failed: start indication helper",_ClassName));
-      return; 
+      CMReturn(CMPI_RC_ERR_FAILED); 
     }
     ind_enabled = 1;
   }
 
   _OSBASE_TRACE(1,("--- %s CMPI EnableIndications() exited",_ClassName));
+  CMReturn(CMPI_RC_OK);
 }
 
-void OSBase_OperatingSystemProviderDisableIndications(CMPIIndicationMI * mi, const CMPIContext * ctx) {
+CMPIStatus OSBase_OperatingSystemProviderDisableIndications(CMPIIndicationMI * mi, const CMPIContext * ctx) {
   _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() called",_ClassName));
 
   if(ind_enabled) {
     /* stop the polling mechanism */
     if(ind_stop() != IND_OK) { 
       _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() failed: stop indication helper",_ClassName));
-      return; 
+      CMReturn(CMPI_RC_ERR_FAILED); 
     }
     ind_enabled = 0;
   }
 
   _OSBASE_TRACE(1,("--- %s CMPI DisableIndications() exited",_ClassName));
+  CMReturn(CMPI_RC_OK);
 }
 
 #endif
