@@ -1,5 +1,6 @@
 Bugs Fixed:
 - 2508592 add CMPIStatus to indication function return
+- 2634178 Versioned libcmpiOSBase_OperatingSystemProvider
 
 Changes in Version 1.5.8
 ========================
