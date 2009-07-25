@@ -1,19 +1,19 @@
 dnl
-dnl $Id: acinclude.m4,v 1.9 2006/02/09 13:40:10 mihajlov Exp $
+dnl $Id: acinclude.m4,v 1.10 2009/07/25 00:37:30 tyreld Exp $
 dnl
- dnl 
- dnl (C) Copyright IBM Corp. 2004, 2005
- dnl
- dnl THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
- dnl ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
- dnl CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
- dnl
- dnl You can obtain a current copy of the Common Public License from
- dnl  http://www.opensource.org/licenses/cpl1.0.php
- dnl
- dnl Author:       Konrad Rzeszutek <konradr@us.ibm.com>
- dnl Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
- dnl Date  :	      09/20/2004
+dnl 
+dnl (C) Copyright IBM Corp. 2004, 2005, 2009
+dnl
+dnl THIS FILE IS PROVIDED UNDER THE TERMS OF THE ECLIPSE PUBLIC LICENSE
+dnl ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
+dnl CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
+dnl
+dnl You can obtain a current copy of the Eclipse Public License from
+dnl http://www.eclipse.org/legal/epl-v10.html
+dnl
+dnl Author:       Konrad Rzeszutek <konradr@us.ibm.com>
+dnl Contributors: Viktor Mihajlovski <mihajlov@de.ibm.com>
+dnl Date  :	      09/20/2004
 dnl
 dnl
 dnl CHECK_CMPI: Check for CMPI headers and set the CPPFLAGS
@@ -72,6 +72,7 @@ AC_DEFUN([_CHECK_CMPI],
 	AC_MSG_CHECKING($1)
 	AC_TRY_LINK(
 	[
+		#include <stdio.h>
 		#include <cmpimacs.h>
 		#include <cmpidt.h>
 		#include <cmpift.h>
@@ -252,33 +253,33 @@ AC_DEFUN([CHECK_CIMSERVER],
 	AC_MSG_CHECKING(for CIM servers)
 	if test x"$CIMSERVER" = x
 	then
-	_SERVERS="sfcbd cimserver owcimomd"
-	_SAVE_PATH=$PATH
-	PATH=/usr/sbin:/usr/local/sbin:$PATH
-	for _name in $_SERVERS
-	do
+	   _SERVERS="sfcbd cimserver owcimomd"
+	   _SAVE_PATH=$PATH
+	   PATH=/usr/sbin:/usr/local/sbin:$PATH
+	   for _name in $_SERVERS
+	   do               
 	 	AC_MSG_CHECKING( $_name )
 		for _path in `echo $PATH | sed "s/:/ /g"`
                 do
 		  if test -f $_path/$_name ; then
 		  dnl Found it
-		  AC_MSG_RESULT(yes)
-		  if test x"$CIMSERVER" == x ; then
+		    AC_MSG_RESULT(yes)
+		    if test x"$CIMSERVER" == x ; then
 			case $_name in
 			   sfcbd) CIMSERVER=sfcb;;
 			   cimserver) CIMSERVER=pegasus;;
 			   owcimomd) CIMSERVER=openwbem;;
 			esac
-		  fi
+		    fi
 		  break;
-		fi
-        done
+		  fi
+		done
            done
-	PATH=$_SAVE_PATH
-	if test x"$CIMSERVER" == x ; then
+	   PATH=$_SAVE_PATH
+	   if test x"$CIMSERVER" == x ; then
 		CIMSERVER=sfcb
 		AC_MSG_RESULT(implied: $CIMSERVER)
-	fi
+  	   fi
 	fi
 	# Cross platform only needed for sfcb currently
 	if test $CIMSERVER = sfcb
@@ -343,6 +344,30 @@ dnl The main function to check for the cmpi-base common header
 dnl Modifies the CPPFLAGS with the right include directory and sets
 dnl the 'have_SBLIMBASE' to either 'no' or 'yes'
 dnl
+AC_DEFUN([_CHECK_SBLIM_BASE],
+	[
+	AC_MSG_CHECKING($1)
+	_ldflags=$LDFLAGS
+	LDFLAGS="$LDFLAGS -lcmpiOSBase_Common"
+	AC_TRY_LINK(
+	[
+		#include <OSBase_Common.h>
+	],
+	[
+	        get_system_name();
+	],
+	[
+		have_SBLIMBASE=yes
+	        LDFLAGS=$_ldflags
+		dnl AC_MSG_RESULT(yes)
+	],
+	[
+		have_SBLIMBASE=no
+	        LDFLAGS=$_ldflags
+		dnl AC_MSG_RESULT(no)
+	])
+
+])
 
 AC_DEFUN([CHECK_SBLIM_BASE],
 	[

@@ -1,14 +1,14 @@
 /*
- * $Id: dmitest.c,v 1.2 2007/11/19 16:44:58 buccella Exp $
+ * $Id: dmitest.c,v 1.3 2009/07/25 00:37:31 tyreld Exp $
  *
- * (C) Copyright IBM Corp. 2003
+ * (C) Copyright IBM Corp. 2003, 2009
  *
- * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE 
+ * THIS FILE IS PROVIDED UNDER THE TERMS OF THE ECLIPSE PUBLIC LICENSE 
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE 
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
  *
- * You can obtain a current copy of the Common Public License from
- * http://www.opensource.org/licenses/cpl1.0.txt
+ * You can obtain a current copy of the Eclipse Public License from
+ * http://www.opensource.org/licenses/eclipse-1.0.php
  *
  * Author:       Viktor Mihajlovski <mihajlov@de.ibm.com>
  * Contributors:

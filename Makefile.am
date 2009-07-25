@@ -1,13 +1,13 @@
-# $Id: Makefile.am,v 1.16 2009/02/24 22:39:24 tyreld Exp $
+# $Id: Makefile.am,v 1.17 2009/07/25 00:37:30 tyreld Exp $
 # ==================================================================
-# (C) Copyright IBM Corp. 2005
+# (C) Copyright IBM Corp. 2005, 2009
 #
-# THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+# THIS FILE IS PROVIDED UNDER THE TERMS OF THE ECLIPSE PUBLIC LICENSE
 # ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
 # CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
 #
-# You can obtain a current copy of the Common Public License from
-# http://www.opensource.org/licenses/cpl1.0.php
+# You can obtain a current copy of the Eclipse Public License from
+# http://www.opensource.org/licenses/ecplipse-1.0.php
 #
 # Author:       Viktor Mihajlovski <mihajlov@de.ibm.com>
 # Contributors: Dr. Gareth S. Bestor <bestorga@us.ibm.com>

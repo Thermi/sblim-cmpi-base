@@ -1,14 +1,14 @@
 #!/bin/sh
-# $Id: provider-register.sh,v 1.13 2006/02/09 13:40:10 mihajlov Exp $
+# $Id: provider-register.sh,v 1.14 2009/07/25 00:37:31 tyreld Exp $
 # ==================================================================
-# (C) Copyright IBM Corp. 2005
+# (C) Copyright IBM Corp. 2005, 2009
 #
-# THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+# THIS FILE IS PROVIDED UNDER THE TERMS OF THE ECLIPSE PUBLIC LICENSE
 # ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
 # CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
 #
-# You can obtain a current copy of the Common Public License from
-# http://www.opensource.org/licenses/cpl1.0.php
+# You can obtain a current copy of the Eclipse Public License from
+# http://www.eclipse.org/legal/epl-v10.html
 #
 # Author:       Viktor Mihajlovski <mihajlov@de.ibm.com>
 # Contributors:
@@ -174,8 +174,11 @@ pegasus_install()
 
     mofpath=
     mymofs=
-    mregs=
+    myregs=
     mofmode=1
+    namespace=$1
+    shift
+
     while test x$1 != x
     do 
       if test $1 = ":"
@@ -212,7 +215,7 @@ pegasus_install()
     if pegasus_transform $_REGFILENAME $myregs
     then
 	chatter Registering providers with $state cimserver
-	$CIMMOF -uc -I $mofpath -n root/cimv2 $mymofs &&
+	$CIMMOF -uc -I $mofpath -n $namespace $mymofs &&
 	$CIMMOF -uc -n root/PG_Interop $_REGFILENAME
     else
 	echo "Failed to build pegasus registration MOF." >&2
@@ -223,8 +226,11 @@ pegasus_install()
 pegasus_uninstall()
 {
     mymofs=
-    mregs=
+    myregs=
     mofmode=1
+    namespace=$1
+    shift
+
     while test x$1 != x
     do 
       if test $1 = ":"
@@ -269,18 +275,36 @@ pegasus_uninstall()
 	    return 1
 	fi
 	CLASSES=`cat $myregs 2> /dev/null | grep -v '^[[:space:]]*#.*' | cut -d ' ' -f 1 | grep -v '^CIM_'`
+
+	for _TEMPDIR in /var/tmp /tmp
+	  do
+	  if test -w $_TEMPDIR
+	      then
+	      _DELETE_NAME=$TEMPDIR/delete-class.mof
+	      break
+	  fi
+	done
+
+	trap "rm -f $_DELETE_NAME" EXIT
+
 	for cls in $CLASSES
 	do
 	  chatter Delete CIM Class $cls
-	  $WBEMEXEC > /dev/null <<EOFWX
+	  cat > $_DELETE_NAME <<EOFA
 <?xml version="1.0" encoding="utf-8" ?>
 <CIM CIMVERSION="2.0" DTDVERSION="2.0">
  <MESSAGE ID="4711" PROTOCOLVERSION="1.0">
   <SIMPLEREQ>
    <IMETHODCALL NAME="DeleteClass">
     <LOCALNAMESPACEPATH>
-     <NAMESPACE NAME="root"></NAMESPACE>
-     <NAMESPACE NAME="cimv2"></NAMESPACE>
+EOFA
+	  for ns in `echo $namespace | sed 's?/? ?'g`
+	  do
+	    cat >> $_DELETE_NAME <<EOFX
+     <NAMESPACE NAME="$ns"></NAMESPACE>
+EOFX
+	  done
+	  cat >> $_DELETE_NAME <<EOFE
     </LOCALNAMESPACEPATH>
     <IPARAMVALUE NAME="ClassName">
      <CLASSNAME NAME="$cls"/>
@@ -289,7 +313,8 @@ pegasus_uninstall()
   </SIMPLEREQ>
  </MESSAGE>
 </CIM>
-EOFWX
+EOFE
+	  $WBEMEXEC > /dev/null $_DELETE_NAME
 	done
     else
 	echo "Sorry, cimserver must be running to deregister the providers." >&2
@@ -378,8 +403,11 @@ sfcb_rebuild()
 sfcb_install()
 {    
     mymofs=
-    mregs=
+    myregs=
     mofmode=1
+    namespace=$1
+    shift
+    
     while test x$1 != x
     do 
       if test $1 = ":"
@@ -412,7 +440,7 @@ sfcb_install()
     if sfcb_transform $_REGFILENAME $myregs
     then
 	chatter "Staging provider registration."
-	sfcbstage -r $_REGFILENAME $mymofs
+	sfcbstage -n $namespace -r $_REGFILENAME $mymofs
 	if test $? != 0 
 	then
 	    echo "Failed to stage provider registration." >&2
@@ -428,6 +456,9 @@ sfcb_install()
 sfcb_uninstall()
 {    
     mymofs=
+    namespace=$1
+    shift
+
     while test x$1 != x
     do 
       if test $1 = ":"
@@ -442,7 +473,7 @@ sfcb_uninstall()
     
     # "Unstage" MOFs and the registration file
     chatter "Unstaging provider registrations."
-    sfcbunstage -r $baseregname.reg $mymofs
+    sfcbunstage -n $namespace -r $baseregname.reg $mymofs
 
     # Rebuild repository
     sfcb_rebuild
@@ -582,7 +613,7 @@ cim_server()
 
 usage() 
 {
-    echo "usage: $0 [-h] [-v] [-d] [-t <cimserver>] -r regfile ... -m mof ..."
+    echo "usage: $0 [-h] [-v] [-d] [-t <cimserver>] [-n <namespace>] -r regfile ... -m mof ..."
 }
 
 chatter()
@@ -626,7 +657,7 @@ gb_getopt()
 }
 
 prepargs=`gb_getopt $*`
-args=`getopt dvhX:t:r: $prepargs`
+args=`getopt dvhX:t:r:n: $prepargs`
 rc=$?
 
 if [ $rc = 127 ]
@@ -638,6 +669,8 @@ then
     usage $0
     exit 1
 fi
+
+namespace="root/cimv2"
 
 set -- $args
 
@@ -654,6 +687,8 @@ do
       -d) deregister=1; 
 	  shift;;
       -t) cimserver=$2;
+	  shift 2;;
+      -n) namespace=$2;
 	  shift 2;;
       -r) regs="$regs $2";
 	  shift 2;;
@@ -675,6 +710,7 @@ then
     echo -e "\t-r specify registration files"
     echo -e "\t-m specify schema mof files"
     echo -e "\t-X create repository for alternate platform (sfcb only at the moment)."
+    echo -e "\t-n target namespace definition (default: root/cimv2)."
     echo
     echo Use this command to install schema mofs and register providers.
     echo CIM Server Type is required as well as at least one registration file and one mof.
@@ -702,16 +738,16 @@ fi
 if test x$deregister = x
 then
     case $cimserver in
-	pegasus) pegasus_install $mofs ":" $regs;;
-	sfcb)    sfcb_install $mofs ":" $regs;;
+	pegasus) pegasus_install $namespace $mofs ":" $regs;;
+	sfcb)    sfcb_install $namespace $mofs ":" $regs;;
 	openwbem) openwbem_install $mofs ;;
 	sniacimom) echo sniacimom not yet supported && exit 1 ;;
 	**)	echo "Invalid CIM Server Type " $cimserver && exit 1;;
     esac
 else
     case $cimserver in
-	pegasus) pegasus_uninstall $mofs ":" $regs;;
-	sfcb)    sfcb_uninstall $mofs ":" $regs;;
+	pegasus) pegasus_uninstall $namespace $mofs ":" $regs;;
+	sfcb)    sfcb_uninstall $namespace $mofs ":" $regs;;
 	openwbem) openwbem_uninstall $mofs ;;
 	sniacimom) echo sniacimom not yet supported && exit 1 ;;
 	**)	echo "Invalid CIM Server Type " $cimserver && exit 1;;

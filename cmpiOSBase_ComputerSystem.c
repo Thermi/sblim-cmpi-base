@@ -1,14 +1,14 @@
 /*
  * cmpiOSBase_ComputerSystem.c
  *
- * (C) Copyright IBM Corp. 2002
+ * (C) Copyright IBM Corp. 2002, 2009
  *
- * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
+ * THIS FILE IS PROVIDED UNDER THE TERMS OF THE ECLIPSE PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
  *
- * You can obtain a current copy of the Common Public License from
- * http://www.opensource.org/licenses/cpl1.0.txt
+ * You can obtain a current copy of the Eclipse Public License from
+ * http://www.opensource.org/licenses/eclipse-1.0.php
  *
  * Author:       Heidi Neumann <heidineu@de.ibm.com>
  * Contributors: Tyrel Datwyler <tyreld@us.ibm.com>

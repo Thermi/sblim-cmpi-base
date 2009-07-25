@@ -1,5 +1,5 @@
 #
-# $Id: sblim-cmpi-base.rh.spec,v 1.3 2005/11/10 12:01:06 mihajlov Exp $
+# $Id: sblim-cmpi-base.rh.spec,v 1.4 2009/07/25 00:37:31 tyreld Exp $
 #
 # Package spec for sblim-cmpi-base - RedHat/Fedora Flavor
 #
@@ -15,7 +15,7 @@ Version: 1.5.4
 Release: 3
 Group: Systems Management/Base
 URL: http://www.sblim.org
-License: CPL
+License: EPL
 
 Source0: http://download.sourceforge.net/pub/sourceforge/s/sb/sblim/%{name}-%{version}.tar.bz2
 
