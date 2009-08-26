@@ -1,0 +1,24 @@
+External Contributions to sfcb
+******************************
+
+Below are listed code contributions from the open source community.  
+The format is:
+
+Author, Organization
+--------------------
+MM/DD/YYYY [ bugnum ] description
+
+
+where "bugnum" is the bug number on SourceForge where a summary of the fix can 
+be found, along with a patch file containing the contributed code.
+
+The SourceForge bugtracker can be found here:
+
+https://sourceforge.net/tracker/?atid=712784&group_id=128809
+
+********************************************************************************
+
+Michal Hrušecký, Novell
+-----------------------
+08/25/2009 [ 2843613 ] Missing fclose in sblim-cmpi-base
+

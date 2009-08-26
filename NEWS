@@ -1,3 +1,6 @@
+Bugs Fixed:
+- 2843613 Missing fclose in sblim-cmpi-base
+
 Changes in Version 1.6.0
 ========================
 
