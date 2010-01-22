@@ -1,5 +1,5 @@
-External Contributions to sfcb
-******************************
+External Contributions to sblim-cmpi-base 
+*****************************************
 
 Below are listed code contributions from the open source community.  
 The format is:
