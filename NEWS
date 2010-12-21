@@ -1,6 +1,7 @@
 Bugs Fixed:
 - 2843613 Missing fclose in sblim-cmpi-base
 - 2882514 leak in sblim-cmpi-base-1.5.9/cmpiOSBase_OperatingSystem.c
+- 2836926 _osbase_common_init unreliable
 
 Changes in Version 1.6.0
 ========================
