@@ -3,6 +3,7 @@ Changes in Version 1.6.2
 
 Bugs Fixed:
 - 3275169 bash error reported in provider bootstrap scripts
+- 3306580 wrong OperatingSystem.Version prop value on RHEL6
 
 Changes in Version 1.6.1
 ========================
