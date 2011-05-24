@@ -1,3 +1,9 @@
+Changes in Version 1.6.2
+========================
+
+Bugs Fixed:
+- 3275169 bash error reported in provider bootstrap scripts
+
 Changes in Version 1.6.1
 ========================
 

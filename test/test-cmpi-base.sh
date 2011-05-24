@@ -10,7 +10,7 @@ export SBLIM_TESTSUITE_RUN=1;
 
 #******************************************************************************#
 
-declare -a CLASSNAMES[];
+declare -a CLASSNAMES;
 CLASSNAMES=([0]=Linux_ComputerSystem [1]=Linux_OperatingSystem \
 [2]=Linux_UnixProcess [3]=Linux_Processor \
 [4]=Linux_RunningOS [5]=Linux_OSProcess [6]=Linux_CSProcessor \
