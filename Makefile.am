@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.17 2009/07/25 00:37:30 tyreld Exp $
+# $Id: Makefile.am,v 1.18 2012/02/08 00:35:16 tyreld Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005, 2009
 #
@@ -93,7 +93,7 @@ libcmpiOSBase_ProcessorProvider_la_SOURCES = \
 		cmpiOSBase_ProcessorProvider.c \
 		cmpiOSBase_Processor.c \
 		OSBase_Processor.c
-libcmpiOSBase_ProcessorProvider_la_LIBADD =  -lcmpiOSBase_Common
+libcmpiOSBase_ProcessorProvider_la_LIBADD =  -lcmpiOSBase_Common -lpthread
 libcmpiOSBase_ProcessorProvider_la_LDFLAGS =  -avoid-version
 
 # Base Board

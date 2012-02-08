@@ -1,3 +1,6 @@
+Bugs Fixed:
+- 3424288 Underlinked libcmpiOSBase_ProcessorProvider.so
+
 Changes in Version 1.6.2
 ========================
 
