@@ -86,21 +86,28 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
   char *  cmd   = NULL;
   char *  str   = NULL;
   char *  ptr   = NULL;
-  DIR  *  dpid  = NULL;
+  char    buf[256];
+  int     len   = 0;
   int     i     = 0;
   int     rc    = 0;
 
   _OSBASE_TRACE(3,("--- get_process_data() called"));
 
-  cmd = (char*)malloc((strlen(pid)+100));
-  sprintf(cmd, "ps -p %s --no-headers -eo pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,session,state,args",pid);
-    rc = runcommand( cmd , NULL, &hdout, NULL );
+  sscanf(pid, "%[0-9] %n", buf, &len);
+  if (len != strlen(pid)) {
+      _OSBASE_TRACE(3,("--- get_process_data() failed : PID %s not valid", pid));
+      return -1;
+  }
+
+  cmd = (char*)malloc(len + 100);
+  sprintf(cmd, "ps -p %s --no-headers -o pid,ppid,tty,pri,nice,uid,gid,pmem,pcpu,cputime,session,state,args",buf);
+  rc = runcommand( cmd , NULL, &hdout, NULL );
   if (rc == 0) {
     while( hdout[i] ) {
       if((ptr=strchr(hdout[i], '\n'))) { *ptr = '\0'; }
       str = hdout[i];
       while( *str == ' ' ) { str = str+1; }
-      if( strncmp( str,pid,strlen(pid)) == 0 ) {
+      if( strncmp( str,buf,len) == 0 ) {
 	rc = _process_data( hdout[i], sptr );
 	break;
       }
@@ -108,7 +115,6 @@ int get_process_data( char * pid , struct cim_process ** sptr ) {
     }
     free ( cmd );
     freeresultbuf( hdout );
-    closedir(dpid);
   }
   else { 
     _OSBASE_TRACE(3,("--- get_process_data() failed : PID %s not valid",pid));
