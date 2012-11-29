@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.18 2012/02/08 00:35:16 tyreld Exp $
+# $Id: Makefile.am,v 1.19 2012/11/29 06:22:20 tyreld Exp $
 # ==================================================================
 # (C) Copyright IBM Corp. 2005, 2009
 #
@@ -14,6 +14,7 @@
 # Description:  Automake input file for OS Base Providers
 # ==================================================================
 
+AUTOMAKE_OPTIONS = no-dist-gzip dist-bzip2
 
 # SBLIM Include Directory
 sblimincdir = $(includedir)/sblim

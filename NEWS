@@ -1,3 +1,5 @@
+Changes in Version 1.6.3
+========================
 Bugs Fixed:
 - 3424288 Underlinked libcmpiOSBase_ProcessorProvider.so
 - 3582069 Linux_UnixProcess command injection vulnerability

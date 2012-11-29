@@ -1,3 +1,33 @@
+2012-11-02  Tyrel Datwyler <tyreld@us.ibm.com>
+
+	* NEWS, OSBase_UnixProcess.c:
+
+	Fixed 3582069: Linux_UnixProcess command injection vulnerability
+
+2012-02-07  Tyrel Datwyler <tyreld@us.ibm.com>
+
+	* Makefile.am, NEWS:
+
+	Fixed 3424288: Underlinked libcmpiOSBase_ProcessorProvider.so
+
+2011-05-23  Tyrel Datwyler <tyreld@us.ibm.com>
+
+	* NEWS, OSBase_OperatingSystem.c:
+
+	Fixed 3306580: wrong OperatingSystem.Version prop value on RHEL6
+
+2011-05-23  Tyrel Datwyler <tyreld@us.ibm.com>
+
+	* NEWS, test/test-cmpi-base.sh:
+
+	Fixed 3275169: bash error reported in provider bootstrap scripts
+
+2011-01-04  Tyrel Datwyler <tyreld@us.ibm.com>
+
+	* ChangeLog, NEWS, configure.ac:
+
+	Update release info for 1.6.1
+
 2010-12-20  Tyrel Datwyler <tyreld@us.ibm.com>
 
 	* NEWS, OSBase_Processor.c, OSBase_Processor.h,
@@ -322,7 +352,7 @@
 	[ 1395363 ] Providers' postinstall step location dependent.  Fixed
 	Makefile and updated autoconf/deployment files from cmpi-samples.
 
-2006-01-23  Lynn Moss
+2006-01-23  Lynn Moss <lynn@us.ibm.com>
 
 	* Makefile.am:
 
@@ -1555,7 +1585,7 @@
 
 	Updated setting.cmpi to support Pegasus
 
-2003-03-25  Adrian Schuur
+2003-03-25  Adrian Schuur <schuur@de.ibm.com>
 
 	* cimibase.h:
 
