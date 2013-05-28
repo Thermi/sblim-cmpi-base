@@ -1,3 +1,10 @@
+2013-05-28  Dave Heller <hellerda@us.ibm.com>
+
+	* NEWS, contributions.txt, OSBase_Processor.c:
+
+	Fixed SBLIM-2634: incorrect max cpu frequency
+	(patch by Henning Sackewitz)
+
 2012-11-02  Tyrel Datwyler <tyreld@us.ibm.com>
 
 	* NEWS, OSBase_UnixProcess.c:

@@ -22,3 +22,6 @@ Michal Hrušecký, Novell
 -----------------------
 08/25/2009 [ 2843613 ] Missing fclose in sblim-cmpi-base
 
+Henning Sackewitz,
+-----------------------
+05/28/2013 [ SBLIM-2634 ] incorrect max cpu frequency
