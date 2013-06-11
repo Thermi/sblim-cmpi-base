@@ -1,3 +1,10 @@
+2013-06-11  Dave Heller <hellerda@us.ibm.com>
+
+	* NEWS, contributions.txt, OSBase_UnixProcess.c:
+
+	Fixed SBLIM-2644: wrong UserModeTime and KernelModeTime
+	(patch by Henning Sackewitz)
+
 2013-05-28  Dave Heller <hellerda@us.ibm.com>
 
 	* NEWS, contributions.txt, OSBase_Processor.c:

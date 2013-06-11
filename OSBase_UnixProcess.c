@@ -229,9 +229,9 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
   strcat( cmd, "/stat");
 
   if ( (fpstat=fopen(cmd,"r")) != NULL ) {
-    fscanf(fpstat,"%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s "
-	   "%lld %lld %*s %*s %*s %*s %*s %ld", 
-	   &umtime,&kmtime,&ctime );
+    fscanf(fpstat,"%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s "
+       "%lld %lld %*s %*s %*s %*s %*s %*s %ld",
+       &umtime,&kmtime,&ctime );
     fclose(fpstat);
     (*sptr)->kmtime = kmtime*10;
     (*sptr)->umtime = umtime*10;

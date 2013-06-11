@@ -25,3 +25,4 @@ Michal Hrušecký, Novell
 Henning Sackewitz,
 -----------------------
 05/28/2013 [ SBLIM-2634 ] incorrect max cpu frequency
+06/11/2013 [ SBLIM-2644 ] wrong UserModeTime and KernelModeTime
