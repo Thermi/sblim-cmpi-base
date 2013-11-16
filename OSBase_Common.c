@@ -174,11 +174,23 @@ void _init_system_name() {
 	}
 	freeresultbuf(hdout);
       }
+      if (!domain || *domain == 0) { /* /bin/dnsdomainname might return empty */
+        /* get domain name */
+        rc=runcommand("/bin/domainname",NULL,&hdout,NULL);
+        if (rc == 0 && hdout != NULL) {
+          if (hdout[0] && *hdout[0] != '(') { /* might return "(none)" */
+            domain = strdup(hdout[0]);
+            ptr = strchr(domain, '\n');
+            *ptr = '\0';
+          }
+          freeresultbuf(hdout);
+        }
+      }
     }
 
     /* initializes CIM_HOST_NAME */
     if( strlen(host) ) {
-      if( !domain ) {
+      if(!domain || *domain == 0) {
 	CIM_HOST_NAME = calloc(1,(strlen(host)+1));
 	strcpy( CIM_HOST_NAME, host);
       }

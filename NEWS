@@ -4,6 +4,7 @@ Changes in Version 1.6.3
 Bugs Fixed:
 - SBLIM-2634: incorrect max cpu frequency
 - SBLIM-2644: wrong UserModeTime and KernelModeTime
+- SBLIM-2698: system name might have empty domainname
 
 Changes in Version 1.6.2
 ========================

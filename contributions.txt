@@ -26,3 +26,7 @@ Henning Sackewitz,
 -----------------------
 05/28/2013 [ SBLIM-2634 ] incorrect max cpu frequency
 06/11/2013 [ SBLIM-2644 ] wrong UserModeTime and KernelModeTime
+
+Klaus Kämpf, Novell
+-----------------------
+11/16/2013 [ SBLIM-2698 ] system name might have empty domainname
