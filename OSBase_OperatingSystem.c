@@ -104,11 +104,11 @@ int get_operatingsystem_data( struct cim_operatingsystem ** sptr ){
 
   //  fprintf( stderr,"%lli : %lli: %lli: %lli\n",(*sptr)->totalPhysMem,(*sptr)->freePhysMem,(*sptr)->totalSwapMem,(*sptr)->freeSwapMem);
 
-  /* CurrentTimeZone */
-  (*sptr)->curTimeZone = get_os_timezone();
-
   /* LocalDateTime */
   (*sptr)->localDate = get_os_localdatetime();
+
+  /* CurrentTimeZone */
+  (*sptr)->curTimeZone = atoi((*sptr)->localDate + 21);
 
   /* InstallDate */
   (*sptr)->installDate = get_os_installdate();
@@ -289,14 +289,10 @@ char * get_os_lastbootup() {
 
   up = _get_os_boottime();
   if( up == 0 ) { 
-    _OSBASE_TRACE(4,("--- get_os_lastbootup() failed : was not able to set last boot time"));
+    _OSBASE_TRACE(1,("--- get_os_lastbootup() failed : was not able to set last boot time"));
     return NULL;
   }
-  if( gmtime_r( &up, &uptm ) != NULL ) {
-    uptime = (char*)malloc(26);
-    strftime(uptime,26,"%Y%m%d%H%M%S.000000",&uptm);
-    _cat_timezone(uptime, get_os_timezone());
-  }
+  uptime = sse_to_cmpi_datetime_str(up, 1, 1);
 
   _OSBASE_TRACE(4,("--- get_os_lastbootup() exited : %s",uptime));
   return uptime;
@@ -310,13 +306,8 @@ char * get_os_localdatetime() {
 
   _OSBASE_TRACE(4,("--- get_os_localdatetime() called"));
 
-  sec=time(NULL) + get_os_timezone()*60;
-  if( gmtime_r( &sec , &cttm) != NULL ) {
-    tm = (char*)malloc(26);
-    strftime(tm,26,"%Y%m%d%H%M%S.000000",&cttm);
-    _cat_timezone(tm, get_os_timezone());
-  }
-  
+  tm = sse_to_cmpi_datetime_str(time(NULL), 1, 1);
+
   _OSBASE_TRACE(4,("--- get_os_localdatetime() exited : %s",tm));
   return tm;
 }

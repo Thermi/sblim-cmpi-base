@@ -57,6 +57,7 @@ static inline char * get_os_name() { return CIM_OS_NAME; }
 signed short  get_os_timezone();
 unsigned long _get_os_boottime();
 void          _cat_timezone( char * str, signed short zone );
+char *        sse_to_cmpi_datetime_str(long sse, int local, int adj_dst);
 
 /* ---------------------------------------------------------------------------*/
 

@@ -241,11 +241,7 @@ static int _process_data( char * phd , struct cim_process ** sptr ){
     if( uptime == 0 ) { (*sptr)->createdate = NULL; }
     else {
       ctime = (ctime/100)+uptime;
-      if( gmtime_r( &ctime , &tmdate) != NULL ) {
-	(*sptr)->createdate = (char*)malloc(26);
-	rc = strftime((*sptr)->createdate,26,"%Y%m%d%H%M%S.000000",&tmdate);
-	_cat_timezone((*sptr)->createdate, get_os_timezone());
-      }
+      (*sptr)->createdate = sse_to_cmpi_datetime_str(ctime, 1, 1);
     }
     //    fprintf(stderr,"(*sptr)->createdate: %s\n",(*sptr)->createdate);
     /*    fprintf(stderr,"PID: %s ... um:%lli; km:%lli;\num:%lli; km:%lli; cd_sec:%li\n",

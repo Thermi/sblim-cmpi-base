@@ -247,6 +247,53 @@ signed short get_os_timezone() {
   return CIM_OS_TIMEZONE;
 }
 
+/** ----------------------------------------------------------------------------
+ * Convert time_t time (seconds since epoch) to a CMPIDateTime-like string in
+ * the requested format:
+ * @param local    1 = result in localtime; 0 = result in GMT
+ * @param adj_dst  1 = result adjusted for DST (only meaningful for local)
+ * @return a string containing the requested datetime
+ * -------------------------------------------------------------------------- */
+
+char *sse_to_cmpi_datetime_str(long sse, int local, int adj_dst) {
+  char *dt = malloc(26);
+  struct tm bdtime;
+  struct tm *(*func)();
+  int offset = 0;
+  
+  _OSBASE_TRACE(4,
+      ("--- sse_to_cmpi_datetime_str() called for sse=%lu local=%d adj_dst=%d\n",
+          sse, local, adj_dst));
+
+  if (local && adj_dst) {
+    func = &localtime_r;
+  }
+  else {
+    func = &gmtime_r;
+    adj_dst = 0; 
+    if (local)
+      sse -= timezone;
+  }
+
+  if (func(&sse, &bdtime)) {
+    if (adj_dst)
+      offset = bdtime.tm_gmtoff / 60; /* adjusted for DST */
+    else if (local)
+      offset = - timezone / 60; /* not adjusted for DST */
+
+    strftime(dt, 26, "%Y%m%d%H%M%S.000000", &bdtime);
+    sprintf(dt, "%s%+04d", dt, offset);
+  }
+
+  _OSBASE_TRACE(4,
+      ("--- sse_to_cmpi_datetime_str() : exiting, returned value: %s", dt));
+  return dt;
+}
+
+/* ---------------------------------------------------------------------------*/
+
+/* ---------------------------------------------------------------------------*/
+
 unsigned long _get_os_boottime() {
   char ** hdout = NULL;
   int     rc    = 0;

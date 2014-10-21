@@ -5,6 +5,7 @@ Bugs Fixed:
 - SBLIM-2634: incorrect max cpu frequency
 - SBLIM-2644: wrong UserModeTime and KernelModeTime
 - SBLIM-2698: system name might have empty domainname
+- SBLIM-2737: datetime values do not adjust for DST
 
 Changes in Version 1.6.2
 ========================

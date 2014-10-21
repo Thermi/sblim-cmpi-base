@@ -1,3 +1,10 @@
+2014-10-24  Dave Heller <hellerda@us.ibm.com>
+
+	* NEWS, OSBase_Common.c, OSBase_Common.h, OSBase_OperatingSystem.c,
+	OSBase_UnixProcess.c
+
+	Fixed SBLIM-2737: datetime values do not adjust for DST
+
 2013-11-16  Dave Heller <hellerda@us.ibm.com>
 
 	* NEWS, contributions.txt, OSBase_Common.c:
