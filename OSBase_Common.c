@@ -257,6 +257,7 @@ signed short get_os_timezone() {
 
 char *sse_to_cmpi_datetime_str(long sse, int local, int adj_dst) {
   char *dt = malloc(26);
+  char *dt2 = malloc(26);
   struct tm bdtime;
   struct tm *(*func)();
   int offset = 0;
@@ -282,12 +283,13 @@ char *sse_to_cmpi_datetime_str(long sse, int local, int adj_dst) {
       offset = - timezone / 60; /* not adjusted for DST */
 
     strftime(dt, 26, "%Y%m%d%H%M%S.000000", &bdtime);
-    sprintf(dt, "%s%+04d", dt, offset);
+    sprintf(dt2, "%s%+04d", dt, offset);
+    free(dt);
   }
 
   _OSBASE_TRACE(4,
-      ("--- sse_to_cmpi_datetime_str() : exiting, returned value: %s", dt));
-  return dt;
+      ("--- sse_to_cmpi_datetime_str() : exiting, returned value: %s", dt2));
+  return dt2;
 }
 
 /* ---------------------------------------------------------------------------*/
