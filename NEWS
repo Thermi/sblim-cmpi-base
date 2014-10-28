@@ -2,7 +2,7 @@ Changes in Version 1.6.4
 ========================
 
 Bugs Fixed:
-
+- SBLIM-2737: bugfix for sprintf() handling
 
 Changes in Version 1.6.3
 ========================
